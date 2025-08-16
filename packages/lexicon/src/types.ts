@@ -281,13 +281,16 @@ export const lexXrpcError = z.object({
 })
 export type LexXrpcError = z.infer<typeof lexXrpcError>
 
+export const lexXrpcAuth = z.object({
+  permission: z.string(),
+  objectType: z.string().optional()
+})
+
 export const lexXrpcQuery = z
   .object({
     type: z.literal('query'),
     description: z.string().optional(),
-    auth: z.object({
-      permission: z.string()
-    }).optional(),
+    auth: lexXrpcAuth.optional(),
     parameters: lexXrpcParameters.optional(),
     output: lexXrpcBody.optional(),
     errors: lexXrpcError.array().optional(),
@@ -299,9 +302,7 @@ export const lexXrpcProcedure = z
   .object({
     type: z.literal('procedure'),
     description: z.string().optional(),
-    auth: z.object({
-      permission: z.string()
-    }).optional(),
+    auth: lexXrpcAuth.optional(),
     parameters: lexXrpcParameters.optional(),
     input: lexXrpcBody.optional(),
     output: lexXrpcBody.optional(),
@@ -314,9 +315,7 @@ export const lexXrpcSubscription = z
   .object({
     type: z.literal('subscription'),
     description: z.string().optional(),
-    auth: z.object({
-      permission: z.string()
-    }).optional(),
+    auth: lexXrpcAuth.optional(),
     parameters: lexXrpcParameters.optional(),
     message: lexXrpcSubscriptionMessage.optional(),
     errors: lexXrpcError.array().optional(),

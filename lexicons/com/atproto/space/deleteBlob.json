@@ -1,0 +1,58 @@
+{
+    "lexicon": 1,
+    "id": "com.atproto.space.deleteBlob",
+    "description": "Delete a blob from a repository. Requires auth, implemented by PDS.",
+    "defs": {
+        "main": {
+            "type": "query",
+            "description": "Delete a blob from a repository.",
+            "auth": {
+                "permission": "get_blob"
+            },
+            "parameters": {
+                "type": "params",
+                "properties": {
+                    "repo": {
+                        "type": "string",
+                        "description": "The handle or DID of the repo (aka, current account).",
+                        "format": "at-identifier",
+                        "maxLength": 256
+                    },
+                    "space": {
+                        "type": "string",
+                        "description": "The id of the space.",
+                        "format": "record-key",
+                        "maxLength": 64
+                    },
+                    "parent": {
+                        "type": "string",
+                        "description": "The id of the context space to operate under.",
+                        "format": "record-key",
+                        "maxLength": 64
+                    },
+                    "cid": {
+                        "type": "string",
+                        "description": "The CID of the version of the resource. If not specified, then return the most recent version.",
+                        "format": "cid"
+                    }
+                },
+                "required": [
+                    "repo",
+                    "cid"
+                ]
+            },
+            "output": {
+                "encoding": "application/json",
+                "schema": {
+                    "type": "object",
+                    "properties": {
+                        "status": {
+                            "type": "string",
+                            "description": "a human readable status message"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
