@@ -51,6 +51,7 @@ export const ensureValidDidRegex = (did: string): void => {
     throw new InvalidDidError("DID didn't validate via regex")
   }
 
+  // TODO, check this first to avoid regex if too long?
   if (did.length > 2 * 1024) {
     throw new InvalidDidError('DID is too long (2048 chars max)')
   }

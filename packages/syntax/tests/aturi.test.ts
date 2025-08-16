@@ -377,6 +377,11 @@ describe('AtUri validation', () => {
     expectValid('at://did:plc:asdf123/com.atproto.feed.post')
     expectValid('at://did:plc:asdf123/com.atproto.feed.post/record')
 
+    expectValid('at://did:plc:asdf123?foo=bar')
+    expectValid('at://user.bsky.social?foo=bar')
+    expectValid('at://did:plc:asdf123/com.atproto.feed.post?foo=bar')
+    expectValid('at://did:plc:asdf123/com.atproto.feed.post/record?foo=bar')
+
     expectValid('at://did:plc:asdf123#/frag')
     expectValid('at://user.bsky.social#/frag')
     expectValid('at://did:plc:asdf123/com.atproto.feed.post#/frag')

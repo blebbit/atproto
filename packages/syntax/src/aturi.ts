@@ -37,11 +37,13 @@ export class AtUri {
     this.searchParams = parsed.searchParams
   }
 
-  static make(handleOrDid: string, collection?: string, rkey?: string) {
+  static make(handleOrDid: string, collection?: string, rkey?: string, space?: string) {
     let str = handleOrDid
     if (collection) str += '/' + collection
     if (rkey) str += '/' + rkey
-    return new AtUri(str)
+    const uri = new AtUri(str)
+    if (space) uri.searchParams.set('space', space)
+    return uri
   }
 
   get protocol() {
