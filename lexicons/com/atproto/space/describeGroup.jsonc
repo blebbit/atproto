@@ -1,0 +1,52 @@
+{
+  "lexicon": 1,
+  "id": "com.atproto.space.describeGroup",
+  "defs": {
+    "main": {
+      "type": "query",
+      "description": "Get information about a group.",
+      "auth": {
+        "permission": "list" // this could list members and resources
+      },
+      "parameters": {
+        "type": "params",
+        "required": ["repo", "rkey"],
+        "properties": {
+          "repo": {
+            "type": "string",
+            "description": "The handle or DID of the repo (aka, current account).",
+            "format": "at-identifier"
+          },
+          "space": {
+            "type": "string",
+            "description": "The id of the parent space to nest under.",
+            "format": "record-key",
+            "maxLength": 256
+          },
+          "rkey": {
+            "type": "string",
+            "description": "The id of the space associated with the repo.",
+            "format": "record-key",
+            "maxLength": 256
+          },
+        }
+      },
+      "output": {
+        "encoding": "application/json",
+        "schema": {
+          "type": "object",
+          // "required": [
+          //   "users",
+          //   "groups",
+          //   "spaces",
+          // ],
+          "properties": {
+            "hello": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+  }
+}
