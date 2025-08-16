@@ -73,10 +73,9 @@ export default function (server: Server, ctx: AppContext) {
           validate,
         })
       } catch (err) {
-        if (err instanceof InvalidRecordError) {
-          throw new InvalidRequestError(err.message)
-        }
-        if (err instanceof InvalidRecordKeyError) {
+        if (err instanceof InvalidRecordError
+         || err instanceof InvalidRecordKeyError
+        ) {
           throw new InvalidRequestError(err.message)
         }
         throw err

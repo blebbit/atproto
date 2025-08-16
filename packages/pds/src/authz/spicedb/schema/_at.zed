@@ -1,0 +1,351 @@
+// not all are used yet
+definition superuser {}
+
+definition anon {}
+
+// main actors
+definition acct {}
+
+definition oauth {}
+
+definition service {}
+
+// created by accounts, access for automations, like app passwords, but with permissions
+definition apikey {}
+
+definition svcacct {}
+
+// custom roles
+definition role {
+	relation parent: space
+
+	// pseudo member role as a permission
+	permission member = owner + direct_member
+
+	// every resource gets a default owner of the account the resources live under
+	// the owner role can be given to other users or generally subjects too
+	// ... or does the creator of the record get some ownership in the account, how much appview purview here?
+	// does super user god here, because super user
+	relation owner: acct | service | space#member | group#member | role#member
+	relation direct_member: acct | oauth | apikey | svcacct | service | space#member | group#member | role#member
+
+	// Role CRUD relations
+	// what about acct:* for all logged in accts vs anon visitors
+	relation role_deleter: superuser | acct | acct with nsid_allowed | oauth | oauth with nsid_allowed | apikey | apikey with nsid_allowed | svcacct | svcacct with nsid_allowed | service | service with nsid_allowed | space#member | space#member with nsid_allowed | group#member | group#member with nsid_allowed | role#member | role#member with nsid_allowed
+	relation role_updater: superuser | acct | acct with nsid_allowed | oauth | oauth with nsid_allowed | apikey | apikey with nsid_allowed | svcacct | svcacct with nsid_allowed | service | service with nsid_allowed | space#member | space#member with nsid_allowed | group#member | group#member with nsid_allowed | role#member | role#member with nsid_allowed
+	relation role_creator: superuser | acct | acct with nsid_allowed | oauth | oauth with nsid_allowed | apikey | apikey with nsid_allowed | svcacct | svcacct with nsid_allowed | service | service with nsid_allowed | space#member | space#member with nsid_allowed | group#member | group#member with nsid_allowed | role#member | role#member with nsid_allowed
+	relation role_lister: superuser | anon | acct | acct with nsid_allowed | acct:* | acct:* with nsid_allowed | oauth | oauth with nsid_allowed | apikey | apikey with nsid_allowed | svcacct | svcacct with nsid_allowed | service | service with nsid_allowed | space#member | space#member with nsid_allowed | group#member | group#member with nsid_allowed | role#member | role#member with nsid_allowed
+	relation role_reader: superuser | anon | acct | acct with nsid_allowed | acct:* | acct:* with nsid_allowed | oauth | oauth with nsid_allowed | apikey | apikey with nsid_allowed | svcacct | svcacct with nsid_allowed | service | service with nsid_allowed | space#member | space#member with nsid_allowed | group#member | group#member with nsid_allowed | role#member | role#member with nsid_allowed
+
+	// Role CRUD permissions
+	permission role_delete = owner + role_deleter + parent->role_delete
+	permission role_update = role_delete + role_updater + parent->role_update
+	permission role_create = role_update + role_creator + parent->role_create
+	permission role_list = role_create + role_lister + parent->role_list
+	permission role_read = role_list + role_reader + parent->role_read
+
+	// Role IAM relations
+	relation role_iam_adminer: superuser | acct | acct with nsid_allowed | oauth | oauth with nsid_allowed | apikey | apikey with nsid_allowed | svcacct | svcacct with nsid_allowed | service | service with nsid_allowed | space#member | space#member with nsid_allowed | group#member | group#member with nsid_allowed | role#member | role#member with nsid_allowed
+	relation role_iam_editor: superuser | acct | acct with nsid_allowed | oauth | oauth with nsid_allowed | apikey | apikey with nsid_allowed | svcacct | svcacct with nsid_allowed | service | service with nsid_allowed | space#member | space#member with nsid_allowed | group#member | group#member with nsid_allowed | role#member | role#member with nsid_allowed
+	relation role_iam_lister: superuser | acct | acct with nsid_allowed | oauth | oauth with nsid_allowed | apikey | apikey with nsid_allowed | svcacct | svcacct with nsid_allowed | service | service with nsid_allowed | space#member | space#member with nsid_allowed | group#member | group#member with nsid_allowed | role#member | role#member with nsid_allowed
+	relation role_iam_reader: superuser | acct | acct with nsid_allowed | oauth | oauth with nsid_allowed | apikey | apikey with nsid_allowed | svcacct | svcacct with nsid_allowed | service | service with nsid_allowed | space#member | space#member with nsid_allowed | group#member | group#member with nsid_allowed | role#member | role#member with nsid_allowed
+
+	// Role IAM permissions
+	permission role_iam_admin = owner + role_iam_adminer + parent->role_iam_admin
+	permission role_iam_edit = role_iam_admin + role_iam_editor + parent->role_iam_edit
+	permission role_iam_list = role_iam_edit + role_iam_lister + parent->role_iam_list
+	permission role_iam_read = role_iam_list + role_iam_reader + parent->role_iam_read
+}
+
+definition space {
+	// space containment / nesting
+	relation parent: space
+
+	// pseudo member role as a permission
+	permission member = owner + direct_member
+
+	// every resource gets a default owner of the account the resources live under
+	// the owner role can be given to other users or generally subjects too
+	// ... or does the creator of the record get some ownership in the account, how much appview purview here?
+	// does super user god here, because super user
+	relation owner: acct | service | space#member | group#member | role#member
+	relation direct_member: acct | oauth | apikey | svcacct | service | space#member | group#member | role#member
+
+	// Role CRUD relations
+	relation space_deleter: superuser | acct | acct with nsid_allowed | oauth | oauth with nsid_allowed | apikey | apikey with nsid_allowed | svcacct | svcacct with nsid_allowed | service | service with nsid_allowed | space#member | space#member with nsid_allowed | group#member | group#member with nsid_allowed | role#member | role#member with nsid_allowed
+	relation space_updater: superuser | acct | acct with nsid_allowed | oauth | oauth with nsid_allowed | apikey | apikey with nsid_allowed | svcacct | svcacct with nsid_allowed | service | service with nsid_allowed | space#member | space#member with nsid_allowed | group#member | group#member with nsid_allowed | role#member | role#member with nsid_allowed
+	relation space_creator: superuser | acct | acct with nsid_allowed | oauth | oauth with nsid_allowed | apikey | apikey with nsid_allowed | svcacct | svcacct with nsid_allowed | service | service with nsid_allowed | space#member | space#member with nsid_allowed | group#member | group#member with nsid_allowed | role#member | role#member with nsid_allowed
+	relation space_lister: superuser | anon | acct | acct with nsid_allowed | acct:* | acct:* with nsid_allowed | oauth | oauth with nsid_allowed | apikey | apikey with nsid_allowed | svcacct | svcacct with nsid_allowed | service | service with nsid_allowed | space#member | space#member with nsid_allowed | group#member | group#member with nsid_allowed | role#member | role#member with nsid_allowed
+	relation space_reader: superuser | anon | acct | acct with nsid_allowed | acct:* | acct:* with nsid_allowed | oauth | oauth with nsid_allowed | apikey | apikey with nsid_allowed | svcacct | svcacct with nsid_allowed | service | service with nsid_allowed | space#member | space#member with nsid_allowed | group#member | group#member with nsid_allowed | role#member | role#member with nsid_allowed
+
+	// Role CRUD permissions
+	permission space_delete = owner + space_deleter + parent->space_delete
+	permission space_update = space_delete + space_updater + parent->space_update
+	permission space_create = space_update + space_creator + parent->space_create
+	permission space_list = space_create + space_lister + parent->space_list
+	permission space_read = space_list + space_reader + parent->space_read
+
+	// Role IAM relations
+	relation space_iam_adminer: superuser | acct | acct with nsid_allowed | oauth | oauth with nsid_allowed | apikey | apikey with nsid_allowed | svcacct | svcacct with nsid_allowed | service | service with nsid_allowed | space#member | space#member with nsid_allowed | group#member | group#member with nsid_allowed | role#member | role#member with nsid_allowed
+	relation space_iam_editor: superuser | acct | acct with nsid_allowed | oauth | oauth with nsid_allowed | apikey | apikey with nsid_allowed | svcacct | svcacct with nsid_allowed | service | service with nsid_allowed | space#member | space#member with nsid_allowed | group#member | group#member with nsid_allowed | role#member | role#member with nsid_allowed
+	relation space_iam_lister: superuser | acct | acct with nsid_allowed | oauth | oauth with nsid_allowed | apikey | apikey with nsid_allowed | svcacct | svcacct with nsid_allowed | service | service with nsid_allowed | space#member | space#member with nsid_allowed | group#member | group#member with nsid_allowed | role#member | role#member with nsid_allowed
+	relation space_iam_reader: superuser | acct | acct with nsid_allowed | oauth | oauth with nsid_allowed | apikey | apikey with nsid_allowed | svcacct | svcacct with nsid_allowed | service | service with nsid_allowed | space#member | space#member with nsid_allowed | group#member | group#member with nsid_allowed | role#member | role#member with nsid_allowed
+
+	// Role IAM permissions
+	permission space_iam_admin = owner + space_iam_adminer + parent->space_iam_admin
+	permission space_iam_edit = space_iam_admin + space_iam_editor + parent->space_iam_edit
+	permission space_iam_list = space_iam_edit + space_iam_lister + parent->space_iam_list
+	permission space_iam_read = space_iam_list + space_iam_reader + parent->space_iam_read
+
+	// Role CRUD relations
+	// what about acct:* for all logged in accts vs anon visitors
+	relation group_deleter: superuser | acct | acct with nsid_allowed | oauth | oauth with nsid_allowed | apikey | apikey with nsid_allowed | svcacct | svcacct with nsid_allowed | service | service with nsid_allowed | space#member | space#member with nsid_allowed | group#member | group#member with nsid_allowed | role#member | role#member with nsid_allowed
+	relation group_updater: superuser | acct | acct with nsid_allowed | oauth | oauth with nsid_allowed | apikey | apikey with nsid_allowed | svcacct | svcacct with nsid_allowed | service | service with nsid_allowed | space#member | space#member with nsid_allowed | group#member | group#member with nsid_allowed | role#member | role#member with nsid_allowed
+	relation group_creator: superuser | acct | acct with nsid_allowed | oauth | oauth with nsid_allowed | apikey | apikey with nsid_allowed | svcacct | svcacct with nsid_allowed | service | service with nsid_allowed | space#member | space#member with nsid_allowed | group#member | group#member with nsid_allowed | role#member | role#member with nsid_allowed
+	relation group_lister: superuser | anon | acct | acct with nsid_allowed | acct:* | acct:* with nsid_allowed | oauth | oauth with nsid_allowed | apikey | apikey with nsid_allowed | svcacct | svcacct with nsid_allowed | service | service with nsid_allowed | space#member | space#member with nsid_allowed | group#member | group#member with nsid_allowed | role#member | role#member with nsid_allowed
+	relation group_reader: superuser | anon | acct | acct with nsid_allowed | acct:* | acct:* with nsid_allowed | oauth | oauth with nsid_allowed | apikey | apikey with nsid_allowed | svcacct | svcacct with nsid_allowed | service | service with nsid_allowed | space#member | space#member with nsid_allowed | group#member | group#member with nsid_allowed | role#member | role#member with nsid_allowed
+
+	// Role CRUD permissions
+	permission group_delete = owner + group_deleter + parent->group_delete
+	permission group_update = group_delete + group_updater + parent->group_update
+	permission group_create = group_update + group_creator + parent->group_create
+	permission group_list = group_create + group_lister + parent->group_list
+	permission group_read = group_list + group_reader + parent->group_read
+
+	// Role IAM relations
+	relation group_iam_adminer: superuser | acct | acct with nsid_allowed | oauth | oauth with nsid_allowed | apikey | apikey with nsid_allowed | svcacct | svcacct with nsid_allowed | service | service with nsid_allowed | space#member | space#member with nsid_allowed | group#member | group#member with nsid_allowed | role#member | role#member with nsid_allowed
+	relation group_iam_editor: superuser | acct | acct with nsid_allowed | oauth | oauth with nsid_allowed | apikey | apikey with nsid_allowed | svcacct | svcacct with nsid_allowed | service | service with nsid_allowed | space#member | space#member with nsid_allowed | group#member | group#member with nsid_allowed | role#member | role#member with nsid_allowed
+	relation group_iam_lister: superuser | acct | acct with nsid_allowed | oauth | oauth with nsid_allowed | apikey | apikey with nsid_allowed | svcacct | svcacct with nsid_allowed | service | service with nsid_allowed | space#member | space#member with nsid_allowed | group#member | group#member with nsid_allowed | role#member | role#member with nsid_allowed
+	relation group_iam_reader: superuser | acct | acct with nsid_allowed | oauth | oauth with nsid_allowed | apikey | apikey with nsid_allowed | svcacct | svcacct with nsid_allowed | service | service with nsid_allowed | space#member | space#member with nsid_allowed | group#member | group#member with nsid_allowed | role#member | role#member with nsid_allowed
+
+	// Role IAM permissions
+	permission group_iam_admin = owner + group_iam_adminer + parent->group_iam_admin
+	permission group_iam_edit = group_iam_admin + group_iam_editor + parent->group_iam_edit
+	permission group_iam_list = group_iam_edit + group_iam_lister + parent->group_iam_list
+	permission group_iam_read = group_iam_list + group_iam_reader + parent->group_iam_read
+
+	// Role CRUD relations
+	// what about acct:* for all logged in accts vs anon visitors
+	relation role_deleter: superuser | acct | acct with nsid_allowed | oauth | oauth with nsid_allowed | apikey | apikey with nsid_allowed | svcacct | svcacct with nsid_allowed | service | service with nsid_allowed | space#member | space#member with nsid_allowed | group#member | group#member with nsid_allowed | role#member | role#member with nsid_allowed
+	relation role_updater: superuser | acct | acct with nsid_allowed | oauth | oauth with nsid_allowed | apikey | apikey with nsid_allowed | svcacct | svcacct with nsid_allowed | service | service with nsid_allowed | space#member | space#member with nsid_allowed | group#member | group#member with nsid_allowed | role#member | role#member with nsid_allowed
+	relation role_creator: superuser | acct | acct with nsid_allowed | oauth | oauth with nsid_allowed | apikey | apikey with nsid_allowed | svcacct | svcacct with nsid_allowed | service | service with nsid_allowed | space#member | space#member with nsid_allowed | group#member | group#member with nsid_allowed | role#member | role#member with nsid_allowed
+	relation role_lister: superuser | anon | acct | acct with nsid_allowed | acct:* | acct:* with nsid_allowed | oauth | oauth with nsid_allowed | apikey | apikey with nsid_allowed | svcacct | svcacct with nsid_allowed | service | service with nsid_allowed | space#member | space#member with nsid_allowed | group#member | group#member with nsid_allowed | role#member | role#member with nsid_allowed
+	relation role_reader: superuser | anon | acct | acct with nsid_allowed | acct:* | acct:* with nsid_allowed | oauth | oauth with nsid_allowed | apikey | apikey with nsid_allowed | svcacct | svcacct with nsid_allowed | service | service with nsid_allowed | space#member | space#member with nsid_allowed | group#member | group#member with nsid_allowed | role#member | role#member with nsid_allowed
+
+	// Role CRUD permissions
+	permission role_delete = owner + role_deleter + parent->role_delete
+	permission role_update = role_delete + role_updater + parent->role_update
+	permission role_create = role_update + role_creator + parent->role_create
+	permission role_list = role_create + role_lister + parent->role_list
+	permission role_read = role_list + role_reader + parent->role_read
+
+	// Role IAM relations
+	relation role_iam_adminer: superuser | acct | acct with nsid_allowed | oauth | oauth with nsid_allowed | apikey | apikey with nsid_allowed | svcacct | svcacct with nsid_allowed | service | service with nsid_allowed | space#member | space#member with nsid_allowed | group#member | group#member with nsid_allowed | role#member | role#member with nsid_allowed
+	relation role_iam_editor: superuser | acct | acct with nsid_allowed | oauth | oauth with nsid_allowed | apikey | apikey with nsid_allowed | svcacct | svcacct with nsid_allowed | service | service with nsid_allowed | space#member | space#member with nsid_allowed | group#member | group#member with nsid_allowed | role#member | role#member with nsid_allowed
+	relation role_iam_lister: superuser | acct | acct with nsid_allowed | oauth | oauth with nsid_allowed | apikey | apikey with nsid_allowed | svcacct | svcacct with nsid_allowed | service | service with nsid_allowed | space#member | space#member with nsid_allowed | group#member | group#member with nsid_allowed | role#member | role#member with nsid_allowed
+	relation role_iam_reader: superuser | acct | acct with nsid_allowed | oauth | oauth with nsid_allowed | apikey | apikey with nsid_allowed | svcacct | svcacct with nsid_allowed | service | service with nsid_allowed | space#member | space#member with nsid_allowed | group#member | group#member with nsid_allowed | role#member | role#member with nsid_allowed
+
+	// Role IAM permissions
+	permission role_iam_admin = owner + role_iam_adminer + parent->role_iam_admin
+	permission role_iam_edit = role_iam_admin + role_iam_editor + parent->role_iam_edit
+	permission role_iam_list = role_iam_edit + role_iam_lister + parent->role_iam_list
+	permission role_iam_read = role_iam_list + role_iam_reader + parent->role_iam_read
+
+	// Role CRUD relations
+	relation record_deleter: superuser | acct | acct with nsid_allowed | oauth | oauth with nsid_allowed | apikey | apikey with nsid_allowed | svcacct | svcacct with nsid_allowed | service | service with nsid_allowed | space#member | space#member with nsid_allowed | group#member | group#member with nsid_allowed | role#member | role#member with nsid_allowed
+	relation record_updater: superuser | acct | acct with nsid_allowed | oauth | oauth with nsid_allowed | apikey | apikey with nsid_allowed | svcacct | svcacct with nsid_allowed | service | service with nsid_allowed | space#member | space#member with nsid_allowed | group#member | group#member with nsid_allowed | role#member | role#member with nsid_allowed
+	relation record_creator: superuser | acct | acct with nsid_allowed | oauth | oauth with nsid_allowed | apikey | apikey with nsid_allowed | svcacct | svcacct with nsid_allowed | service | service with nsid_allowed | space#member | space#member with nsid_allowed | group#member | group#member with nsid_allowed | role#member | role#member with nsid_allowed
+	relation record_lister: superuser | anon | acct | acct with nsid_allowed | acct:* | acct:* with nsid_allowed | oauth | oauth with nsid_allowed | apikey | apikey with nsid_allowed | svcacct | svcacct with nsid_allowed | service | service with nsid_allowed | space#member | space#member with nsid_allowed | group#member | group#member with nsid_allowed | role#member | role#member with nsid_allowed
+	relation record_reader: superuser | anon | acct | acct with nsid_allowed | acct:* | acct:* with nsid_allowed | oauth | oauth with nsid_allowed | apikey | apikey with nsid_allowed | svcacct | svcacct with nsid_allowed | service | service with nsid_allowed | space#member | space#member with nsid_allowed | group#member | group#member with nsid_allowed | role#member | role#member with nsid_allowed
+
+	// Role CRUD permissions
+	permission record_delete = owner + record_deleter + parent->record_delete
+	permission record_update = record_delete + record_updater + parent->record_update
+	permission record_create = record_update + record_creator + parent->record_create
+	permission record_list = record_create + record_lister + parent->record_list
+	permission record_read = record_list + record_reader + parent->record_read
+
+	// Role IAM relations
+	relation record_iam_adminer: superuser | acct | acct with nsid_allowed | oauth | oauth with nsid_allowed | apikey | apikey with nsid_allowed | svcacct | svcacct with nsid_allowed | service | service with nsid_allowed | space#member | space#member with nsid_allowed | group#member | group#member with nsid_allowed | role#member | role#member with nsid_allowed
+	relation record_iam_editor: superuser | acct | acct with nsid_allowed | oauth | oauth with nsid_allowed | apikey | apikey with nsid_allowed | svcacct | svcacct with nsid_allowed | service | service with nsid_allowed | space#member | space#member with nsid_allowed | group#member | group#member with nsid_allowed | role#member | role#member with nsid_allowed
+	relation record_iam_lister: superuser | acct | acct with nsid_allowed | oauth | oauth with nsid_allowed | apikey | apikey with nsid_allowed | svcacct | svcacct with nsid_allowed | service | service with nsid_allowed | space#member | space#member with nsid_allowed | group#member | group#member with nsid_allowed | role#member | role#member with nsid_allowed
+	relation record_iam_reader: superuser | acct | acct with nsid_allowed | oauth | oauth with nsid_allowed | apikey | apikey with nsid_allowed | svcacct | svcacct with nsid_allowed | service | service with nsid_allowed | space#member | space#member with nsid_allowed | group#member | group#member with nsid_allowed | role#member | role#member with nsid_allowed
+
+	// Role IAM permissions
+	permission record_iam_admin = owner + record_iam_adminer + parent->record_iam_admin
+	permission record_iam_edit = record_iam_admin + record_iam_editor + parent->record_iam_edit
+	permission record_iam_list = record_iam_edit + record_iam_lister + parent->record_iam_list
+	permission record_iam_read = record_iam_list + record_iam_reader + parent->record_iam_read
+
+	// Role CRUD relations
+	relation blob_deleter: superuser | acct | acct with nsid_allowed | oauth | oauth with nsid_allowed | apikey | apikey with nsid_allowed | svcacct | svcacct with nsid_allowed | service | service with nsid_allowed | space#member | space#member with nsid_allowed | group#member | group#member with nsid_allowed | role#member | role#member with nsid_allowed
+	relation blob_updater: superuser | acct | acct with nsid_allowed | oauth | oauth with nsid_allowed | apikey | apikey with nsid_allowed | svcacct | svcacct with nsid_allowed | service | service with nsid_allowed | space#member | space#member with nsid_allowed | group#member | group#member with nsid_allowed | role#member | role#member with nsid_allowed
+	relation blob_creator: superuser | acct | acct with nsid_allowed | oauth | oauth with nsid_allowed | apikey | apikey with nsid_allowed | svcacct | svcacct with nsid_allowed | service | service with nsid_allowed | space#member | space#member with nsid_allowed | group#member | group#member with nsid_allowed | role#member | role#member with nsid_allowed
+	relation blob_lister: superuser | anon | acct | acct with nsid_allowed | acct:* | acct:* with nsid_allowed | oauth | oauth with nsid_allowed | apikey | apikey with nsid_allowed | svcacct | svcacct with nsid_allowed | service | service with nsid_allowed | space#member | space#member with nsid_allowed | group#member | group#member with nsid_allowed | role#member | role#member with nsid_allowed
+	relation blob_reader: superuser | anon | acct | acct with nsid_allowed | acct:* | acct:* with nsid_allowed | oauth | oauth with nsid_allowed | apikey | apikey with nsid_allowed | svcacct | svcacct with nsid_allowed | service | service with nsid_allowed | space#member | space#member with nsid_allowed | group#member | group#member with nsid_allowed | role#member | role#member with nsid_allowed
+
+	// Role CRUD permissions
+	permission blob_delete = owner + blob_deleter + parent->blob_delete
+	permission blob_update = blob_delete + blob_updater + parent->blob_update
+	permission blob_create = blob_update + blob_creator + parent->blob_create
+	permission blob_list = blob_create + blob_lister + parent->blob_list
+	permission blob_read = blob_list + blob_reader + parent->blob_read
+
+	// Role IAM relations
+	relation blob_iam_adminer: superuser | acct | acct with nsid_allowed | oauth | oauth with nsid_allowed | apikey | apikey with nsid_allowed | svcacct | svcacct with nsid_allowed | service | service with nsid_allowed | space#member | space#member with nsid_allowed | group#member | group#member with nsid_allowed | role#member | role#member with nsid_allowed
+	relation blob_iam_editor: superuser | acct | acct with nsid_allowed | oauth | oauth with nsid_allowed | apikey | apikey with nsid_allowed | svcacct | svcacct with nsid_allowed | service | service with nsid_allowed | space#member | space#member with nsid_allowed | group#member | group#member with nsid_allowed | role#member | role#member with nsid_allowed
+	relation blob_iam_lister: superuser | acct | acct with nsid_allowed | oauth | oauth with nsid_allowed | apikey | apikey with nsid_allowed | svcacct | svcacct with nsid_allowed | service | service with nsid_allowed | space#member | space#member with nsid_allowed | group#member | group#member with nsid_allowed | role#member | role#member with nsid_allowed
+	relation blob_iam_reader: superuser | acct | acct with nsid_allowed | oauth | oauth with nsid_allowed | apikey | apikey with nsid_allowed | svcacct | svcacct with nsid_allowed | service | service with nsid_allowed | space#member | space#member with nsid_allowed | group#member | group#member with nsid_allowed | role#member | role#member with nsid_allowed
+
+	// Role IAM permissions
+	permission blob_iam_admin = owner + blob_iam_adminer + parent->blob_iam_admin
+	permission blob_iam_edit = blob_iam_admin + blob_iam_editor + parent->blob_iam_edit
+	permission blob_iam_list = blob_iam_edit + blob_iam_lister + parent->blob_iam_list
+	permission blob_iam_read = blob_iam_list + blob_iam_reader + parent->blob_iam_read
+	relation rpc_caller: superuser | anon | acct | acct with nsid_allowed | acct:* | acct:* with nsid_allowed | oauth | oauth with nsid_allowed | apikey | apikey with nsid_allowed | svcacct | svcacct with nsid_allowed | service | service with nsid_allowed | space#member | space#member with nsid_allowed | group#member | group#member with nsid_allowed | role#member | role#member with nsid_allowed
+
+	// RPC CRUD permissions
+	permission rpc_call = rpc_caller + parent->rpc_call
+
+	// Role IAM relations
+	relation rpc_iam_adminer: superuser | acct | acct with nsid_allowed | oauth | oauth with nsid_allowed | apikey | apikey with nsid_allowed | svcacct | svcacct with nsid_allowed | service | service with nsid_allowed | space#member | space#member with nsid_allowed | group#member | group#member with nsid_allowed | role#member | role#member with nsid_allowed
+	relation rpc_iam_editor: superuser | acct | acct with nsid_allowed | oauth | oauth with nsid_allowed | apikey | apikey with nsid_allowed | svcacct | svcacct with nsid_allowed | service | service with nsid_allowed | space#member | space#member with nsid_allowed | group#member | group#member with nsid_allowed | role#member | role#member with nsid_allowed
+	relation rpc_iam_lister: superuser | acct | acct with nsid_allowed | oauth | oauth with nsid_allowed | apikey | apikey with nsid_allowed | svcacct | svcacct with nsid_allowed | service | service with nsid_allowed | space#member | space#member with nsid_allowed | group#member | group#member with nsid_allowed | role#member | role#member with nsid_allowed
+	relation rpc_iam_reader: superuser | acct | acct with nsid_allowed | oauth | oauth with nsid_allowed | apikey | apikey with nsid_allowed | svcacct | svcacct with nsid_allowed | service | service with nsid_allowed | space#member | space#member with nsid_allowed | group#member | group#member with nsid_allowed | role#member | role#member with nsid_allowed
+
+	// Role IAM permissions
+	permission rpc_iam_admin = rpc_iam_adminer + parent->rpc_iam_admin
+	permission rpc_iam_edit = rpc_iam_admin + rpc_iam_editor + parent->rpc_iam_edit
+	permission rpc_iam_list = rpc_iam_edit + rpc_iam_lister + parent->rpc_iam_list
+	permission rpc_iam_read = rpc_iam_list + rpc_iam_reader + parent->rpc_iam_read
+}
+
+definition group {
+	// space containment / nesting
+	relation parent: space
+
+	// pseudo member role as a permission
+	permission member = owner + direct_member
+
+	// every resource gets a default owner of the account the resources live under
+	// the owner role can be given to other users or generally subjects too
+	// ... or does the creator of the record get some ownership in the account, how much appview purview here?
+	// does super user god here, because super user
+	relation owner: acct | service | space#member | group#member | role#member
+	relation direct_member: acct | oauth | apikey | svcacct | service | space#member | group#member | role#member
+
+	// Role IAM relations
+	relation group_iam_adminer: superuser | acct | acct with nsid_allowed | oauth | oauth with nsid_allowed | apikey | apikey with nsid_allowed | svcacct | svcacct with nsid_allowed | service | service with nsid_allowed | space#member | space#member with nsid_allowed | group#member | group#member with nsid_allowed | role#member | role#member with nsid_allowed
+	relation group_iam_editor: superuser | acct | acct with nsid_allowed | oauth | oauth with nsid_allowed | apikey | apikey with nsid_allowed | svcacct | svcacct with nsid_allowed | service | service with nsid_allowed | space#member | space#member with nsid_allowed | group#member | group#member with nsid_allowed | role#member | role#member with nsid_allowed
+	relation group_iam_lister: superuser | acct | acct with nsid_allowed | oauth | oauth with nsid_allowed | apikey | apikey with nsid_allowed | svcacct | svcacct with nsid_allowed | service | service with nsid_allowed | space#member | space#member with nsid_allowed | group#member | group#member with nsid_allowed | role#member | role#member with nsid_allowed
+	relation group_iam_reader: superuser | acct | acct with nsid_allowed | oauth | oauth with nsid_allowed | apikey | apikey with nsid_allowed | svcacct | svcacct with nsid_allowed | service | service with nsid_allowed | space#member | space#member with nsid_allowed | group#member | group#member with nsid_allowed | role#member | role#member with nsid_allowed
+
+	// Role IAM permissions
+	permission group_iam_admin = owner + group_iam_adminer + parent->group_iam_admin
+	permission group_iam_edit = group_iam_admin + group_iam_editor + parent->group_iam_edit
+	permission group_iam_list = group_iam_edit + group_iam_lister + parent->group_iam_list
+	permission group_iam_read = group_iam_list + group_iam_reader + parent->group_iam_read
+}
+
+definition record {
+	// space containment / nesting
+	relation parent: space
+
+	// every resource gets a default owner of the account the resources live under
+	// the owner role can be given to other users or generally subjects too
+	// ... or does the creator of the record get some ownership in the account, how much appview purview here?
+	// does super user god here, because super user
+	relation owner: acct | service | space#member | group#member | role#member
+
+	// Role CRUD relations
+	relation record_deleter: superuser | acct | acct with nsid_allowed | oauth | oauth with nsid_allowed | apikey | apikey with nsid_allowed | svcacct | svcacct with nsid_allowed | service | service with nsid_allowed | space#member | space#member with nsid_allowed | group#member | group#member with nsid_allowed | role#member | role#member with nsid_allowed
+	relation record_updater: superuser | acct | acct with nsid_allowed | oauth | oauth with nsid_allowed | apikey | apikey with nsid_allowed | svcacct | svcacct with nsid_allowed | service | service with nsid_allowed | space#member | space#member with nsid_allowed | group#member | group#member with nsid_allowed | role#member | role#member with nsid_allowed
+	relation record_creator: superuser | acct | acct with nsid_allowed | oauth | oauth with nsid_allowed | apikey | apikey with nsid_allowed | svcacct | svcacct with nsid_allowed | service | service with nsid_allowed | space#member | space#member with nsid_allowed | group#member | group#member with nsid_allowed | role#member | role#member with nsid_allowed
+	relation record_lister: superuser | anon | acct | acct with nsid_allowed | acct:* | acct:* with nsid_allowed | oauth | oauth with nsid_allowed | apikey | apikey with nsid_allowed | svcacct | svcacct with nsid_allowed | service | service with nsid_allowed | space#member | space#member with nsid_allowed | group#member | group#member with nsid_allowed | role#member | role#member with nsid_allowed
+	relation record_reader: superuser | anon | acct | acct with nsid_allowed | acct:* | acct:* with nsid_allowed | oauth | oauth with nsid_allowed | apikey | apikey with nsid_allowed | svcacct | svcacct with nsid_allowed | service | service with nsid_allowed | space#member | space#member with nsid_allowed | group#member | group#member with nsid_allowed | role#member | role#member with nsid_allowed
+
+	// Role CRUD permissions
+	permission record_delete = owner + record_deleter + parent->record_delete
+	permission record_update = record_delete + record_updater + parent->record_update
+	permission record_create = record_update + record_creator + parent->record_create
+	permission record_list = record_create + record_lister + parent->record_list
+	permission record_read = record_list + record_reader + parent->record_read
+
+	// Role IAM relations
+	relation record_iam_adminer: superuser | acct | acct with nsid_allowed | oauth | oauth with nsid_allowed | apikey | apikey with nsid_allowed | svcacct | svcacct with nsid_allowed | service | service with nsid_allowed | space#member | space#member with nsid_allowed | group#member | group#member with nsid_allowed | role#member | role#member with nsid_allowed
+	relation record_iam_editor: superuser | acct | acct with nsid_allowed | oauth | oauth with nsid_allowed | apikey | apikey with nsid_allowed | svcacct | svcacct with nsid_allowed | service | service with nsid_allowed | space#member | space#member with nsid_allowed | group#member | group#member with nsid_allowed | role#member | role#member with nsid_allowed
+	relation record_iam_lister: superuser | acct | acct with nsid_allowed | oauth | oauth with nsid_allowed | apikey | apikey with nsid_allowed | svcacct | svcacct with nsid_allowed | service | service with nsid_allowed | space#member | space#member with nsid_allowed | group#member | group#member with nsid_allowed | role#member | role#member with nsid_allowed
+	relation record_iam_reader: superuser | acct | acct with nsid_allowed | oauth | oauth with nsid_allowed | apikey | apikey with nsid_allowed | svcacct | svcacct with nsid_allowed | service | service with nsid_allowed | space#member | space#member with nsid_allowed | group#member | group#member with nsid_allowed | role#member | role#member with nsid_allowed
+
+	// Role IAM permissions
+	permission record_iam_admin = owner + record_iam_adminer + parent->record_iam_admin
+	permission record_iam_edit = record_iam_admin + record_iam_editor + parent->record_iam_edit
+	permission record_iam_list = record_iam_edit + record_iam_lister + parent->record_iam_list
+	permission record_iam_read = record_iam_list + record_iam_reader + parent->record_iam_read
+}
+
+definition blob {
+	// space containment / nesting
+	relation parent: space
+
+	// every resource gets a default owner of the account the resources live under
+	// the owner role can be given to other users or generally subjects too
+	// ... or does the creator of the record get some ownership in the account, how much appview purview here?
+	// does super user god here, because super user
+	relation owner: acct | service | space#member | group#member | role#member
+
+	// Role CRUD relations
+	relation blob_deleter: superuser | acct | acct with nsid_allowed | oauth | oauth with nsid_allowed | apikey | apikey with nsid_allowed | svcacct | svcacct with nsid_allowed | service | service with nsid_allowed | space#member | space#member with nsid_allowed | group#member | group#member with nsid_allowed | role#member | role#member with nsid_allowed
+	relation blob_updater: superuser | acct | acct with nsid_allowed | oauth | oauth with nsid_allowed | apikey | apikey with nsid_allowed | svcacct | svcacct with nsid_allowed | service | service with nsid_allowed | space#member | space#member with nsid_allowed | group#member | group#member with nsid_allowed | role#member | role#member with nsid_allowed
+	relation blob_creator: superuser | acct | acct with nsid_allowed | oauth | oauth with nsid_allowed | apikey | apikey with nsid_allowed | svcacct | svcacct with nsid_allowed | service | service with nsid_allowed | space#member | space#member with nsid_allowed | group#member | group#member with nsid_allowed | role#member | role#member with nsid_allowed
+	relation blob_lister: superuser | anon | acct | acct with nsid_allowed | acct:* | acct:* with nsid_allowed | oauth | oauth with nsid_allowed | apikey | apikey with nsid_allowed | svcacct | svcacct with nsid_allowed | service | service with nsid_allowed | space#member | space#member with nsid_allowed | group#member | group#member with nsid_allowed | role#member | role#member with nsid_allowed
+	relation blob_reader: superuser | anon | acct | acct with nsid_allowed | acct:* | acct:* with nsid_allowed | oauth | oauth with nsid_allowed | apikey | apikey with nsid_allowed | svcacct | svcacct with nsid_allowed | service | service with nsid_allowed | space#member | space#member with nsid_allowed | group#member | group#member with nsid_allowed | role#member | role#member with nsid_allowed
+
+	// Role CRUD permissions
+	permission blob_delete = owner + blob_deleter + parent->blob_delete
+	permission blob_update = blob_delete + blob_updater + parent->blob_update
+	permission blob_create = blob_update + blob_creator + parent->blob_create
+	permission blob_list = blob_create + blob_lister + parent->blob_list
+	permission blob_read = blob_list + blob_reader + parent->blob_read
+
+	// Role IAM relations
+	relation blob_iam_adminer: superuser | acct | acct with nsid_allowed | oauth | oauth with nsid_allowed | apikey | apikey with nsid_allowed | svcacct | svcacct with nsid_allowed | service | service with nsid_allowed | space#member | space#member with nsid_allowed | group#member | group#member with nsid_allowed | role#member | role#member with nsid_allowed
+	relation blob_iam_editor: superuser | acct | acct with nsid_allowed | oauth | oauth with nsid_allowed | apikey | apikey with nsid_allowed | svcacct | svcacct with nsid_allowed | service | service with nsid_allowed | space#member | space#member with nsid_allowed | group#member | group#member with nsid_allowed | role#member | role#member with nsid_allowed
+	relation blob_iam_lister: superuser | acct | acct with nsid_allowed | oauth | oauth with nsid_allowed | apikey | apikey with nsid_allowed | svcacct | svcacct with nsid_allowed | service | service with nsid_allowed | space#member | space#member with nsid_allowed | group#member | group#member with nsid_allowed | role#member | role#member with nsid_allowed
+	relation blob_iam_reader: superuser | acct | acct with nsid_allowed | oauth | oauth with nsid_allowed | apikey | apikey with nsid_allowed | svcacct | svcacct with nsid_allowed | service | service with nsid_allowed | space#member | space#member with nsid_allowed | group#member | group#member with nsid_allowed | role#member | role#member with nsid_allowed
+
+	// Role IAM permissions
+	permission blob_iam_admin = owner + blob_iam_adminer + parent->blob_iam_admin
+	permission blob_iam_edit = blob_iam_admin + blob_iam_editor + parent->blob_iam_edit
+	permission blob_iam_list = blob_iam_edit + blob_iam_lister + parent->blob_iam_list
+	permission blob_iam_read = blob_iam_list + blob_iam_reader + parent->blob_iam_read
+}
+
+definition rpc {
+	// space containment / nesting
+	relation parent: space
+	relation rpc_caller: superuser | anon | acct | acct with nsid_allowed | acct:* | acct:* with nsid_allowed | oauth | oauth with nsid_allowed | apikey | apikey with nsid_allowed | svcacct | svcacct with nsid_allowed | service | service with nsid_allowed | space#member | space#member with nsid_allowed | group#member | group#member with nsid_allowed | role#member | role#member with nsid_allowed
+
+	// RPC CRUD permissions
+	permission rpc_call = rpc_caller + parent->rpc_call
+
+	// Role IAM relations
+	relation rpc_iam_adminer: superuser | acct | acct with nsid_allowed | oauth | oauth with nsid_allowed | apikey | apikey with nsid_allowed | svcacct | svcacct with nsid_allowed | service | service with nsid_allowed | space#member | space#member with nsid_allowed | group#member | group#member with nsid_allowed | role#member | role#member with nsid_allowed
+	relation rpc_iam_editor: superuser | acct | acct with nsid_allowed | oauth | oauth with nsid_allowed | apikey | apikey with nsid_allowed | svcacct | svcacct with nsid_allowed | service | service with nsid_allowed | space#member | space#member with nsid_allowed | group#member | group#member with nsid_allowed | role#member | role#member with nsid_allowed
+	relation rpc_iam_lister: superuser | acct | acct with nsid_allowed | oauth | oauth with nsid_allowed | apikey | apikey with nsid_allowed | svcacct | svcacct with nsid_allowed | service | service with nsid_allowed | space#member | space#member with nsid_allowed | group#member | group#member with nsid_allowed | role#member | role#member with nsid_allowed
+	relation rpc_iam_reader: superuser | acct | acct with nsid_allowed | oauth | oauth with nsid_allowed | apikey | apikey with nsid_allowed | svcacct | svcacct with nsid_allowed | service | service with nsid_allowed | space#member | space#member with nsid_allowed | group#member | group#member with nsid_allowed | role#member | role#member with nsid_allowed
+
+	// Role IAM permissions
+	permission rpc_iam_admin = rpc_iam_adminer + parent->rpc_iam_admin
+	permission rpc_iam_edit = rpc_iam_admin + rpc_iam_editor + parent->rpc_iam_edit
+	permission rpc_iam_list = rpc_iam_edit + rpc_iam_lister + parent->rpc_iam_list
+	permission rpc_iam_read = rpc_iam_list + rpc_iam_reader + parent->rpc_iam_read
+}
+
+// 
+// Caveats
+// 
+// NSID filtering (think oauth permission sets and check)
+caveat nsid_allowed(allowed_nsid list<string>, nsid string) {
+	nsid in allowed_nsid
+}

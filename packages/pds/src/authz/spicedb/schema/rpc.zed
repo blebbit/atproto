@@ -1,0 +1,72 @@
+definition rpc {
+  // space containment / nesting
+  relation parent: space
+
+  ...rpc_call
+  ...rpc_iam
+}
+
+partial rpc_call {
+  relation rpc_caller: superuser | anon |
+    acct    | acct    with nsid_allowed |
+    acct:*  | acct:*  with nsid_allowed |
+    oauth   | oauth   with nsid_allowed |
+    apikey  | apikey  with nsid_allowed |
+    svcacct | svcacct with nsid_allowed |
+    service | service with nsid_allowed |
+    space#member | space#member with nsid_allowed |
+    group#member | group#member with nsid_allowed |
+    role#member  | role#member  with nsid_allowed
+
+  // RPC CRUD permissions
+  permission rpc_call = rpc_caller + parent->rpc_call
+}
+
+partial rpc_iam {
+  // Role IAM relations
+  relation rpc_iam_adminer: superuser |
+    acct    | acct    with nsid_allowed |
+    oauth   | oauth   with nsid_allowed |
+    apikey  | apikey  with nsid_allowed |
+    svcacct | svcacct with nsid_allowed |
+    service | service with nsid_allowed |
+    space#member | space#member with nsid_allowed |
+    group#member | group#member with nsid_allowed |
+    role#member  | role#member  with nsid_allowed
+
+  relation rpc_iam_editor: superuser |
+    acct    | acct    with nsid_allowed |
+    oauth   | oauth   with nsid_allowed |
+    apikey  | apikey  with nsid_allowed |
+    svcacct | svcacct with nsid_allowed |
+    service | service with nsid_allowed |
+    space#member | space#member with nsid_allowed |
+    group#member | group#member with nsid_allowed |
+    role#member  | role#member  with nsid_allowed
+
+  relation rpc_iam_lister: superuser |
+    acct    | acct    with nsid_allowed |
+    oauth   | oauth   with nsid_allowed |
+    apikey  | apikey  with nsid_allowed |
+    svcacct | svcacct with nsid_allowed |
+    service | service with nsid_allowed |
+    space#member | space#member with nsid_allowed |
+    group#member | group#member with nsid_allowed |
+    role#member  | role#member  with nsid_allowed
+
+  relation rpc_iam_reader: superuser |
+    acct    | acct    with nsid_allowed |
+    oauth   | oauth   with nsid_allowed |
+    apikey  | apikey  with nsid_allowed |
+    svcacct | svcacct with nsid_allowed |
+    service | service with nsid_allowed |
+    space#member | space#member with nsid_allowed |
+    group#member | group#member with nsid_allowed |
+    role#member  | role#member  with nsid_allowed
+
+  // Role IAM permissions
+  permission rpc_iam_admin =                 rpc_iam_adminer + parent->rpc_iam_admin
+  permission rpc_iam_edit  = rpc_iam_admin + rpc_iam_editor  + parent->rpc_iam_edit
+  permission rpc_iam_list  = rpc_iam_edit  + rpc_iam_lister  + parent->rpc_iam_list
+  permission rpc_iam_read  = rpc_iam_list  + rpc_iam_reader  + parent->rpc_iam_read
+}

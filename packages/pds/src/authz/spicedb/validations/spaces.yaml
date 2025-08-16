@@ -1,0 +1,16 @@
+---
+schemaFile: "../schema/_at.zed"
+relationships: |-
+  // every acct has a root space
+  space:alice/root#owner@acct:alice
+  space:billy/root#owner@acct:billy
+  space:candy/root#owner@acct:candy
+
+assertations:
+  assertTrue:
+  - "space:alice/root#space_read@acct:alice"
+  assertFalse:
+  - "space:alice/root#space_read@acct:billy"
+validation:
+  space:alice/root#space_read:
+  - "[acct:alice] is <space:alice/root#owner>"

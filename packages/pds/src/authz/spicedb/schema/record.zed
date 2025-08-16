@@ -1,0 +1,119 @@
+definition record {
+  // space containment / nesting
+  relation parent: space
+
+  ...owned
+  ...record_crud
+  ...record_iam
+}
+
+partial record_crud {
+  // Role CRUD relations
+  relation record_deleter: superuser |
+    acct    | acct    with nsid_allowed |
+    oauth   | oauth   with nsid_allowed |
+    apikey  | apikey  with nsid_allowed |
+    svcacct | svcacct with nsid_allowed |
+    service | service with nsid_allowed |
+    space#member | space#member with nsid_allowed |
+    group#member | group#member with nsid_allowed |
+    role#member  | role#member  with nsid_allowed
+
+  relation record_updater: superuser |
+    acct    | acct    with nsid_allowed |
+    oauth   | oauth   with nsid_allowed |
+    apikey  | apikey  with nsid_allowed |
+    svcacct | svcacct with nsid_allowed |
+    service | service with nsid_allowed |
+    space#member | space#member with nsid_allowed |
+    group#member | group#member with nsid_allowed |
+    role#member  | role#member  with nsid_allowed
+
+  relation record_creator: superuser |
+    acct    | acct    with nsid_allowed |
+    oauth   | oauth   with nsid_allowed |
+    apikey  | apikey  with nsid_allowed |
+    svcacct | svcacct with nsid_allowed |
+    service | service with nsid_allowed |
+    space#member | space#member with nsid_allowed |
+    group#member | group#member with nsid_allowed |
+    role#member  | role#member  with nsid_allowed
+
+  relation record_lister: superuser | anon |
+    acct    | acct    with nsid_allowed |
+    acct:*  | acct:*  with nsid_allowed |
+    oauth   | oauth   with nsid_allowed |
+    apikey  | apikey  with nsid_allowed |
+    svcacct | svcacct with nsid_allowed |
+    service | service with nsid_allowed |
+    space#member | space#member with nsid_allowed |
+    group#member | group#member with nsid_allowed |
+    role#member  | role#member  with nsid_allowed
+
+  relation record_reader: superuser | anon |
+    acct    | acct    with nsid_allowed |
+    acct:*  | acct:*  with nsid_allowed |
+    oauth   | oauth   with nsid_allowed |
+    apikey  | apikey  with nsid_allowed |
+    svcacct | svcacct with nsid_allowed |
+    service | service with nsid_allowed |
+    space#member | space#member with nsid_allowed |
+    group#member | group#member with nsid_allowed |
+    role#member  | role#member  with nsid_allowed
+
+  // Role CRUD permissions
+  permission record_delete = owner         + record_deleter + parent->record_delete
+  permission record_update = record_delete + record_updater + parent->record_update
+  permission record_create = record_update + record_creator + parent->record_create
+  permission record_list =   record_create + record_lister  + parent->record_list
+  permission record_read =   record_list   + record_reader  + parent->record_read
+}
+
+partial record_iam {
+  // Role IAM relations
+  relation record_iam_adminer: superuser |
+    acct    | acct    with nsid_allowed |
+    oauth   | oauth   with nsid_allowed |
+    apikey  | apikey  with nsid_allowed |
+    svcacct | svcacct with nsid_allowed |
+    service | service with nsid_allowed |
+    space#member | space#member with nsid_allowed |
+    group#member | group#member with nsid_allowed |
+    role#member  | role#member  with nsid_allowed
+
+  relation record_iam_editor: superuser |
+    acct    | acct    with nsid_allowed |
+    oauth   | oauth   with nsid_allowed |
+    apikey  | apikey  with nsid_allowed |
+    svcacct | svcacct with nsid_allowed |
+    service | service with nsid_allowed |
+    space#member | space#member with nsid_allowed |
+    group#member | group#member with nsid_allowed |
+    role#member  | role#member  with nsid_allowed
+
+  relation record_iam_lister: superuser |
+    acct    | acct    with nsid_allowed |
+    oauth   | oauth   with nsid_allowed |
+    apikey  | apikey  with nsid_allowed |
+    svcacct | svcacct with nsid_allowed |
+    service | service with nsid_allowed |
+    space#member | space#member with nsid_allowed |
+    group#member | group#member with nsid_allowed |
+    role#member  | role#member  with nsid_allowed
+
+  relation record_iam_reader: superuser |
+    acct    | acct    with nsid_allowed |
+    oauth   | oauth   with nsid_allowed |
+    apikey  | apikey  with nsid_allowed |
+    svcacct | svcacct with nsid_allowed |
+    service | service with nsid_allowed |
+    space#member | space#member with nsid_allowed |
+    group#member | group#member with nsid_allowed |
+    role#member  | role#member  with nsid_allowed
+
+  // Role IAM permissions
+  permission record_iam_admin = owner            + record_iam_adminer + parent->record_iam_admin
+  permission record_iam_edit  = record_iam_admin + record_iam_editor  + parent->record_iam_edit
+  permission record_iam_list  = record_iam_edit  + record_iam_lister  + parent->record_iam_list
+  permission record_iam_read  = record_iam_list  + record_iam_reader  + parent->record_iam_read
+}

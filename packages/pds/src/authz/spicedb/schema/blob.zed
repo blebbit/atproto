@@ -1,0 +1,119 @@
+definition blob {
+  // space containment / nesting
+  relation parent: space
+
+  ...owned
+  ...blob_crud
+  ...blob_iam
+}
+
+partial blob_crud {
+  // Role CRUD relations
+  relation blob_deleter: superuser |
+    acct    | acct    with nsid_allowed |
+    oauth   | oauth   with nsid_allowed |
+    apikey  | apikey  with nsid_allowed |
+    svcacct | svcacct with nsid_allowed |
+    service | service with nsid_allowed |
+    space#member | space#member with nsid_allowed |
+    group#member | group#member with nsid_allowed |
+    role#member  | role#member  with nsid_allowed
+
+  relation blob_updater: superuser |
+    acct    | acct    with nsid_allowed |
+    oauth   | oauth   with nsid_allowed |
+    apikey  | apikey  with nsid_allowed |
+    svcacct | svcacct with nsid_allowed |
+    service | service with nsid_allowed |
+    space#member | space#member with nsid_allowed |
+    group#member | group#member with nsid_allowed |
+    role#member  | role#member  with nsid_allowed
+
+  relation blob_creator: superuser |
+    acct    | acct    with nsid_allowed |
+    oauth   | oauth   with nsid_allowed |
+    apikey  | apikey  with nsid_allowed |
+    svcacct | svcacct with nsid_allowed |
+    service | service with nsid_allowed |
+    space#member | space#member with nsid_allowed |
+    group#member | group#member with nsid_allowed |
+    role#member  | role#member  with nsid_allowed
+
+  relation blob_lister: superuser | anon |
+    acct    | acct    with nsid_allowed |
+    acct:*  | acct:*  with nsid_allowed |
+    oauth   | oauth   with nsid_allowed |
+    apikey  | apikey  with nsid_allowed |
+    svcacct | svcacct with nsid_allowed |
+    service | service with nsid_allowed |
+    space#member | space#member with nsid_allowed |
+    group#member | group#member with nsid_allowed |
+    role#member  | role#member  with nsid_allowed
+
+  relation blob_reader: superuser | anon |
+    acct    | acct    with nsid_allowed |
+    acct:*  | acct:*  with nsid_allowed |
+    oauth   | oauth   with nsid_allowed |
+    apikey  | apikey  with nsid_allowed |
+    svcacct | svcacct with nsid_allowed |
+    service | service with nsid_allowed |
+    space#member | space#member with nsid_allowed |
+    group#member | group#member with nsid_allowed |
+    role#member  | role#member  with nsid_allowed
+
+  // Role CRUD permissions
+  permission blob_delete = owner       + blob_deleter + parent->blob_delete
+  permission blob_update = blob_delete + blob_updater + parent->blob_update
+  permission blob_create = blob_update + blob_creator + parent->blob_create
+  permission blob_list =   blob_create + blob_lister  + parent->blob_list
+  permission blob_read =   blob_list   + blob_reader  + parent->blob_read
+}
+
+partial blob_iam {
+  // Role IAM relations
+  relation blob_iam_adminer: superuser |
+    acct    | acct    with nsid_allowed |
+    oauth   | oauth   with nsid_allowed |
+    apikey  | apikey  with nsid_allowed |
+    svcacct | svcacct with nsid_allowed |
+    service | service with nsid_allowed |
+    space#member | space#member with nsid_allowed |
+    group#member | group#member with nsid_allowed |
+    role#member  | role#member  with nsid_allowed
+
+  relation blob_iam_editor: superuser |
+    acct    | acct    with nsid_allowed |
+    oauth   | oauth   with nsid_allowed |
+    apikey  | apikey  with nsid_allowed |
+    svcacct | svcacct with nsid_allowed |
+    service | service with nsid_allowed |
+    space#member | space#member with nsid_allowed |
+    group#member | group#member with nsid_allowed |
+    role#member  | role#member  with nsid_allowed
+
+  relation blob_iam_lister: superuser |
+    acct    | acct    with nsid_allowed |
+    oauth   | oauth   with nsid_allowed |
+    apikey  | apikey  with nsid_allowed |
+    svcacct | svcacct with nsid_allowed |
+    service | service with nsid_allowed |
+    space#member | space#member with nsid_allowed |
+    group#member | group#member with nsid_allowed |
+    role#member  | role#member  with nsid_allowed
+
+  relation blob_iam_reader: superuser |
+    acct    | acct    with nsid_allowed |
+    oauth   | oauth   with nsid_allowed |
+    apikey  | apikey  with nsid_allowed |
+    svcacct | svcacct with nsid_allowed |
+    service | service with nsid_allowed |
+    space#member | space#member with nsid_allowed |
+    group#member | group#member with nsid_allowed |
+    role#member  | role#member  with nsid_allowed
+
+  // Role IAM permissions
+  permission blob_iam_admin = owner          + blob_iam_adminer + parent->blob_iam_admin
+  permission blob_iam_edit  = blob_iam_admin + blob_iam_editor  + parent->blob_iam_edit
+  permission blob_iam_list  = blob_iam_edit  + blob_iam_lister  + parent->blob_iam_list
+  permission blob_iam_read  = blob_iam_list  + blob_iam_reader  + parent->blob_iam_read
+}

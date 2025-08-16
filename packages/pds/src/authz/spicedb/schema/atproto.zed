@@ -1,0 +1,86 @@
+//
+// Caveats
+//
+
+// NSID filtering (think oauth permission sets and check)
+caveat nsid_allowed(nsid string, allowed_nsid list<string>) {
+  nsid in allowed_nsid
+}
+
+//
+// Subjects '<kind>:<ident>'
+//
+import "./subjects.zed"
+
+//
+// Custom roles
+//
+import "./role.zed"
+
+//
+// Resources '<kind>:<did>/<space>/<nsid>/<rkey>'
+//    space:<did>/<space>
+//    group:<did>/<space>/com.atproto.space.group/<rkey>
+//    record:<did>/<space>/<nsid>/<rkey>
+//    blob:<did>/<space>/com.atproto.space.blob/<cid>
+//    rpc:<did>/<space>/<nsid>
+//
+
+import "./space.zed"
+import "./group.zed"
+import "./record.zed"
+import "./blob.zed"
+import "./rpc.zed"
+
+//
+// Thinking...
+//
+
+// Using this is computationally EXPENSIVE
+// We also handle this else where in atproto (appviews and clients)
+// partial negative {
+//   // various negating relations (should / do we need all of these here)
+//   relation blocked:   acct | service
+//   relation muted:     acct | service
+//   relation banned:    acct | service
+//   relation takendown: acct | service
+//   relation timedout:  acct | service
+
+//   permission negated = blocked | muted | banned | takendown | timedout | parent->negated
+
+//   // do we need crud and iam here?
+//   // or are the com.atproto.* NSID sufficient with the rest of the permission system?
+//   // These relations are to negate matches in other permissions (tbd...)
+// }
+
+
+// //
+// // More Caveats under consideration
+// //
+
+// // Custom context string set checking, perhaps add a not option to this?
+// caveat context_allowed(context string, allowed_contenxt list<string>, disallow bool = false) {
+//   context in allowed_context
+// }
+
+// // RFC-3339, RFC-3339, [before,inside,outside,after]
+// // what about cron schedules?
+// caveat time_frame(beg int, end int, mode string) {
+//   // ...
+// }
+
+// caveat cron_frame(beg int, end int, mode string) {
+//   // ...
+// }
+
+// caveat less_than(lhs any, rhs any) {
+//   lhs < rhs
+// }
+
+// caveat attributes_match(expected map<any>, provided map<any>) {
+//    expected.isSubtreeOf(provided)
+// }
+
+// caveat ip_allowlist(user_ip ipaddress, cidr string) {
+//   user_ip.in_cidr(cidr)
+// }

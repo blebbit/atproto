@@ -1,0 +1,73 @@
+// not all are used yet
+definition superuser {} // PDS admin / moderation
+definition anon {}      // not logged in or with any auth
+
+// main actors
+definition acct {}     // tied to a DID, could be password login?
+definition oauth {}    // may want to give different app logins different permissions
+definition service {}  // appview, labeler, feedgen, ... needs a DID
+
+// created by accounts, access for automations, like app passwords, but with permissions
+definition apikey {}
+definition svcacct {}
+
+
+partial owned {
+  // every resource gets a default owner of the account the resources live under
+  //   the owner role can be given to other users or generally subjects too
+  //   ... or does the creator of the record get some ownership in the account, how much appview purview here?
+  // does super user god here, because super user
+  relation owner: acct | service | space#member | group#member | role#member
+}
+
+partial direct_member {
+  relation direct_member: acct | oauth | apikey | svcacct | service | space#member | group#member | role#member
+}
+
+
+//
+// Thinking...
+//
+
+// we can us acct:* for all logged in accounts vs anonymous visitors
+// partial wildauth {
+//   relation authd: acct:* | oauth:* | service:*
+// }
+
+// HMMM, do we need something for moderation / labelling?
+//       or can that be modelled with permissioned rpc/nsid?
+// It does live both within the spaces system as well as above for PDS moderation
+// partial mod {
+//   // ...?
+// }
+
+
+// would like to do something like this
+// so as not to repeate everywhere
+// partial many_with {
+//   relation many_with: superuser |
+//     acct    | acct    with nsid_allowed |
+//     acct:*  | acct:*  with nsid_allowed |
+//     oauth   | oauth   with nsid_allowed |
+//     oauth:* | oauth:* with nsid_allowed |
+//     service | service with nsid_allowed |
+//     service:* | service:* with nsid_allowed |
+//
+//     apikey  | apikey  with nsid_allowed |
+//     svcacct | svcacct with nsid_allowed |
+//     space#member | space#member with nsid_allowed |
+//     group#member | group#member with nsid_allowed |
+//     role#member  | role#member  with nsid_allowed
+// }
+
+
+// relation <name>: superuser |
+//   anon    | anon    with nsid_allowed |
+//   acct    | acct    with nsid_allowed |
+//   oauth   | oauth   with nsid_allowed |
+//   apikey  | apikey  with nsid_allowed |
+//   svcacct | svcacct with nsid_allowed |
+//   service | service with nsid_allowed |
+//   space#member | space#member with nsid_allowed |
+//   group#member | group#member with nsid_allowed |
+//   role#member  | role#member  with nsid_allowed
