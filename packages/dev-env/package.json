@@ -15,10 +15,13 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "bin": "dist/bin.js",
+  "hack": "dist/hack/hack.js",
   "scripts": {
     "build": "tsc --build tsconfig.build.json",
     "start": "../dev-infra/with-test-redis-and-db.sh node --enable-source-maps dist/bin.js",
-    "dev": "../dev-infra/with-test-redis-and-db.sh node --enable-source-maps --watch dist/bin.js"
+    "dev": "../dev-infra/with-test-redis-and-db.sh node --enable-source-maps --watch dist/bin.js",
+    "hack.build": "tsc --build tsconfig.build.json && node --enable-source-maps dist/hack/hack.js $@",
+    "hack": "node --enable-source-maps dist/hack/hack.js $@"
   },
   "engines": {
     "node": ">=18.7.0"
