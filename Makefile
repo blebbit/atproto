@@ -19,12 +19,21 @@ test: ## Run all tests
 	pnpm test
 
 .PHONY: run-dev-env
-run-dev-env: ## Run a "development environment" shell
-	cd packages/dev-env; NODE_ENV=development pnpm run start
+run-dev-env: clean-dev-env ## Run a "development environment" shell
+	cd packages/dev-env; NODE_ENV=development pnpm run dev | pnpm exec pino-pretty
+# 	cd packages/dev-env; NODE_ENV=development pnpm run start
+
+.PHONY: stop-dev-infra
+stop-dev-infra: ## Stop a "development infrastructure" services
+	cd packages/dev-infra; docker compose down
 
 .PHONY: run-dev-env-logged
-run-dev-env-logged: ## Run a "development environment" shell (with logging)
-	cd packages/dev-env; LOG_ENABLED=true NODE_ENV=development pnpm run start | pnpm exec pino-pretty
+run-dev-env-logged: clean-dev-env ## Run a "development environment" shell (with logging)
+	cd packages/dev-env; LOG_ENABLED=true NODE_ENV=development pnpm run dev | pnpm exec pino-pretty
+
+.PHONY: clean-dev-env
+clean-dev-env: stop-dev-infra ## Clean up docker containers/volumes used by the "development environment"
+	@docker volume rm -f dev-infra_atp_db dev-infra_atp_redis
 
 .PHONY: codegen
 codegen: ## Re-generate packages from lexicon/ files

@@ -63,6 +63,7 @@ export async function generateMockSetup(env: TestNetwork) {
           description: `Test user ${i}`,
         },
       )
+      console.log(`Created user: ${user.handle} (${client.did})`)
       return client
     }),
   )
