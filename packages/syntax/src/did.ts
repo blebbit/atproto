@@ -38,6 +38,7 @@ export const ensureValidDid = (did: string): void => {
     throw new InvalidDidError('DID can not end with ":" or "%"')
   }
 
+  // TODO, check this earlier to avoid regex if too long?
   if (did.length > 2 * 1024) {
     throw new InvalidDidError('DID is too long (2048 chars max)')
   }

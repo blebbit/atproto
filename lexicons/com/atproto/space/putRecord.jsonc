@@ -1,0 +1,66 @@
+{
+  "lexicon": 1,
+  "id": "com.atproto.space.putRecord",
+  "defs": {
+    "main": {
+      "type": "procedure",
+      "description": "Write a repository record, creating or updating it as needed. Requires auth, implemented by PDS.",
+      "auth": {
+        "permission": "record.write"
+      },
+      "input": {
+        "encoding": "application/json",
+        "schema": {
+          "type": "object",
+          "required": ["repo", "space", "collection", "rkey", "record"],
+          "nullable": ["swapRecord"],
+          "properties": {
+            "repo": {
+              "type": "string",
+              "format": "at-identifier",
+              "description": "The handle or DID of the repo (aka, current account)."
+            },
+            "space": {
+              "type": "string",
+              "description": "The id of the space associated with the repo."
+            },
+            "collection": {
+              "type": "string",
+              "format": "nsid",
+              "description": "The NSID of the record collection."
+            },
+            "rkey": {
+              "type": "string",
+              "format": "record-key",
+              "description": "The Record Key.",
+              "maxLength": 512
+            },
+            "validate": {
+              "type": "boolean",
+              "description": "Can be set to 'false' to skip Lexicon schema validation of record data, 'true' to require it, or leave unset to validate only for known Lexicons."
+            },
+            "record": {
+              "type": "unknown",
+              "description": "The record to write."
+            }
+          }
+        }
+      },
+      "output": {
+        "encoding": "application/json",
+        "schema": {
+          "type": "object",
+          "required": ["uri", "cid"],
+          "properties": {
+            "uri": { "type": "string", "format": "at-uri" },
+            "cid": { "type": "string", "format": "cid" },
+            "validationStatus": {
+              "type": "string",
+              "knownValues": ["valid", "unknown"]
+            }
+          }
+        }
+      }
+    }
+  }
+}

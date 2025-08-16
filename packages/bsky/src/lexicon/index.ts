@@ -176,6 +176,36 @@ import * as ComAtprotoServerReserveSigningKey from './types/com/atproto/server/r
 import * as ComAtprotoServerResetPassword from './types/com/atproto/server/resetPassword.js'
 import * as ComAtprotoServerRevokeAppPassword from './types/com/atproto/server/revokeAppPassword.js'
 import * as ComAtprotoServerUpdateEmail from './types/com/atproto/server/updateEmail.js'
+import * as ComAtprotoSpaceApplyWrites from './types/com/atproto/space/applyWrites.js'
+import * as ComAtprotoSpaceCheckPermission from './types/com/atproto/space/checkPermission.js'
+import * as ComAtprotoSpaceCheckPermissions from './types/com/atproto/space/checkPermissions.js'
+import * as ComAtprotoSpaceCreateGroup from './types/com/atproto/space/createGroup.js'
+import * as ComAtprotoSpaceCreateRecord from './types/com/atproto/space/createRecord.js'
+import * as ComAtprotoSpaceCreateRelationship from './types/com/atproto/space/createRelationship.js'
+import * as ComAtprotoSpaceCreateSpace from './types/com/atproto/space/createSpace.js'
+import * as ComAtprotoSpaceDeleteGroup from './types/com/atproto/space/deleteGroup.js'
+import * as ComAtprotoSpaceDeleteRecord from './types/com/atproto/space/deleteRecord.js'
+import * as ComAtprotoSpaceDeleteRelationship from './types/com/atproto/space/deleteRelationship.js'
+import * as ComAtprotoSpaceDeleteSpace from './types/com/atproto/space/deleteSpace.js'
+import * as ComAtprotoSpaceDescribeRepo from './types/com/atproto/space/describeRepo.js'
+import * as ComAtprotoSpaceDescribeSpace from './types/com/atproto/space/describeSpace.js'
+import * as ComAtprotoSpaceGetBlob from './types/com/atproto/space/getBlob.js'
+import * as ComAtprotoSpaceGetGroup from './types/com/atproto/space/getGroup.js'
+import * as ComAtprotoSpaceGetRecord from './types/com/atproto/space/getRecord.js'
+import * as ComAtprotoSpaceGetRelationship from './types/com/atproto/space/getRelationship.js'
+import * as ComAtprotoSpaceGetSpace from './types/com/atproto/space/getSpace.js'
+import * as ComAtprotoSpaceListBlobs from './types/com/atproto/space/listBlobs.js'
+import * as ComAtprotoSpaceListGroups from './types/com/atproto/space/listGroups.js'
+import * as ComAtprotoSpaceListMissingBlobs from './types/com/atproto/space/listMissingBlobs.js'
+import * as ComAtprotoSpaceListRecords from './types/com/atproto/space/listRecords.js'
+import * as ComAtprotoSpaceListSpaces from './types/com/atproto/space/listSpaces.js'
+import * as ComAtprotoSpaceLookupResources from './types/com/atproto/space/lookupResources.js'
+import * as ComAtprotoSpaceLookupSubjects from './types/com/atproto/space/lookupSubjects.js'
+import * as ComAtprotoSpacePutGroup from './types/com/atproto/space/putGroup.js'
+import * as ComAtprotoSpacePutRecord from './types/com/atproto/space/putRecord.js'
+import * as ComAtprotoSpacePutRelationship from './types/com/atproto/space/putRelationship.js'
+import * as ComAtprotoSpacePutSpace from './types/com/atproto/space/putSpace.js'
+import * as ComAtprotoSpaceUploadBlob from './types/com/atproto/space/uploadBlob.js'
 import * as ComAtprotoSyncGetBlob from './types/com/atproto/sync/getBlob.js'
 import * as ComAtprotoSyncGetBlocks from './types/com/atproto/sync/getBlocks.js'
 import * as ComAtprotoSyncGetCheckout from './types/com/atproto/sync/getCheckout.js'
@@ -1673,6 +1703,7 @@ export class ComAtprotoNS {
   moderation: ComAtprotoModerationNS
   repo: ComAtprotoRepoNS
   server: ComAtprotoServerNS
+  space: ComAtprotoSpaceNS
   sync: ComAtprotoSyncNS
   temp: ComAtprotoTempNS
 
@@ -1685,6 +1716,7 @@ export class ComAtprotoNS {
     this.moderation = new ComAtprotoModerationNS(server)
     this.repo = new ComAtprotoRepoNS(server)
     this.server = new ComAtprotoServerNS(server)
+    this.space = new ComAtprotoSpaceNS(server)
     this.sync = new ComAtprotoSyncNS(server)
     this.temp = new ComAtprotoTempNS(server)
   }
@@ -2485,6 +2517,374 @@ export class ComAtprotoServerNS {
     >,
   ) {
     const nsid = 'com.atproto.server.updateEmail' // @ts-ignore
+    return this._server.xrpc.method(nsid, cfg)
+  }
+}
+
+export class ComAtprotoSpaceNS {
+  _server: Server
+
+  constructor(server: Server) {
+    this._server = server
+  }
+
+  applyWrites<A extends Auth = void>(
+    cfg: MethodConfigOrHandler<
+      A,
+      ComAtprotoSpaceApplyWrites.QueryParams,
+      ComAtprotoSpaceApplyWrites.HandlerInput,
+      ComAtprotoSpaceApplyWrites.HandlerOutput
+    >,
+  ) {
+    const nsid = 'com.atproto.space.applyWrites' // @ts-ignore
+    return this._server.xrpc.method(nsid, cfg)
+  }
+
+  checkPermission<A extends Auth = void>(
+    cfg: MethodConfigOrHandler<
+      A,
+      ComAtprotoSpaceCheckPermission.QueryParams,
+      ComAtprotoSpaceCheckPermission.HandlerInput,
+      ComAtprotoSpaceCheckPermission.HandlerOutput
+    >,
+  ) {
+    const nsid = 'com.atproto.space.checkPermission' // @ts-ignore
+    return this._server.xrpc.method(nsid, cfg)
+  }
+
+  checkPermissions<A extends Auth = void>(
+    cfg: MethodConfigOrHandler<
+      A,
+      ComAtprotoSpaceCheckPermissions.QueryParams,
+      ComAtprotoSpaceCheckPermissions.HandlerInput,
+      ComAtprotoSpaceCheckPermissions.HandlerOutput
+    >,
+  ) {
+    const nsid = 'com.atproto.space.checkPermissions' // @ts-ignore
+    return this._server.xrpc.method(nsid, cfg)
+  }
+
+  createGroup<A extends Auth = void>(
+    cfg: MethodConfigOrHandler<
+      A,
+      ComAtprotoSpaceCreateGroup.QueryParams,
+      ComAtprotoSpaceCreateGroup.HandlerInput,
+      ComAtprotoSpaceCreateGroup.HandlerOutput
+    >,
+  ) {
+    const nsid = 'com.atproto.space.createGroup' // @ts-ignore
+    return this._server.xrpc.method(nsid, cfg)
+  }
+
+  createRecord<A extends Auth = void>(
+    cfg: MethodConfigOrHandler<
+      A,
+      ComAtprotoSpaceCreateRecord.QueryParams,
+      ComAtprotoSpaceCreateRecord.HandlerInput,
+      ComAtprotoSpaceCreateRecord.HandlerOutput
+    >,
+  ) {
+    const nsid = 'com.atproto.space.createRecord' // @ts-ignore
+    return this._server.xrpc.method(nsid, cfg)
+  }
+
+  createRelationship<A extends Auth = void>(
+    cfg: MethodConfigOrHandler<
+      A,
+      ComAtprotoSpaceCreateRelationship.QueryParams,
+      ComAtprotoSpaceCreateRelationship.HandlerInput,
+      ComAtprotoSpaceCreateRelationship.HandlerOutput
+    >,
+  ) {
+    const nsid = 'com.atproto.space.createRelationship' // @ts-ignore
+    return this._server.xrpc.method(nsid, cfg)
+  }
+
+  createSpace<A extends Auth = void>(
+    cfg: MethodConfigOrHandler<
+      A,
+      ComAtprotoSpaceCreateSpace.QueryParams,
+      ComAtprotoSpaceCreateSpace.HandlerInput,
+      ComAtprotoSpaceCreateSpace.HandlerOutput
+    >,
+  ) {
+    const nsid = 'com.atproto.space.createSpace' // @ts-ignore
+    return this._server.xrpc.method(nsid, cfg)
+  }
+
+  deleteGroup<A extends Auth = void>(
+    cfg: MethodConfigOrHandler<
+      A,
+      ComAtprotoSpaceDeleteGroup.QueryParams,
+      ComAtprotoSpaceDeleteGroup.HandlerInput,
+      ComAtprotoSpaceDeleteGroup.HandlerOutput
+    >,
+  ) {
+    const nsid = 'com.atproto.space.deleteGroup' // @ts-ignore
+    return this._server.xrpc.method(nsid, cfg)
+  }
+
+  deleteRecord<A extends Auth = void>(
+    cfg: MethodConfigOrHandler<
+      A,
+      ComAtprotoSpaceDeleteRecord.QueryParams,
+      ComAtprotoSpaceDeleteRecord.HandlerInput,
+      ComAtprotoSpaceDeleteRecord.HandlerOutput
+    >,
+  ) {
+    const nsid = 'com.atproto.space.deleteRecord' // @ts-ignore
+    return this._server.xrpc.method(nsid, cfg)
+  }
+
+  deleteRelationship<A extends Auth = void>(
+    cfg: MethodConfigOrHandler<
+      A,
+      ComAtprotoSpaceDeleteRelationship.QueryParams,
+      ComAtprotoSpaceDeleteRelationship.HandlerInput,
+      ComAtprotoSpaceDeleteRelationship.HandlerOutput
+    >,
+  ) {
+    const nsid = 'com.atproto.space.deleteRelationship' // @ts-ignore
+    return this._server.xrpc.method(nsid, cfg)
+  }
+
+  deleteSpace<A extends Auth = void>(
+    cfg: MethodConfigOrHandler<
+      A,
+      ComAtprotoSpaceDeleteSpace.QueryParams,
+      ComAtprotoSpaceDeleteSpace.HandlerInput,
+      ComAtprotoSpaceDeleteSpace.HandlerOutput
+    >,
+  ) {
+    const nsid = 'com.atproto.space.deleteSpace' // @ts-ignore
+    return this._server.xrpc.method(nsid, cfg)
+  }
+
+  describeRepo<A extends Auth = void>(
+    cfg: MethodConfigOrHandler<
+      A,
+      ComAtprotoSpaceDescribeRepo.QueryParams,
+      ComAtprotoSpaceDescribeRepo.HandlerInput,
+      ComAtprotoSpaceDescribeRepo.HandlerOutput
+    >,
+  ) {
+    const nsid = 'com.atproto.space.describeRepo' // @ts-ignore
+    return this._server.xrpc.method(nsid, cfg)
+  }
+
+  describeSpace<A extends Auth = void>(
+    cfg: MethodConfigOrHandler<
+      A,
+      ComAtprotoSpaceDescribeSpace.QueryParams,
+      ComAtprotoSpaceDescribeSpace.HandlerInput,
+      ComAtprotoSpaceDescribeSpace.HandlerOutput
+    >,
+  ) {
+    const nsid = 'com.atproto.space.describeSpace' // @ts-ignore
+    return this._server.xrpc.method(nsid, cfg)
+  }
+
+  getBlob<A extends Auth = void>(
+    cfg: MethodConfigOrHandler<
+      A,
+      ComAtprotoSpaceGetBlob.QueryParams,
+      ComAtprotoSpaceGetBlob.HandlerInput,
+      ComAtprotoSpaceGetBlob.HandlerOutput
+    >,
+  ) {
+    const nsid = 'com.atproto.space.getBlob' // @ts-ignore
+    return this._server.xrpc.method(nsid, cfg)
+  }
+
+  getGroup<A extends Auth = void>(
+    cfg: MethodConfigOrHandler<
+      A,
+      ComAtprotoSpaceGetGroup.QueryParams,
+      ComAtprotoSpaceGetGroup.HandlerInput,
+      ComAtprotoSpaceGetGroup.HandlerOutput
+    >,
+  ) {
+    const nsid = 'com.atproto.space.getGroup' // @ts-ignore
+    return this._server.xrpc.method(nsid, cfg)
+  }
+
+  getRecord<A extends Auth = void>(
+    cfg: MethodConfigOrHandler<
+      A,
+      ComAtprotoSpaceGetRecord.QueryParams,
+      ComAtprotoSpaceGetRecord.HandlerInput,
+      ComAtprotoSpaceGetRecord.HandlerOutput
+    >,
+  ) {
+    const nsid = 'com.atproto.space.getRecord' // @ts-ignore
+    return this._server.xrpc.method(nsid, cfg)
+  }
+
+  getRelationship<A extends Auth = void>(
+    cfg: MethodConfigOrHandler<
+      A,
+      ComAtprotoSpaceGetRelationship.QueryParams,
+      ComAtprotoSpaceGetRelationship.HandlerInput,
+      ComAtprotoSpaceGetRelationship.HandlerOutput
+    >,
+  ) {
+    const nsid = 'com.atproto.space.getRelationship' // @ts-ignore
+    return this._server.xrpc.method(nsid, cfg)
+  }
+
+  getSpace<A extends Auth = void>(
+    cfg: MethodConfigOrHandler<
+      A,
+      ComAtprotoSpaceGetSpace.QueryParams,
+      ComAtprotoSpaceGetSpace.HandlerInput,
+      ComAtprotoSpaceGetSpace.HandlerOutput
+    >,
+  ) {
+    const nsid = 'com.atproto.space.getSpace' // @ts-ignore
+    return this._server.xrpc.method(nsid, cfg)
+  }
+
+  listBlobs<A extends Auth = void>(
+    cfg: MethodConfigOrHandler<
+      A,
+      ComAtprotoSpaceListBlobs.QueryParams,
+      ComAtprotoSpaceListBlobs.HandlerInput,
+      ComAtprotoSpaceListBlobs.HandlerOutput
+    >,
+  ) {
+    const nsid = 'com.atproto.space.listBlobs' // @ts-ignore
+    return this._server.xrpc.method(nsid, cfg)
+  }
+
+  listGroups<A extends Auth = void>(
+    cfg: MethodConfigOrHandler<
+      A,
+      ComAtprotoSpaceListGroups.QueryParams,
+      ComAtprotoSpaceListGroups.HandlerInput,
+      ComAtprotoSpaceListGroups.HandlerOutput
+    >,
+  ) {
+    const nsid = 'com.atproto.space.listGroups' // @ts-ignore
+    return this._server.xrpc.method(nsid, cfg)
+  }
+
+  listMissingBlobs<A extends Auth = void>(
+    cfg: MethodConfigOrHandler<
+      A,
+      ComAtprotoSpaceListMissingBlobs.QueryParams,
+      ComAtprotoSpaceListMissingBlobs.HandlerInput,
+      ComAtprotoSpaceListMissingBlobs.HandlerOutput
+    >,
+  ) {
+    const nsid = 'com.atproto.space.listMissingBlobs' // @ts-ignore
+    return this._server.xrpc.method(nsid, cfg)
+  }
+
+  listRecords<A extends Auth = void>(
+    cfg: MethodConfigOrHandler<
+      A,
+      ComAtprotoSpaceListRecords.QueryParams,
+      ComAtprotoSpaceListRecords.HandlerInput,
+      ComAtprotoSpaceListRecords.HandlerOutput
+    >,
+  ) {
+    const nsid = 'com.atproto.space.listRecords' // @ts-ignore
+    return this._server.xrpc.method(nsid, cfg)
+  }
+
+  listSpaces<A extends Auth = void>(
+    cfg: MethodConfigOrHandler<
+      A,
+      ComAtprotoSpaceListSpaces.QueryParams,
+      ComAtprotoSpaceListSpaces.HandlerInput,
+      ComAtprotoSpaceListSpaces.HandlerOutput
+    >,
+  ) {
+    const nsid = 'com.atproto.space.listSpaces' // @ts-ignore
+    return this._server.xrpc.method(nsid, cfg)
+  }
+
+  lookupResources<A extends Auth = void>(
+    cfg: MethodConfigOrHandler<
+      A,
+      ComAtprotoSpaceLookupResources.QueryParams,
+      ComAtprotoSpaceLookupResources.HandlerInput,
+      ComAtprotoSpaceLookupResources.HandlerOutput
+    >,
+  ) {
+    const nsid = 'com.atproto.space.lookupResources' // @ts-ignore
+    return this._server.xrpc.method(nsid, cfg)
+  }
+
+  lookupSubjects<A extends Auth = void>(
+    cfg: MethodConfigOrHandler<
+      A,
+      ComAtprotoSpaceLookupSubjects.QueryParams,
+      ComAtprotoSpaceLookupSubjects.HandlerInput,
+      ComAtprotoSpaceLookupSubjects.HandlerOutput
+    >,
+  ) {
+    const nsid = 'com.atproto.space.lookupSubjects' // @ts-ignore
+    return this._server.xrpc.method(nsid, cfg)
+  }
+
+  putGroup<A extends Auth = void>(
+    cfg: MethodConfigOrHandler<
+      A,
+      ComAtprotoSpacePutGroup.QueryParams,
+      ComAtprotoSpacePutGroup.HandlerInput,
+      ComAtprotoSpacePutGroup.HandlerOutput
+    >,
+  ) {
+    const nsid = 'com.atproto.space.putGroup' // @ts-ignore
+    return this._server.xrpc.method(nsid, cfg)
+  }
+
+  putRecord<A extends Auth = void>(
+    cfg: MethodConfigOrHandler<
+      A,
+      ComAtprotoSpacePutRecord.QueryParams,
+      ComAtprotoSpacePutRecord.HandlerInput,
+      ComAtprotoSpacePutRecord.HandlerOutput
+    >,
+  ) {
+    const nsid = 'com.atproto.space.putRecord' // @ts-ignore
+    return this._server.xrpc.method(nsid, cfg)
+  }
+
+  putRelationship<A extends Auth = void>(
+    cfg: MethodConfigOrHandler<
+      A,
+      ComAtprotoSpacePutRelationship.QueryParams,
+      ComAtprotoSpacePutRelationship.HandlerInput,
+      ComAtprotoSpacePutRelationship.HandlerOutput
+    >,
+  ) {
+    const nsid = 'com.atproto.space.putRelationship' // @ts-ignore
+    return this._server.xrpc.method(nsid, cfg)
+  }
+
+  putSpace<A extends Auth = void>(
+    cfg: MethodConfigOrHandler<
+      A,
+      ComAtprotoSpacePutSpace.QueryParams,
+      ComAtprotoSpacePutSpace.HandlerInput,
+      ComAtprotoSpacePutSpace.HandlerOutput
+    >,
+  ) {
+    const nsid = 'com.atproto.space.putSpace' // @ts-ignore
+    return this._server.xrpc.method(nsid, cfg)
+  }
+
+  uploadBlob<A extends Auth = void>(
+    cfg: MethodConfigOrHandler<
+      A,
+      ComAtprotoSpaceUploadBlob.QueryParams,
+      ComAtprotoSpaceUploadBlob.HandlerInput,
+      ComAtprotoSpaceUploadBlob.HandlerOutput
+    >,
+  ) {
+    const nsid = 'com.atproto.space.uploadBlob' // @ts-ignore
     return this._server.xrpc.method(nsid, cfg)
   }
 }

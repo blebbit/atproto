@@ -1,0 +1,59 @@
+{
+  "lexicon": 1,
+  "id": "com.atproto.space.listSpaces",
+  "defs": {
+    "main": {
+      "type": "query",
+      "description": "List the spaces requester has access to.",
+      "auth": {
+        "permission": "space.list"
+      },
+      "parameters": {
+        "type": "params",
+        "required": ["repo"],
+        "properties": {
+          "repo": {
+            "type": "string",
+            "format": "at-identifier",
+            "description": "The handle or DID of the repo."
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100,
+            "default": 50,
+            "description": "The number of records to return."
+          },
+          "cursor": { "type": "string" },
+          "reverse": {
+            "type": "boolean",
+            "description": "Flag to reverse the order of the returned records."
+          }
+        }
+      },
+      "output": {
+        "encoding": "application/json",
+        "schema": {
+          "type": "object",
+          "required": ["spaces"],
+          "properties": {
+            "cursor": { "type": "string" },
+            "spaces": {
+              "type": "array",
+              "items": { "type": "ref", "ref": "#record" } // when this is '#space', the error only manifests when building, should catch in lex-cli
+            }
+          }
+        }
+      }
+    },
+    "record": {
+      "type": "object",
+      "required": ["uri", "cid", "value"],
+      "properties": {
+        "uri": { "type": "string", "format": "at-uri" },
+        "cid": { "type": "string", "format": "cid" },
+        "value": { "type": "unknown", "description": "Information about the space." }
+      }
+    }
+  }
+}

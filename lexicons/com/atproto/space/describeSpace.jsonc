@@ -1,0 +1,44 @@
+{
+  "lexicon": 1,
+  "id": "com.atproto.space.describeSpace",
+  "defs": {
+    "main": {
+      "type": "query",
+      "description": "Get information about an account's spaces, primarily the list of spaces the requester can see.",
+      "auth": {
+        "permission": "space.read"
+      },
+      "parameters": {
+        "type": "params",
+        "required": ["repo", "space"],
+        "properties": {
+          "repo": {
+            "type": "string",
+            "format": "at-identifier",
+            "description": "The handle or DID of the repo."
+          },
+          "space": {
+            "type": "string",
+            "description": "The id of the space associated with the repo."
+          }
+        }
+      },
+      "output": {
+        "encoding": "application/json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "collections"
+          ],
+          "properties": {
+            "collections": {
+              "type": "array",
+              "description": "List of the collections for which this requester has some permission for within this space.",
+              "items": { "type": "string", "format": "nsid" }
+            }
+          }
+        }
+      }
+    },
+  }
+}

@@ -1,0 +1,52 @@
+{
+  "lexicon": 1,
+  "id": "com.atproto.space.lookupSubjects",
+  "defs": {
+    "main": {
+      "type": "query",
+      "description": "List of spaces which the requester has access too.",
+      "auth": {
+        "permission": "relationships.list"
+      },
+      "parameters": {
+        "type": "params",
+        "required": ["repo", "space", "object", "permission"],
+        "properties": {
+          "repo": {
+            "type": "string",
+            "format": "at-identifier",
+            "description": "The handle or DID of the repo."
+          },
+          "space": {
+            "type": "string",
+            "description": "The id of the space associated with the repo."
+          },
+
+          // known relationship fields (the data)
+          "object": {
+            "type": "string",
+            "description": "The object id."
+          },
+          "permission": {
+            "type": "string",
+            "description": "The required permission."
+          },
+        }
+      },
+      "output": {
+        "encoding": "application/json",
+        "schema": {
+          "type": "object",
+          "required": [ "subjects" ],
+          "properties": {
+            "subjects": {
+              "type": "array",
+              "description": "List of all the subjects that have the given permission on the object.",
+              "items": { "type": "string" }
+            }
+          }
+        }
+      }
+    }
+  }
+}

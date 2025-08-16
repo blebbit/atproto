@@ -1,0 +1,56 @@
+{
+  "lexicon": 1,
+  "id": "com.atproto.space.checkPermissions",
+  "defs": {
+    "main": {
+      "type": "procedure",
+      "description": "Get a single record from a repository. Does not require auth.",
+      "auth": {
+        "permission": "read"
+      },
+      "input": {
+        "encoding": "application/json",
+        "schema": {
+          "type": "object",
+          "required": ["repo", "space", "subject", "permission", "objects"],
+          "properties": {
+
+            // location fields
+            "repo": {
+              "type": "string",
+              "format": "at-identifier",
+              "description": "The handle or DID of the repo (aka, current account)."
+            },
+            "space": {
+              "type": "string",
+              "description": "The id of the space associated with the repo."
+            },
+
+            // relationship fields
+            "subject": { "type": "string" },
+            "permission": { "type": "string" },
+            "objects": {
+              "type": "array",
+              "description": "List of objects to see if subject is granted the permission.",
+              "items": { "type": "string" }
+            }
+          }
+        }
+      },
+      "output": {
+        "encoding": "application/json",
+        "schema": {
+          "type": "object",
+          "required": ["objects"],
+          "properties": {
+            "objects": {
+              "type": "array",
+              "description": "List ordered the same as input objects, with allowed status.",
+              "items": { "type": "string", "description": "one of: [yes,no,conditional,unspecified,unknown]"}
+            }
+          }
+        }
+      }
+    }
+  }
+}
