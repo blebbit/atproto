@@ -221,6 +221,40 @@ import * as ComAtprotoServerReserveSigningKey from './types/com/atproto/server/r
 import * as ComAtprotoServerResetPassword from './types/com/atproto/server/resetPassword.js'
 import * as ComAtprotoServerRevokeAppPassword from './types/com/atproto/server/revokeAppPassword.js'
 import * as ComAtprotoServerUpdateEmail from './types/com/atproto/server/updateEmail.js'
+import * as ComAtprotoSpaceApplyWrites from './types/com/atproto/space/applyWrites.js'
+import * as ComAtprotoSpaceCheckPermission from './types/com/atproto/space/checkPermission.js'
+import * as ComAtprotoSpaceCheckPermissions from './types/com/atproto/space/checkPermissions.js'
+import * as ComAtprotoSpaceCreateGroup from './types/com/atproto/space/createGroup.js'
+import * as ComAtprotoSpaceCreateRecord from './types/com/atproto/space/createRecord.js'
+import * as ComAtprotoSpaceCreateRelationship from './types/com/atproto/space/createRelationship.js'
+import * as ComAtprotoSpaceCreateSpace from './types/com/atproto/space/createSpace.js'
+import * as ComAtprotoSpaceDefs from './types/com/atproto/space/defs.js'
+import * as ComAtprotoSpaceDeleteGroup from './types/com/atproto/space/deleteGroup.js'
+import * as ComAtprotoSpaceDeleteRecord from './types/com/atproto/space/deleteRecord.js'
+import * as ComAtprotoSpaceDeleteRelationship from './types/com/atproto/space/deleteRelationship.js'
+import * as ComAtprotoSpaceDeleteSpace from './types/com/atproto/space/deleteSpace.js'
+import * as ComAtprotoSpaceDescribeGroup from './types/com/atproto/space/describeGroup.js'
+import * as ComAtprotoSpaceDescribeSpace from './types/com/atproto/space/describeSpace.js'
+import * as ComAtprotoSpaceGetBlob from './types/com/atproto/space/getBlob.js'
+import * as ComAtprotoSpaceGetGroup from './types/com/atproto/space/getGroup.js'
+import * as ComAtprotoSpaceGetRecord from './types/com/atproto/space/getRecord.js'
+import * as ComAtprotoSpaceGetRelationship from './types/com/atproto/space/getRelationship.js'
+import * as ComAtprotoSpaceGetSpace from './types/com/atproto/space/getSpace.js'
+import * as ComAtprotoSpaceGroup from './types/com/atproto/space/group.js'
+import * as ComAtprotoSpaceListBlobs from './types/com/atproto/space/listBlobs.js'
+import * as ComAtprotoSpaceListGroups from './types/com/atproto/space/listGroups.js'
+import * as ComAtprotoSpaceListMissingBlobs from './types/com/atproto/space/listMissingBlobs.js'
+import * as ComAtprotoSpaceListRecords from './types/com/atproto/space/listRecords.js'
+import * as ComAtprotoSpaceListSpaces from './types/com/atproto/space/listSpaces.js'
+import * as ComAtprotoSpaceLookupResources from './types/com/atproto/space/lookupResources.js'
+import * as ComAtprotoSpaceLookupSubjects from './types/com/atproto/space/lookupSubjects.js'
+import * as ComAtprotoSpacePutGroup from './types/com/atproto/space/putGroup.js'
+import * as ComAtprotoSpacePutRecord from './types/com/atproto/space/putRecord.js'
+import * as ComAtprotoSpacePutRelationship from './types/com/atproto/space/putRelationship.js'
+import * as ComAtprotoSpacePutSpace from './types/com/atproto/space/putSpace.js'
+import * as ComAtprotoSpaceRelationship from './types/com/atproto/space/relationship.js'
+import * as ComAtprotoSpaceSpace from './types/com/atproto/space/space.js'
+import * as ComAtprotoSpaceUploadBlob from './types/com/atproto/space/uploadBlob.js'
 import * as ComAtprotoSyncDefs from './types/com/atproto/sync/defs.js'
 import * as ComAtprotoSyncGetBlob from './types/com/atproto/sync/getBlob.js'
 import * as ComAtprotoSyncGetBlocks from './types/com/atproto/sync/getBlocks.js'
@@ -509,6 +543,40 @@ export * as ComAtprotoServerReserveSigningKey from './types/com/atproto/server/r
 export * as ComAtprotoServerResetPassword from './types/com/atproto/server/resetPassword.js'
 export * as ComAtprotoServerRevokeAppPassword from './types/com/atproto/server/revokeAppPassword.js'
 export * as ComAtprotoServerUpdateEmail from './types/com/atproto/server/updateEmail.js'
+export * as ComAtprotoSpaceApplyWrites from './types/com/atproto/space/applyWrites.js'
+export * as ComAtprotoSpaceCheckPermission from './types/com/atproto/space/checkPermission.js'
+export * as ComAtprotoSpaceCheckPermissions from './types/com/atproto/space/checkPermissions.js'
+export * as ComAtprotoSpaceCreateGroup from './types/com/atproto/space/createGroup.js'
+export * as ComAtprotoSpaceCreateRecord from './types/com/atproto/space/createRecord.js'
+export * as ComAtprotoSpaceCreateRelationship from './types/com/atproto/space/createRelationship.js'
+export * as ComAtprotoSpaceCreateSpace from './types/com/atproto/space/createSpace.js'
+export * as ComAtprotoSpaceDefs from './types/com/atproto/space/defs.js'
+export * as ComAtprotoSpaceDeleteGroup from './types/com/atproto/space/deleteGroup.js'
+export * as ComAtprotoSpaceDeleteRecord from './types/com/atproto/space/deleteRecord.js'
+export * as ComAtprotoSpaceDeleteRelationship from './types/com/atproto/space/deleteRelationship.js'
+export * as ComAtprotoSpaceDeleteSpace from './types/com/atproto/space/deleteSpace.js'
+export * as ComAtprotoSpaceDescribeGroup from './types/com/atproto/space/describeGroup.js'
+export * as ComAtprotoSpaceDescribeSpace from './types/com/atproto/space/describeSpace.js'
+export * as ComAtprotoSpaceGetBlob from './types/com/atproto/space/getBlob.js'
+export * as ComAtprotoSpaceGetGroup from './types/com/atproto/space/getGroup.js'
+export * as ComAtprotoSpaceGetRecord from './types/com/atproto/space/getRecord.js'
+export * as ComAtprotoSpaceGetRelationship from './types/com/atproto/space/getRelationship.js'
+export * as ComAtprotoSpaceGetSpace from './types/com/atproto/space/getSpace.js'
+export * as ComAtprotoSpaceGroup from './types/com/atproto/space/group.js'
+export * as ComAtprotoSpaceListBlobs from './types/com/atproto/space/listBlobs.js'
+export * as ComAtprotoSpaceListGroups from './types/com/atproto/space/listGroups.js'
+export * as ComAtprotoSpaceListMissingBlobs from './types/com/atproto/space/listMissingBlobs.js'
+export * as ComAtprotoSpaceListRecords from './types/com/atproto/space/listRecords.js'
+export * as ComAtprotoSpaceListSpaces from './types/com/atproto/space/listSpaces.js'
+export * as ComAtprotoSpaceLookupResources from './types/com/atproto/space/lookupResources.js'
+export * as ComAtprotoSpaceLookupSubjects from './types/com/atproto/space/lookupSubjects.js'
+export * as ComAtprotoSpacePutGroup from './types/com/atproto/space/putGroup.js'
+export * as ComAtprotoSpacePutRecord from './types/com/atproto/space/putRecord.js'
+export * as ComAtprotoSpacePutRelationship from './types/com/atproto/space/putRelationship.js'
+export * as ComAtprotoSpacePutSpace from './types/com/atproto/space/putSpace.js'
+export * as ComAtprotoSpaceRelationship from './types/com/atproto/space/relationship.js'
+export * as ComAtprotoSpaceSpace from './types/com/atproto/space/space.js'
+export * as ComAtprotoSpaceUploadBlob from './types/com/atproto/space/uploadBlob.js'
 export * as ComAtprotoSyncDefs from './types/com/atproto/sync/defs.js'
 export * as ComAtprotoSyncGetBlob from './types/com/atproto/sync/getBlob.js'
 export * as ComAtprotoSyncGetBlocks from './types/com/atproto/sync/getBlocks.js'
@@ -3625,6 +3693,7 @@ export class ComAtprotoNS {
   moderation: ComAtprotoModerationNS
   repo: ComAtprotoRepoNS
   server: ComAtprotoServerNS
+  space: ComAtprotoSpaceNS
   sync: ComAtprotoSyncNS
   temp: ComAtprotoTempNS
 
@@ -3637,6 +3706,7 @@ export class ComAtprotoNS {
     this.moderation = new ComAtprotoModerationNS(client)
     this.repo = new ComAtprotoRepoNS(client)
     this.server = new ComAtprotoServerNS(client)
+    this.space = new ComAtprotoSpaceNS(client)
     this.sync = new ComAtprotoSyncNS(client)
     this.temp = new ComAtprotoTempNS(client)
   }
@@ -4492,6 +4562,596 @@ export class ComAtprotoServerNS {
       .catch((e) => {
         throw ComAtprotoServerUpdateEmail.toKnownErr(e)
       })
+  }
+}
+
+export class ComAtprotoSpaceNS {
+  _client: XrpcClient
+  group: ComAtprotoSpaceGroupRecord
+  relationship: ComAtprotoSpaceRelationshipRecord
+  space: ComAtprotoSpaceSpaceRecord
+
+  constructor(client: XrpcClient) {
+    this._client = client
+    this.group = new ComAtprotoSpaceGroupRecord(client)
+    this.relationship = new ComAtprotoSpaceRelationshipRecord(client)
+    this.space = new ComAtprotoSpaceSpaceRecord(client)
+  }
+
+  applyWrites(
+    data?: ComAtprotoSpaceApplyWrites.InputSchema,
+    opts?: ComAtprotoSpaceApplyWrites.CallOptions,
+  ): Promise<ComAtprotoSpaceApplyWrites.Response> {
+    return this._client
+      .call('com.atproto.space.applyWrites', opts?.qp, data, opts)
+      .catch((e) => {
+        throw ComAtprotoSpaceApplyWrites.toKnownErr(e)
+      })
+  }
+
+  checkPermission(
+    data?: ComAtprotoSpaceCheckPermission.InputSchema,
+    opts?: ComAtprotoSpaceCheckPermission.CallOptions,
+  ): Promise<ComAtprotoSpaceCheckPermission.Response> {
+    return this._client.call(
+      'com.atproto.space.checkPermission',
+      opts?.qp,
+      data,
+      opts,
+    )
+  }
+
+  checkPermissions(
+    data?: ComAtprotoSpaceCheckPermissions.InputSchema,
+    opts?: ComAtprotoSpaceCheckPermissions.CallOptions,
+  ): Promise<ComAtprotoSpaceCheckPermissions.Response> {
+    return this._client.call(
+      'com.atproto.space.checkPermissions',
+      opts?.qp,
+      data,
+      opts,
+    )
+  }
+
+  createGroup(
+    data?: ComAtprotoSpaceCreateGroup.InputSchema,
+    opts?: ComAtprotoSpaceCreateGroup.CallOptions,
+  ): Promise<ComAtprotoSpaceCreateGroup.Response> {
+    return this._client
+      .call('com.atproto.space.createGroup', opts?.qp, data, opts)
+      .catch((e) => {
+        throw ComAtprotoSpaceCreateGroup.toKnownErr(e)
+      })
+  }
+
+  createRecord(
+    data?: ComAtprotoSpaceCreateRecord.InputSchema,
+    opts?: ComAtprotoSpaceCreateRecord.CallOptions,
+  ): Promise<ComAtprotoSpaceCreateRecord.Response> {
+    return this._client
+      .call('com.atproto.space.createRecord', opts?.qp, data, opts)
+      .catch((e) => {
+        throw ComAtprotoSpaceCreateRecord.toKnownErr(e)
+      })
+  }
+
+  createRelationship(
+    data?: ComAtprotoSpaceCreateRelationship.InputSchema,
+    opts?: ComAtprotoSpaceCreateRelationship.CallOptions,
+  ): Promise<ComAtprotoSpaceCreateRelationship.Response> {
+    return this._client
+      .call('com.atproto.space.createRelationship', opts?.qp, data, opts)
+      .catch((e) => {
+        throw ComAtprotoSpaceCreateRelationship.toKnownErr(e)
+      })
+  }
+
+  createSpace(
+    data?: ComAtprotoSpaceCreateSpace.InputSchema,
+    opts?: ComAtprotoSpaceCreateSpace.CallOptions,
+  ): Promise<ComAtprotoSpaceCreateSpace.Response> {
+    return this._client
+      .call('com.atproto.space.createSpace', opts?.qp, data, opts)
+      .catch((e) => {
+        throw ComAtprotoSpaceCreateSpace.toKnownErr(e)
+      })
+  }
+
+  deleteGroup(
+    data?: ComAtprotoSpaceDeleteGroup.InputSchema,
+    opts?: ComAtprotoSpaceDeleteGroup.CallOptions,
+  ): Promise<ComAtprotoSpaceDeleteGroup.Response> {
+    return this._client
+      .call('com.atproto.space.deleteGroup', opts?.qp, data, opts)
+      .catch((e) => {
+        throw ComAtprotoSpaceDeleteGroup.toKnownErr(e)
+      })
+  }
+
+  deleteRecord(
+    data?: ComAtprotoSpaceDeleteRecord.InputSchema,
+    opts?: ComAtprotoSpaceDeleteRecord.CallOptions,
+  ): Promise<ComAtprotoSpaceDeleteRecord.Response> {
+    return this._client
+      .call('com.atproto.space.deleteRecord', opts?.qp, data, opts)
+      .catch((e) => {
+        throw ComAtprotoSpaceDeleteRecord.toKnownErr(e)
+      })
+  }
+
+  deleteRelationship(
+    data?: ComAtprotoSpaceDeleteRelationship.InputSchema,
+    opts?: ComAtprotoSpaceDeleteRelationship.CallOptions,
+  ): Promise<ComAtprotoSpaceDeleteRelationship.Response> {
+    return this._client
+      .call('com.atproto.space.deleteRelationship', opts?.qp, data, opts)
+      .catch((e) => {
+        throw ComAtprotoSpaceDeleteRelationship.toKnownErr(e)
+      })
+  }
+
+  deleteSpace(
+    data?: ComAtprotoSpaceDeleteSpace.InputSchema,
+    opts?: ComAtprotoSpaceDeleteSpace.CallOptions,
+  ): Promise<ComAtprotoSpaceDeleteSpace.Response> {
+    return this._client
+      .call('com.atproto.space.deleteSpace', opts?.qp, data, opts)
+      .catch((e) => {
+        throw ComAtprotoSpaceDeleteSpace.toKnownErr(e)
+      })
+  }
+
+  describeGroup(
+    params?: ComAtprotoSpaceDescribeGroup.QueryParams,
+    opts?: ComAtprotoSpaceDescribeGroup.CallOptions,
+  ): Promise<ComAtprotoSpaceDescribeGroup.Response> {
+    return this._client.call(
+      'com.atproto.space.describeGroup',
+      params,
+      undefined,
+      opts,
+    )
+  }
+
+  describeSpace(
+    params?: ComAtprotoSpaceDescribeSpace.QueryParams,
+    opts?: ComAtprotoSpaceDescribeSpace.CallOptions,
+  ): Promise<ComAtprotoSpaceDescribeSpace.Response> {
+    return this._client.call(
+      'com.atproto.space.describeSpace',
+      params,
+      undefined,
+      opts,
+    )
+  }
+
+  getBlob(
+    params?: ComAtprotoSpaceGetBlob.QueryParams,
+    opts?: ComAtprotoSpaceGetBlob.CallOptions,
+  ): Promise<ComAtprotoSpaceGetBlob.Response> {
+    return this._client
+      .call('com.atproto.space.getBlob', params, undefined, opts)
+      .catch((e) => {
+        throw ComAtprotoSpaceGetBlob.toKnownErr(e)
+      })
+  }
+
+  getGroup(
+    params?: ComAtprotoSpaceGetGroup.QueryParams,
+    opts?: ComAtprotoSpaceGetGroup.CallOptions,
+  ): Promise<ComAtprotoSpaceGetGroup.Response> {
+    return this._client
+      .call('com.atproto.space.getGroup', params, undefined, opts)
+      .catch((e) => {
+        throw ComAtprotoSpaceGetGroup.toKnownErr(e)
+      })
+  }
+
+  getRecord(
+    params?: ComAtprotoSpaceGetRecord.QueryParams,
+    opts?: ComAtprotoSpaceGetRecord.CallOptions,
+  ): Promise<ComAtprotoSpaceGetRecord.Response> {
+    return this._client
+      .call('com.atproto.space.getRecord', params, undefined, opts)
+      .catch((e) => {
+        throw ComAtprotoSpaceGetRecord.toKnownErr(e)
+      })
+  }
+
+  getRelationship(
+    params?: ComAtprotoSpaceGetRelationship.QueryParams,
+    opts?: ComAtprotoSpaceGetRelationship.CallOptions,
+  ): Promise<ComAtprotoSpaceGetRelationship.Response> {
+    return this._client
+      .call('com.atproto.space.getRelationship', params, undefined, opts)
+      .catch((e) => {
+        throw ComAtprotoSpaceGetRelationship.toKnownErr(e)
+      })
+  }
+
+  getSpace(
+    params?: ComAtprotoSpaceGetSpace.QueryParams,
+    opts?: ComAtprotoSpaceGetSpace.CallOptions,
+  ): Promise<ComAtprotoSpaceGetSpace.Response> {
+    return this._client
+      .call('com.atproto.space.getSpace', params, undefined, opts)
+      .catch((e) => {
+        throw ComAtprotoSpaceGetSpace.toKnownErr(e)
+      })
+  }
+
+  listBlobs(
+    params?: ComAtprotoSpaceListBlobs.QueryParams,
+    opts?: ComAtprotoSpaceListBlobs.CallOptions,
+  ): Promise<ComAtprotoSpaceListBlobs.Response> {
+    return this._client
+      .call('com.atproto.space.listBlobs', params, undefined, opts)
+      .catch((e) => {
+        throw ComAtprotoSpaceListBlobs.toKnownErr(e)
+      })
+  }
+
+  listGroups(
+    params?: ComAtprotoSpaceListGroups.QueryParams,
+    opts?: ComAtprotoSpaceListGroups.CallOptions,
+  ): Promise<ComAtprotoSpaceListGroups.Response> {
+    return this._client.call(
+      'com.atproto.space.listGroups',
+      params,
+      undefined,
+      opts,
+    )
+  }
+
+  listMissingBlobs(
+    params?: ComAtprotoSpaceListMissingBlobs.QueryParams,
+    opts?: ComAtprotoSpaceListMissingBlobs.CallOptions,
+  ): Promise<ComAtprotoSpaceListMissingBlobs.Response> {
+    return this._client.call(
+      'com.atproto.space.listMissingBlobs',
+      params,
+      undefined,
+      opts,
+    )
+  }
+
+  listRecords(
+    params?: ComAtprotoSpaceListRecords.QueryParams,
+    opts?: ComAtprotoSpaceListRecords.CallOptions,
+  ): Promise<ComAtprotoSpaceListRecords.Response> {
+    return this._client.call(
+      'com.atproto.space.listRecords',
+      params,
+      undefined,
+      opts,
+    )
+  }
+
+  listSpaces(
+    params?: ComAtprotoSpaceListSpaces.QueryParams,
+    opts?: ComAtprotoSpaceListSpaces.CallOptions,
+  ): Promise<ComAtprotoSpaceListSpaces.Response> {
+    return this._client.call(
+      'com.atproto.space.listSpaces',
+      params,
+      undefined,
+      opts,
+    )
+  }
+
+  lookupResources(
+    params?: ComAtprotoSpaceLookupResources.QueryParams,
+    opts?: ComAtprotoSpaceLookupResources.CallOptions,
+  ): Promise<ComAtprotoSpaceLookupResources.Response> {
+    return this._client.call(
+      'com.atproto.space.lookupResources',
+      params,
+      undefined,
+      opts,
+    )
+  }
+
+  lookupSubjects(
+    params?: ComAtprotoSpaceLookupSubjects.QueryParams,
+    opts?: ComAtprotoSpaceLookupSubjects.CallOptions,
+  ): Promise<ComAtprotoSpaceLookupSubjects.Response> {
+    return this._client.call(
+      'com.atproto.space.lookupSubjects',
+      params,
+      undefined,
+      opts,
+    )
+  }
+
+  putGroup(
+    data?: ComAtprotoSpacePutGroup.InputSchema,
+    opts?: ComAtprotoSpacePutGroup.CallOptions,
+  ): Promise<ComAtprotoSpacePutGroup.Response> {
+    return this._client.call('com.atproto.space.putGroup', opts?.qp, data, opts)
+  }
+
+  putRecord(
+    data?: ComAtprotoSpacePutRecord.InputSchema,
+    opts?: ComAtprotoSpacePutRecord.CallOptions,
+  ): Promise<ComAtprotoSpacePutRecord.Response> {
+    return this._client.call(
+      'com.atproto.space.putRecord',
+      opts?.qp,
+      data,
+      opts,
+    )
+  }
+
+  putRelationship(
+    data?: ComAtprotoSpacePutRelationship.InputSchema,
+    opts?: ComAtprotoSpacePutRelationship.CallOptions,
+  ): Promise<ComAtprotoSpacePutRelationship.Response> {
+    return this._client.call(
+      'com.atproto.space.putRelationship',
+      opts?.qp,
+      data,
+      opts,
+    )
+  }
+
+  putSpace(
+    data?: ComAtprotoSpacePutSpace.InputSchema,
+    opts?: ComAtprotoSpacePutSpace.CallOptions,
+  ): Promise<ComAtprotoSpacePutSpace.Response> {
+    return this._client.call('com.atproto.space.putSpace', opts?.qp, data, opts)
+  }
+
+  uploadBlob(
+    data?: ComAtprotoSpaceUploadBlob.InputSchema,
+    opts?: ComAtprotoSpaceUploadBlob.CallOptions,
+  ): Promise<ComAtprotoSpaceUploadBlob.Response> {
+    return this._client.call(
+      'com.atproto.space.uploadBlob',
+      opts?.qp,
+      data,
+      opts,
+    )
+  }
+}
+
+export class ComAtprotoSpaceGroupRecord {
+  _client: XrpcClient
+
+  constructor(client: XrpcClient) {
+    this._client = client
+  }
+
+  async list(
+    params: OmitKey<ComAtprotoRepoListRecords.QueryParams, 'collection'>,
+  ): Promise<{
+    cursor?: string
+    records: { uri: string; value: ComAtprotoSpaceGroup.Record }[]
+  }> {
+    const res = await this._client.call('com.atproto.repo.listRecords', {
+      collection: 'com.atproto.space.group',
+      ...params,
+    })
+    return res.data
+  }
+
+  async get(
+    params: OmitKey<ComAtprotoRepoGetRecord.QueryParams, 'collection'>,
+  ): Promise<{ uri: string; cid: string; value: ComAtprotoSpaceGroup.Record }> {
+    const res = await this._client.call('com.atproto.repo.getRecord', {
+      collection: 'com.atproto.space.group',
+      ...params,
+    })
+    return res.data
+  }
+
+  async create(
+    params: OmitKey<
+      ComAtprotoRepoCreateRecord.InputSchema,
+      'collection' | 'record'
+    >,
+    record: Un$Typed<ComAtprotoSpaceGroup.Record>,
+    headers?: Record<string, string>,
+  ): Promise<{ uri: string; cid: string }> {
+    const collection = 'com.atproto.space.group'
+    const res = await this._client.call(
+      'com.atproto.repo.createRecord',
+      undefined,
+      { collection, ...params, record: { ...record, $type: collection } },
+      { encoding: 'application/json', headers },
+    )
+    return res.data
+  }
+
+  async put(
+    params: OmitKey<
+      ComAtprotoRepoPutRecord.InputSchema,
+      'collection' | 'record'
+    >,
+    record: Un$Typed<ComAtprotoSpaceGroup.Record>,
+    headers?: Record<string, string>,
+  ): Promise<{ uri: string; cid: string }> {
+    const collection = 'com.atproto.space.group'
+    const res = await this._client.call(
+      'com.atproto.repo.putRecord',
+      undefined,
+      { collection, ...params, record: { ...record, $type: collection } },
+      { encoding: 'application/json', headers },
+    )
+    return res.data
+  }
+
+  async delete(
+    params: OmitKey<ComAtprotoRepoDeleteRecord.InputSchema, 'collection'>,
+    headers?: Record<string, string>,
+  ): Promise<void> {
+    await this._client.call(
+      'com.atproto.repo.deleteRecord',
+      undefined,
+      { collection: 'com.atproto.space.group', ...params },
+      { headers },
+    )
+  }
+}
+
+export class ComAtprotoSpaceRelationshipRecord {
+  _client: XrpcClient
+
+  constructor(client: XrpcClient) {
+    this._client = client
+  }
+
+  async list(
+    params: OmitKey<ComAtprotoRepoListRecords.QueryParams, 'collection'>,
+  ): Promise<{
+    cursor?: string
+    records: { uri: string; value: ComAtprotoSpaceRelationship.Record }[]
+  }> {
+    const res = await this._client.call('com.atproto.repo.listRecords', {
+      collection: 'com.atproto.space.relationship',
+      ...params,
+    })
+    return res.data
+  }
+
+  async get(
+    params: OmitKey<ComAtprotoRepoGetRecord.QueryParams, 'collection'>,
+  ): Promise<{
+    uri: string
+    cid: string
+    value: ComAtprotoSpaceRelationship.Record
+  }> {
+    const res = await this._client.call('com.atproto.repo.getRecord', {
+      collection: 'com.atproto.space.relationship',
+      ...params,
+    })
+    return res.data
+  }
+
+  async create(
+    params: OmitKey<
+      ComAtprotoRepoCreateRecord.InputSchema,
+      'collection' | 'record'
+    >,
+    record: Un$Typed<ComAtprotoSpaceRelationship.Record>,
+    headers?: Record<string, string>,
+  ): Promise<{ uri: string; cid: string }> {
+    const collection = 'com.atproto.space.relationship'
+    const res = await this._client.call(
+      'com.atproto.repo.createRecord',
+      undefined,
+      { collection, ...params, record: { ...record, $type: collection } },
+      { encoding: 'application/json', headers },
+    )
+    return res.data
+  }
+
+  async put(
+    params: OmitKey<
+      ComAtprotoRepoPutRecord.InputSchema,
+      'collection' | 'record'
+    >,
+    record: Un$Typed<ComAtprotoSpaceRelationship.Record>,
+    headers?: Record<string, string>,
+  ): Promise<{ uri: string; cid: string }> {
+    const collection = 'com.atproto.space.relationship'
+    const res = await this._client.call(
+      'com.atproto.repo.putRecord',
+      undefined,
+      { collection, ...params, record: { ...record, $type: collection } },
+      { encoding: 'application/json', headers },
+    )
+    return res.data
+  }
+
+  async delete(
+    params: OmitKey<ComAtprotoRepoDeleteRecord.InputSchema, 'collection'>,
+    headers?: Record<string, string>,
+  ): Promise<void> {
+    await this._client.call(
+      'com.atproto.repo.deleteRecord',
+      undefined,
+      { collection: 'com.atproto.space.relationship', ...params },
+      { headers },
+    )
+  }
+}
+
+export class ComAtprotoSpaceSpaceRecord {
+  _client: XrpcClient
+
+  constructor(client: XrpcClient) {
+    this._client = client
+  }
+
+  async list(
+    params: OmitKey<ComAtprotoRepoListRecords.QueryParams, 'collection'>,
+  ): Promise<{
+    cursor?: string
+    records: { uri: string; value: ComAtprotoSpaceSpace.Record }[]
+  }> {
+    const res = await this._client.call('com.atproto.repo.listRecords', {
+      collection: 'com.atproto.space.space',
+      ...params,
+    })
+    return res.data
+  }
+
+  async get(
+    params: OmitKey<ComAtprotoRepoGetRecord.QueryParams, 'collection'>,
+  ): Promise<{ uri: string; cid: string; value: ComAtprotoSpaceSpace.Record }> {
+    const res = await this._client.call('com.atproto.repo.getRecord', {
+      collection: 'com.atproto.space.space',
+      ...params,
+    })
+    return res.data
+  }
+
+  async create(
+    params: OmitKey<
+      ComAtprotoRepoCreateRecord.InputSchema,
+      'collection' | 'record'
+    >,
+    record: Un$Typed<ComAtprotoSpaceSpace.Record>,
+    headers?: Record<string, string>,
+  ): Promise<{ uri: string; cid: string }> {
+    const collection = 'com.atproto.space.space'
+    const res = await this._client.call(
+      'com.atproto.repo.createRecord',
+      undefined,
+      { collection, ...params, record: { ...record, $type: collection } },
+      { encoding: 'application/json', headers },
+    )
+    return res.data
+  }
+
+  async put(
+    params: OmitKey<
+      ComAtprotoRepoPutRecord.InputSchema,
+      'collection' | 'record'
+    >,
+    record: Un$Typed<ComAtprotoSpaceSpace.Record>,
+    headers?: Record<string, string>,
+  ): Promise<{ uri: string; cid: string }> {
+    const collection = 'com.atproto.space.space'
+    const res = await this._client.call(
+      'com.atproto.repo.putRecord',
+      undefined,
+      { collection, ...params, record: { ...record, $type: collection } },
+      { encoding: 'application/json', headers },
+    )
+    return res.data
+  }
+
+  async delete(
+    params: OmitKey<ComAtprotoRepoDeleteRecord.InputSchema, 'collection'>,
+    headers?: Record<string, string>,
+  ): Promise<void> {
+    await this._client.call(
+      'com.atproto.repo.deleteRecord',
+      undefined,
+      { collection: 'com.atproto.space.space', ...params },
+      { headers },
+    )
   }
 }
 

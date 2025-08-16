@@ -12511,6 +12511,2374 @@ export const schemaDict = {
       },
     },
   },
+  ComAtprotoSpaceApplyWrites: {
+    lexicon: 1,
+    id: 'com.atproto.space.applyWrites',
+    defs: {
+      main: {
+        type: 'procedure',
+        description:
+          'Apply a batch transaction of repository creates, updates, and deletes. Requires auth, implemented by PDS.',
+        auth: {
+          permission: 'write',
+        },
+        input: {
+          encoding: 'application/json',
+          schema: {
+            type: 'object',
+            required: ['repo', 'space', 'writes'],
+            properties: {
+              repo: {
+                type: 'string',
+                format: 'at-identifier',
+                description:
+                  'The handle or DID of the repo (aka, current account).',
+              },
+              space: {
+                type: 'string',
+                description: 'The id of the space associated with the repo.',
+              },
+              validate: {
+                type: 'boolean',
+                description:
+                  "Can be set to 'false' to skip Lexicon schema validation of record data across all operations, 'true' to require it, or leave unset to validate only for known Lexicons.",
+              },
+              writes: {
+                type: 'array',
+                items: {
+                  type: 'union',
+                  refs: [
+                    'lex:com.atproto.space.applyWrites#create',
+                    'lex:com.atproto.space.applyWrites#update',
+                    'lex:com.atproto.space.applyWrites#delete',
+                  ],
+                  closed: true,
+                },
+              },
+            },
+          },
+        },
+        output: {
+          encoding: 'application/json',
+          schema: {
+            type: 'object',
+            required: [],
+            properties: {
+              results: {
+                type: 'array',
+                items: {
+                  type: 'union',
+                  refs: [
+                    'lex:com.atproto.space.applyWrites#createResult',
+                    'lex:com.atproto.space.applyWrites#updateResult',
+                    'lex:com.atproto.space.applyWrites#deleteResult',
+                  ],
+                  closed: true,
+                },
+              },
+            },
+          },
+        },
+        errors: [
+          {
+            name: 'InvalidSwap',
+            description:
+              "Indicates that the 'swapCommit' parameter did not match current commit.",
+          },
+        ],
+      },
+      create: {
+        type: 'object',
+        description: 'Operation which creates a new record.',
+        required: ['collection', 'value'],
+        properties: {
+          collection: {
+            type: 'string',
+            format: 'nsid',
+          },
+          rkey: {
+            type: 'string',
+            maxLength: 512,
+            format: 'record-key',
+            description:
+              'NOTE: maxLength is redundant with record-key format. Keeping it temporarily to ensure backwards compatibility.',
+          },
+          value: {
+            type: 'unknown',
+          },
+        },
+      },
+      update: {
+        type: 'object',
+        description: 'Operation which updates an existing record.',
+        required: ['collection', 'rkey', 'value'],
+        properties: {
+          collection: {
+            type: 'string',
+            format: 'nsid',
+          },
+          rkey: {
+            type: 'string',
+            format: 'record-key',
+          },
+          value: {
+            type: 'unknown',
+          },
+        },
+      },
+      delete: {
+        type: 'object',
+        description: 'Operation which deletes an existing record.',
+        required: ['collection', 'rkey'],
+        properties: {
+          collection: {
+            type: 'string',
+            format: 'nsid',
+          },
+          rkey: {
+            type: 'string',
+            format: 'record-key',
+          },
+        },
+      },
+      createResult: {
+        type: 'object',
+        required: ['uri', 'cid'],
+        properties: {
+          uri: {
+            type: 'string',
+            format: 'at-uri',
+          },
+          cid: {
+            type: 'string',
+            format: 'cid',
+          },
+          validationStatus: {
+            type: 'string',
+            knownValues: ['valid', 'unknown'],
+          },
+        },
+      },
+      updateResult: {
+        type: 'object',
+        required: ['uri', 'cid'],
+        properties: {
+          uri: {
+            type: 'string',
+            format: 'at-uri',
+          },
+          cid: {
+            type: 'string',
+            format: 'cid',
+          },
+          validationStatus: {
+            type: 'string',
+            knownValues: ['valid', 'unknown'],
+          },
+        },
+      },
+      deleteResult: {
+        type: 'object',
+        required: [],
+        properties: {},
+      },
+    },
+  },
+  ComAtprotoSpaceCheckPermission: {
+    lexicon: 1,
+    id: 'com.atproto.space.checkPermission',
+    defs: {
+      main: {
+        type: 'procedure',
+        description:
+          'Get a single record from a repository. Does not require auth.',
+        auth: {
+          permission: 'iam_read',
+        },
+        input: {
+          encoding: 'application/json',
+          schema: {
+            type: 'object',
+            required: ['repo', 'space', 'subject', 'permission', 'object'],
+            properties: {
+              repo: {
+                type: 'string',
+                format: 'at-identifier',
+                description:
+                  'The handle or DID of the repo (aka, current account).',
+              },
+              space: {
+                type: 'string',
+                description: 'The id of the space associated with the repo.',
+              },
+              subject: {
+                type: 'string',
+              },
+              permission: {
+                type: 'string',
+              },
+              object: {
+                type: 'string',
+              },
+            },
+          },
+        },
+        output: {
+          encoding: 'application/json',
+          schema: {
+            type: 'object',
+            required: ['allowed'],
+            properties: {
+              allowed: {
+                type: 'string',
+                description: 'one of: [yes,no,conditional,unspecified,unknown]',
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+  ComAtprotoSpaceCheckPermissions: {
+    lexicon: 1,
+    id: 'com.atproto.space.checkPermissions',
+    defs: {
+      main: {
+        type: 'procedure',
+        description:
+          'Get a single record from a repository. Does not require auth.',
+        auth: {
+          permission: 'iam_read',
+        },
+        input: {
+          encoding: 'application/json',
+          schema: {
+            type: 'object',
+            required: ['repo', 'space', 'subject', 'permission', 'objects'],
+            properties: {
+              repo: {
+                type: 'string',
+                format: 'at-identifier',
+                description:
+                  'The handle or DID of the repo (aka, current account).',
+              },
+              space: {
+                type: 'string',
+                description: 'The id of the space associated with the repo.',
+              },
+              subject: {
+                type: 'string',
+              },
+              permission: {
+                type: 'string',
+              },
+              objects: {
+                type: 'array',
+                description:
+                  'List of objects to see if subject is granted the permission.',
+                items: {
+                  type: 'string',
+                },
+              },
+            },
+          },
+        },
+        output: {
+          encoding: 'application/json',
+          schema: {
+            type: 'object',
+            required: ['objects'],
+            properties: {
+              objects: {
+                type: 'array',
+                description:
+                  'List ordered the same as input objects, with allowed status.',
+                items: {
+                  type: 'string',
+                  description:
+                    'one of: [yes,no,conditional,unspecified,unknown]',
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+  ComAtprotoSpaceCreateGroup: {
+    lexicon: 1,
+    id: 'com.atproto.space.createGroup',
+    defs: {
+      main: {
+        type: 'procedure',
+        description:
+          'Create a new repository space. Requires auth, implemented by PDS.',
+        auth: {
+          permission: 'iam_admin',
+        },
+        input: {
+          encoding: 'application/json',
+          schema: {
+            type: 'object',
+            required: ['repo', 'record'],
+            properties: {
+              repo: {
+                type: 'string',
+                format: 'at-identifier',
+                description:
+                  'The handle or DID of the repo to create the group in.',
+              },
+              space: {
+                type: 'string',
+                format: 'record-key',
+                description:
+                  'The id of the parent space which will contain this group. Defaults to the repo root space.',
+                maxLength: 64,
+              },
+              rkey: {
+                type: 'string',
+                format: 'record-key',
+                description: 'The Record Key.',
+                maxLength: 64,
+              },
+              record: {
+                type: 'unknown',
+                description: 'The record itself. Must contain a $type field.',
+              },
+              validate: {
+                type: 'boolean',
+                description:
+                  "Can be set to 'false' to skip Lexicon schema validation of record data, 'true' to require it, or leave unset to validate only for known Lexicons.",
+              },
+              swapCommit: {
+                type: 'string',
+                format: 'cid',
+                description:
+                  'Compare and swap with the previous commit by CID.',
+              },
+            },
+          },
+        },
+        output: {
+          encoding: 'application/json',
+          schema: {
+            type: 'object',
+            required: ['uri', 'cid'],
+            properties: {
+              uri: {
+                type: 'string',
+                format: 'at-uri',
+              },
+              cid: {
+                type: 'string',
+                format: 'cid',
+              },
+              commit: {
+                type: 'ref',
+                ref: 'lex:com.atproto.space.defs#commitMeta',
+              },
+              validationStatus: {
+                type: 'string',
+                knownValues: ['valid', 'unknown'],
+              },
+            },
+          },
+        },
+        errors: [
+          {
+            name: 'InvalidSwap',
+            description:
+              "Indicates that 'swapCommit' didn't match current repo commit.",
+          },
+        ],
+      },
+    },
+  },
+  ComAtprotoSpaceCreateRecord: {
+    lexicon: 1,
+    id: 'com.atproto.space.createRecord',
+    defs: {
+      main: {
+        type: 'procedure',
+        description:
+          'Create a single new repository record. Requires auth, implemented by PDS.',
+        auth: {
+          permission: 'create',
+        },
+        input: {
+          encoding: 'application/json',
+          schema: {
+            type: 'object',
+            required: ['repo', 'space', 'collection', 'record'],
+            properties: {
+              repo: {
+                type: 'string',
+                format: 'at-identifier',
+                description:
+                  'The handle or DID of the repo (aka, current account).',
+              },
+              space: {
+                type: 'string',
+                description: 'The id of the space associated with the repo.',
+                format: 'record-key',
+                maxLength: 256,
+              },
+              collection: {
+                type: 'string',
+                format: 'nsid',
+                description: 'The NSID of the record collection.',
+              },
+              rkey: {
+                type: 'string',
+                format: 'record-key',
+                description: 'The Record Key.',
+                maxLength: 512,
+              },
+              record: {
+                type: 'unknown',
+                description: 'The record itself. Must contain a $type field.',
+              },
+              validate: {
+                type: 'boolean',
+                description:
+                  "Can be set to 'false' to skip Lexicon schema validation of record data, 'true' to require it, or leave unset to validate only for known Lexicons.",
+              },
+              swapCommit: {
+                type: 'string',
+                format: 'cid',
+                description:
+                  'Compare and swap with the previous commit by CID.',
+              },
+            },
+          },
+        },
+        output: {
+          encoding: 'application/json',
+          schema: {
+            type: 'object',
+            required: ['uri', 'cid'],
+            properties: {
+              uri: {
+                type: 'string',
+                format: 'at-uri',
+              },
+              cid: {
+                type: 'string',
+                format: 'cid',
+              },
+              commit: {
+                type: 'ref',
+                ref: 'lex:com.atproto.space.defs#commitMeta',
+              },
+              validationStatus: {
+                type: 'string',
+                knownValues: ['valid', 'unknown'],
+              },
+            },
+          },
+        },
+        errors: [
+          {
+            name: 'InvalidSwap',
+            description:
+              "Indicates that 'swapCommit' didn't match current repo commit.",
+          },
+        ],
+      },
+    },
+  },
+  ComAtprotoSpaceCreateRelationship: {
+    lexicon: 1,
+    id: 'com.atproto.space.createRelationship',
+    defs: {
+      main: {
+        type: 'procedure',
+        description:
+          'Create a new repository space. Requires auth, implemented by PDS.',
+        auth: {
+          permission: 'iam_edit',
+        },
+        input: {
+          encoding: 'application/json',
+          schema: {
+            type: 'object',
+            required: [
+              'repo',
+              'space',
+              'subjectType',
+              'subject',
+              'relation',
+              'resourceType',
+              'resource',
+            ],
+            properties: {
+              repo: {
+                type: 'string',
+                format: 'at-identifier',
+                description:
+                  'The handle or DID of the repo (aka, current account).',
+              },
+              space: {
+                type: 'string',
+                description: 'The id of the space associated with the repo.',
+              },
+              subjectType: {
+                type: 'string',
+                description: 'the subject type [user,group,etc]',
+              },
+              subject: {
+                type: 'string',
+                description: 'the subject id to grant',
+              },
+              relation: {
+                type: 'string',
+                description: 'The relation to assign.',
+              },
+              resourceType: {
+                type: 'string',
+                description: 'The resource type [space,record,etc]',
+              },
+              resource: {
+                type: 'string',
+                description: 'The object id to assign.',
+              },
+              validate: {
+                type: 'boolean',
+                description:
+                  "Can be set to 'false' to skip Lexicon schema validation of record data, 'true' to require it, or leave unset to validate only for known Lexicons.",
+              },
+              swapCid: {
+                type: 'string',
+                format: 'cid',
+                description:
+                  'Compare and swap with the previous commit by CID.',
+              },
+            },
+          },
+        },
+        output: {
+          encoding: 'application/json',
+          schema: {
+            type: 'object',
+            required: ['uri', 'cid'],
+            properties: {
+              uri: {
+                type: 'string',
+                format: 'at-uri',
+              },
+              cid: {
+                type: 'string',
+                format: 'cid',
+              },
+              authzCheckpoint: {
+                type: 'string',
+              },
+              validationStatus: {
+                type: 'string',
+                knownValues: ['valid', 'unknown'],
+              },
+            },
+          },
+        },
+        errors: [
+          {
+            name: 'InvalidSwap',
+            description:
+              "Indicates that 'swapCommit' didn't match current repo commit.",
+          },
+        ],
+      },
+    },
+  },
+  ComAtprotoSpaceCreateSpace: {
+    lexicon: 1,
+    id: 'com.atproto.space.createSpace',
+    defs: {
+      main: {
+        type: 'procedure',
+        description:
+          'Create a new repository space. Requires auth, implemented by PDS.',
+        auth: {
+          permission: 'create',
+        },
+        input: {
+          encoding: 'application/json',
+          schema: {
+            type: 'object',
+            required: ['repo', 'record'],
+            properties: {
+              repo: {
+                type: 'string',
+                description:
+                  'The handle or DID of the repo (aka, current account).',
+                format: 'at-identifier',
+              },
+              space: {
+                type: 'string',
+                description: 'The id of the parent space to nest under.',
+                format: 'record-key',
+                maxLength: 64,
+              },
+              rkey: {
+                type: 'string',
+                description: 'The id of the space associated with the repo.',
+                format: 'record-key',
+                maxLength: 64,
+              },
+              record: {
+                type: 'unknown',
+                description: 'The record itself. Must contain a $type field.',
+              },
+              validate: {
+                type: 'boolean',
+                description:
+                  "Can be set to 'false' to skip Lexicon schema validation of record data, 'true' to require it, or leave unset to validate only for known Lexicons.",
+              },
+            },
+          },
+        },
+        output: {
+          encoding: 'application/json',
+          schema: {
+            type: 'object',
+            required: ['uri', 'cid'],
+            properties: {
+              uri: {
+                type: 'string',
+                format: 'at-uri',
+              },
+              cid: {
+                type: 'string',
+                format: 'cid',
+              },
+              commit: {
+                type: 'ref',
+                ref: 'lex:com.atproto.space.defs#commitMeta',
+              },
+              validationStatus: {
+                type: 'string',
+                knownValues: ['valid', 'unknown'],
+              },
+            },
+          },
+        },
+        errors: [
+          {
+            name: 'InvalidSwap',
+            description:
+              "Indicates that 'swapCommit' didn't match current repo commit.",
+          },
+        ],
+      },
+    },
+  },
+  ComAtprotoSpaceDefs: {
+    lexicon: 1,
+    id: 'com.atproto.space.defs',
+    defs: {
+      commitMeta: {
+        type: 'object',
+        required: ['cid', 'rev'],
+        properties: {
+          cid: {
+            type: 'string',
+            format: 'cid',
+          },
+          rev: {
+            type: 'string',
+            format: 'tid',
+          },
+        },
+      },
+      permissionTriplet: {
+        type: 'object',
+        properties: {
+          subject: {
+            type: 'string',
+          },
+          permission: {
+            type: 'string',
+          },
+          resource: {
+            type: 'string',
+          },
+        },
+      },
+    },
+  },
+  ComAtprotoSpaceDeleteGroup: {
+    lexicon: 1,
+    id: 'com.atproto.space.deleteGroup',
+    defs: {
+      main: {
+        type: 'procedure',
+        description:
+          "Delete a repository space and everything under it, or ensure it doesn't exist. Requires auth, implemented by PDS.",
+        auth: {
+          permission: 'iam_admin',
+        },
+        input: {
+          encoding: 'application/json',
+          schema: {
+            type: 'object',
+            required: ['repo', 'space'],
+            properties: {
+              repo: {
+                type: 'string',
+                format: 'at-identifier',
+                description:
+                  'The handle or DID of the repo (aka, current account).',
+              },
+              space: {
+                type: 'string',
+                description: 'The id of the space associated with the repo.',
+              },
+              swapRecord: {
+                type: 'string',
+                format: 'cid',
+                description:
+                  'Compare and swap with the previous record by CID.',
+              },
+              swapCommit: {
+                type: 'string',
+                format: 'cid',
+                description:
+                  'Compare and swap with the previous commit by CID.',
+              },
+            },
+          },
+        },
+        output: {
+          encoding: 'application/json',
+          schema: {
+            type: 'object',
+            properties: {
+              commit: {
+                type: 'ref',
+                ref: 'lex:com.atproto.space.defs#commitMeta',
+              },
+            },
+          },
+        },
+        errors: [
+          {
+            name: 'InvalidSwap',
+          },
+        ],
+      },
+    },
+  },
+  ComAtprotoSpaceDeleteRecord: {
+    lexicon: 1,
+    id: 'com.atproto.space.deleteRecord',
+    defs: {
+      main: {
+        type: 'procedure',
+        description:
+          "Delete a repository record, or ensure it doesn't exist. Requires auth, implemented by PDS.",
+        auth: {
+          permission: 'delete',
+        },
+        input: {
+          encoding: 'application/json',
+          schema: {
+            type: 'object',
+            required: ['repo', 'space', 'collection', 'rkey'],
+            properties: {
+              repo: {
+                type: 'string',
+                format: 'at-identifier',
+                description:
+                  'The handle or DID of the repo (aka, current account).',
+              },
+              space: {
+                type: 'string',
+                description: 'The id of the space associated with the repo.',
+              },
+              collection: {
+                type: 'string',
+                format: 'nsid',
+                description: 'The NSID of the record collection.',
+              },
+              rkey: {
+                type: 'string',
+                format: 'record-key',
+                description: 'The Record Key.',
+              },
+              swapRecord: {
+                type: 'string',
+                format: 'cid',
+                description:
+                  'Compare and swap with the previous record by CID.',
+              },
+              swapCommit: {
+                type: 'string',
+                format: 'cid',
+                description:
+                  'Compare and swap with the previous commit by CID.',
+              },
+            },
+          },
+        },
+        output: {
+          encoding: 'application/json',
+          schema: {
+            type: 'object',
+            properties: {
+              commit: {
+                type: 'ref',
+                ref: 'lex:com.atproto.space.defs#commitMeta',
+              },
+            },
+          },
+        },
+        errors: [
+          {
+            name: 'InvalidSwap',
+          },
+        ],
+      },
+    },
+  },
+  ComAtprotoSpaceDeleteRelationship: {
+    lexicon: 1,
+    id: 'com.atproto.space.deleteRelationship',
+    defs: {
+      main: {
+        type: 'procedure',
+        description:
+          "Delete a repository space and everything under it, or ensure it doesn't exist. Requires auth, implemented by PDS.",
+        auth: {
+          permission: 'iam_edit',
+        },
+        input: {
+          encoding: 'application/json',
+          schema: {
+            type: 'object',
+            required: ['repo', 'space'],
+            properties: {
+              repo: {
+                type: 'string',
+                format: 'at-identifier',
+                description:
+                  'The handle or DID of the repo (aka, current account).',
+              },
+              space: {
+                type: 'string',
+                description: 'The id of the space associated with the repo.',
+              },
+              subject: {
+                type: 'string',
+                description: 'the subject id to grant',
+              },
+              relation: {
+                type: 'string',
+                description: 'The relation to assign.',
+              },
+              object: {
+                type: 'string',
+                description: 'The object id to assign.',
+              },
+              swapRecord: {
+                type: 'string',
+                format: 'cid',
+                description:
+                  'Compare and swap with the previous record by CID.',
+              },
+              swapCommit: {
+                type: 'string',
+                format: 'cid',
+                description:
+                  'Compare and swap with the previous commit by CID.',
+              },
+            },
+          },
+        },
+        output: {
+          encoding: 'application/json',
+          schema: {
+            type: 'object',
+            properties: {
+              commit: {
+                type: 'ref',
+                ref: 'lex:com.atproto.space.defs#commitMeta',
+              },
+            },
+          },
+        },
+        errors: [
+          {
+            name: 'InvalidSwap',
+          },
+        ],
+      },
+    },
+  },
+  ComAtprotoSpaceDeleteSpace: {
+    lexicon: 1,
+    id: 'com.atproto.space.deleteSpace',
+    defs: {
+      main: {
+        type: 'procedure',
+        description:
+          "Delete a repository space and everything under it, or ensure it doesn't exist. Requires auth, implemented by PDS.",
+        auth: {
+          permission: 'delete',
+        },
+        input: {
+          encoding: 'application/json',
+          schema: {
+            type: 'object',
+            required: ['repo', 'space'],
+            properties: {
+              repo: {
+                type: 'string',
+                format: 'at-identifier',
+                description:
+                  'The handle or DID of the repo (aka, current account).',
+              },
+              space: {
+                type: 'string',
+                description: 'The id of the space associated with the repo.',
+              },
+              swapRecord: {
+                type: 'string',
+                format: 'cid',
+                description:
+                  'Compare and swap with the previous record by CID.',
+              },
+              swapCommit: {
+                type: 'string',
+                format: 'cid',
+                description:
+                  'Compare and swap with the previous commit by CID.',
+              },
+            },
+          },
+        },
+        output: {
+          encoding: 'application/json',
+          schema: {
+            type: 'object',
+            properties: {
+              commit: {
+                type: 'ref',
+                ref: 'lex:com.atproto.space.defs#commitMeta',
+              },
+            },
+          },
+        },
+        errors: [
+          {
+            name: 'InvalidSwap',
+          },
+        ],
+      },
+    },
+  },
+  ComAtprotoSpaceDescribeGroup: {
+    lexicon: 1,
+    id: 'com.atproto.space.describeGroup',
+    defs: {
+      main: {
+        type: 'query',
+        description: 'Get information about a group.',
+        auth: {
+          permission: 'list',
+        },
+        parameters: {
+          type: 'params',
+          required: ['repo', 'rkey'],
+          properties: {
+            repo: {
+              type: 'string',
+              description:
+                'The handle or DID of the repo (aka, current account).',
+              format: 'at-identifier',
+            },
+            space: {
+              type: 'string',
+              description: 'The id of the parent space to nest under.',
+              format: 'record-key',
+              maxLength: 256,
+            },
+            rkey: {
+              type: 'string',
+              description: 'The id of the space associated with the repo.',
+              format: 'record-key',
+              maxLength: 256,
+            },
+          },
+        },
+        output: {
+          encoding: 'application/json',
+          schema: {
+            type: 'object',
+            properties: {
+              hello: {
+                type: 'string',
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+  ComAtprotoSpaceDescribeSpace: {
+    lexicon: 1,
+    id: 'com.atproto.space.describeSpace',
+    defs: {
+      main: {
+        type: 'query',
+        description:
+          "Get information about an account's spaces, primarily the list of spaces the requester can see.",
+        auth: {
+          permission: 'list',
+        },
+        parameters: {
+          type: 'params',
+          required: ['repo'],
+          properties: {
+            repo: {
+              type: 'string',
+              description:
+                'The handle or DID of the repo (aka, current account).',
+              format: 'at-identifier',
+            },
+            space: {
+              type: 'string',
+              description: 'The id of the space associated with the repo.',
+              format: 'record-key',
+              maxLength: 256,
+            },
+          },
+        },
+        output: {
+          encoding: 'application/json',
+          schema: {
+            type: 'object',
+            required: ['spaces', 'groups', 'collections'],
+            properties: {
+              spaces: {
+                type: 'array',
+                description:
+                  'List of the spaces for which this requester has some permission for within this space.',
+                items: {
+                  type: 'string',
+                  format: 'at-uri',
+                },
+              },
+              groups: {
+                type: 'array',
+                description:
+                  'List of the groups for which this requester has some permission for within this space.',
+                items: {
+                  type: 'string',
+                  format: 'at-uri',
+                },
+              },
+              collections: {
+                type: 'array',
+                description:
+                  'List of the collections for which this requester has some permission for within this space.',
+                items: {
+                  type: 'string',
+                  format: 'nsid',
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+  ComAtprotoSpaceGetBlob: {
+    lexicon: 1,
+    id: 'com.atproto.space.getBlob',
+    defs: {
+      main: {
+        type: 'query',
+        description:
+          'Get a blob associated with a given account. Returns the full blob as originally uploaded. Does not require auth; implemented by PDS.',
+        auth: {
+          permission: 'read',
+        },
+        parameters: {
+          type: 'params',
+          required: ['repo', 'cid'],
+          properties: {
+            repo: {
+              type: 'string',
+              format: 'at-identifier',
+              description: 'The handle or DID of the repo.',
+            },
+            space: {
+              type: 'string',
+              description: 'The id of the space associated with the repo.',
+            },
+            cid: {
+              type: 'string',
+              format: 'cid',
+              description: 'The CID of the blob to fetch',
+            },
+          },
+        },
+        output: {
+          encoding: '*/*',
+        },
+        errors: [
+          {
+            name: 'BlobNotFound',
+          },
+          {
+            name: 'RepoNotFound',
+          },
+          {
+            name: 'RepoTakendown',
+          },
+          {
+            name: 'RepoSuspended',
+          },
+          {
+            name: 'RepoDeactivated',
+          },
+        ],
+      },
+    },
+  },
+  ComAtprotoSpaceGetGroup: {
+    lexicon: 1,
+    id: 'com.atproto.space.getGroup',
+    defs: {
+      main: {
+        type: 'query',
+        description: 'Get a single space from a repository.',
+        auth: {
+          permission: 'iam_read',
+        },
+        parameters: {
+          type: 'params',
+          required: ['repo', 'space'],
+          properties: {
+            repo: {
+              type: 'string',
+              format: 'at-identifier',
+              description: 'The handle or DID of the repo.',
+            },
+            space: {
+              type: 'string',
+              description: 'The id of the space associated with the repo.',
+            },
+            group: {
+              type: 'string',
+              description: 'The id of the group associated with the space.',
+            },
+            cid: {
+              type: 'string',
+              format: 'cid',
+              description:
+                'The CID of the version of the space. If not specified, then return the most recent version.',
+            },
+          },
+        },
+        output: {
+          encoding: 'application/json',
+          schema: {
+            type: 'object',
+            required: ['uri', 'value'],
+            properties: {
+              uri: {
+                type: 'string',
+                format: 'at-uri',
+              },
+              cid: {
+                type: 'string',
+                format: 'cid',
+              },
+              value: {
+                type: 'unknown',
+              },
+            },
+          },
+        },
+        errors: [
+          {
+            name: 'RecordNotFound',
+          },
+        ],
+      },
+    },
+  },
+  ComAtprotoSpaceGetRecord: {
+    lexicon: 1,
+    id: 'com.atproto.space.getRecord',
+    defs: {
+      main: {
+        type: 'query',
+        description:
+          'Get a single record from a repository. Does not require auth.',
+        auth: {
+          permission: 'read',
+        },
+        parameters: {
+          type: 'params',
+          required: ['repo', 'space', 'collection', 'rkey'],
+          properties: {
+            repo: {
+              type: 'string',
+              format: 'at-identifier',
+              description: 'The handle or DID of the repo.',
+            },
+            space: {
+              type: 'string',
+              description: 'The id of the space associated with the repo.',
+            },
+            collection: {
+              type: 'string',
+              format: 'nsid',
+              description: 'The NSID of the record collection.',
+            },
+            rkey: {
+              type: 'string',
+              description: 'The Record Key.',
+              format: 'record-key',
+            },
+            cid: {
+              type: 'string',
+              format: 'cid',
+              description:
+                'The CID of the version of the record. If not specified, then return the most recent version.',
+            },
+          },
+        },
+        output: {
+          encoding: 'application/json',
+          schema: {
+            type: 'object',
+            required: ['uri', 'value'],
+            properties: {
+              uri: {
+                type: 'string',
+                format: 'at-uri',
+              },
+              cid: {
+                type: 'string',
+                format: 'cid',
+              },
+              value: {
+                type: 'unknown',
+              },
+            },
+          },
+        },
+        errors: [
+          {
+            name: 'RecordNotFound',
+          },
+        ],
+      },
+    },
+  },
+  ComAtprotoSpaceGetRelationship: {
+    lexicon: 1,
+    id: 'com.atproto.space.getRelationship',
+    defs: {
+      main: {
+        type: 'query',
+        description: 'Get a single space from a repository.',
+        auth: {
+          permission: 'iam_read',
+        },
+        parameters: {
+          type: 'params',
+          required: ['repo', 'space'],
+          properties: {
+            repo: {
+              type: 'string',
+              format: 'at-identifier',
+              description: 'The handle or DID of the repo.',
+            },
+            space: {
+              type: 'string',
+              description: 'The id of the space associated with the repo.',
+            },
+            subject: {
+              type: 'string',
+              description: 'the subject id to grant',
+            },
+            relation: {
+              type: 'string',
+              description: 'The relation to assign.',
+            },
+            object: {
+              type: 'string',
+              description: 'The object id to assign.',
+            },
+            cid: {
+              type: 'string',
+              format: 'cid',
+              description:
+                'The CID of the version of the space. If not specified, then return the most recent version.',
+            },
+          },
+        },
+        output: {
+          encoding: 'application/json',
+          schema: {
+            type: 'object',
+            required: ['uri', 'value'],
+            properties: {
+              uri: {
+                type: 'string',
+                format: 'at-uri',
+              },
+              cid: {
+                type: 'string',
+                format: 'cid',
+              },
+              value: {
+                type: 'unknown',
+              },
+            },
+          },
+        },
+        errors: [
+          {
+            name: 'RecordNotFound',
+          },
+        ],
+      },
+    },
+  },
+  ComAtprotoSpaceGetSpace: {
+    lexicon: 1,
+    id: 'com.atproto.space.getSpace',
+    defs: {
+      main: {
+        type: 'query',
+        description: 'Get a single space from a repository.',
+        auth: {
+          permission: 'read',
+        },
+        parameters: {
+          type: 'params',
+          required: ['repo', 'space'],
+          properties: {
+            repo: {
+              type: 'string',
+              format: 'at-identifier',
+              description: 'The handle or DID of the repo.',
+            },
+            space: {
+              type: 'string',
+              description: 'The id of the space associated with the repo.',
+            },
+            cid: {
+              type: 'string',
+              format: 'cid',
+              description:
+                'The CID of the version of the space. If not specified, then return the most recent version.',
+            },
+          },
+        },
+        output: {
+          encoding: 'application/json',
+          schema: {
+            type: 'object',
+            required: ['uri', 'value'],
+            properties: {
+              uri: {
+                type: 'string',
+                format: 'at-uri',
+              },
+              cid: {
+                type: 'string',
+                format: 'cid',
+              },
+              value: {
+                type: 'unknown',
+              },
+            },
+          },
+        },
+        errors: [
+          {
+            name: 'RecordNotFound',
+          },
+        ],
+      },
+    },
+  },
+  ComAtprotoSpaceGroup: {
+    lexicon: 1,
+    id: 'com.atproto.space.group',
+    defs: {
+      main: {
+        type: 'record',
+        description: 'A declaration of a Group and some profile fields.',
+        key: 'any',
+        record: {
+          type: 'object',
+          properties: {
+            displayName: {
+              type: 'string',
+              maxGraphemes: 64,
+              maxLength: 640,
+            },
+            description: {
+              type: 'string',
+              description: 'Free-form profile description text.',
+              maxGraphemes: 256,
+              maxLength: 2560,
+            },
+            avatar: {
+              type: 'blob',
+              description:
+                "Small image to be displayed next to posts from account. AKA, 'profile picture'",
+              accept: ['image/png', 'image/jpeg'],
+              maxSize: 1000000,
+            },
+            banner: {
+              type: 'blob',
+              description:
+                'Larger horizontal image to display behind profile view.',
+              accept: ['image/png', 'image/jpeg'],
+              maxSize: 1000000,
+            },
+            labels: {
+              type: 'union',
+              description:
+                'Self-label values, specific to the Bluesky application, on the overall account.',
+              refs: ['lex:com.atproto.label.defs#selfLabels'],
+            },
+            createdAt: {
+              type: 'string',
+              format: 'datetime',
+            },
+          },
+        },
+      },
+    },
+  },
+  ComAtprotoSpaceListBlobs: {
+    lexicon: 1,
+    id: 'com.atproto.space.listBlobs',
+    defs: {
+      main: {
+        type: 'query',
+        description:
+          'List blob CIDs for an account, since some repo revision. Does not require auth; implemented by PDS.',
+        auth: {
+          permission: 'list',
+        },
+        parameters: {
+          type: 'params',
+          required: ['repo', 'space'],
+          properties: {
+            repo: {
+              type: 'string',
+              format: 'at-identifier',
+              description: 'The handle or DID of the repo.',
+            },
+            space: {
+              type: 'string',
+              description: 'The id of the space associated with the repo.',
+            },
+            since: {
+              type: 'string',
+              format: 'tid',
+              description: 'Optional revision of the repo to list blobs since.',
+            },
+            limit: {
+              type: 'integer',
+              minimum: 1,
+              maximum: 1000,
+              default: 500,
+            },
+            cursor: {
+              type: 'string',
+            },
+          },
+        },
+        output: {
+          encoding: 'application/json',
+          schema: {
+            type: 'object',
+            required: ['cids'],
+            properties: {
+              cursor: {
+                type: 'string',
+              },
+              cids: {
+                type: 'array',
+                items: {
+                  type: 'string',
+                  format: 'cid',
+                },
+              },
+            },
+          },
+        },
+        errors: [
+          {
+            name: 'RepoNotFound',
+          },
+          {
+            name: 'RepoTakendown',
+          },
+          {
+            name: 'RepoSuspended',
+          },
+          {
+            name: 'RepoDeactivated',
+          },
+        ],
+      },
+    },
+  },
+  ComAtprotoSpaceListGroups: {
+    lexicon: 1,
+    id: 'com.atproto.space.listGroups',
+    defs: {
+      main: {
+        type: 'query',
+        description:
+          'List a range of records in a space, matching a specific collection.',
+        auth: {
+          permission: 'iam_list',
+        },
+        parameters: {
+          type: 'params',
+          required: ['repo', 'space'],
+          properties: {
+            repo: {
+              type: 'string',
+              format: 'at-identifier',
+              description: 'The handle or DID of the repo.',
+            },
+            space: {
+              type: 'string',
+              description: 'The id of the space associated with the repo.',
+            },
+            limit: {
+              type: 'integer',
+              minimum: 1,
+              maximum: 100,
+              default: 50,
+              description: 'The number of records to return.',
+            },
+            cursor: {
+              type: 'string',
+            },
+            reverse: {
+              type: 'boolean',
+              description: 'Flag to reverse the order of the returned records.',
+            },
+          },
+        },
+        output: {
+          encoding: 'application/json',
+          schema: {
+            type: 'object',
+            required: ['groups'],
+            properties: {
+              cursor: {
+                type: 'string',
+              },
+              groups: {
+                type: 'array',
+                items: {
+                  type: 'ref',
+                  ref: 'lex:com.atproto.space.listGroups#group',
+                },
+              },
+            },
+          },
+        },
+      },
+      group: {
+        type: 'object',
+        required: ['uri', 'cid', 'value'],
+        properties: {
+          uri: {
+            type: 'string',
+            format: 'at-uri',
+          },
+          cid: {
+            type: 'string',
+            format: 'cid',
+          },
+          value: {
+            type: 'unknown',
+          },
+        },
+      },
+    },
+  },
+  ComAtprotoSpaceListMissingBlobs: {
+    lexicon: 1,
+    id: 'com.atproto.space.listMissingBlobs',
+    defs: {
+      main: {
+        type: 'query',
+        description:
+          'Returns a list of missing blobs for the requesting account. Intended to be used in the account migration flow.',
+        parameters: {
+          type: 'params',
+          required: ['repo', 'space'],
+          properties: {
+            repo: {
+              type: 'string',
+              format: 'at-identifier',
+              description: 'The handle or DID of the repo.',
+            },
+            space: {
+              type: 'string',
+              description: 'The id of the space associated with the repo.',
+            },
+            limit: {
+              type: 'integer',
+              minimum: 1,
+              maximum: 1000,
+              default: 500,
+            },
+            cursor: {
+              type: 'string',
+            },
+          },
+        },
+        output: {
+          encoding: 'application/json',
+          schema: {
+            type: 'object',
+            required: ['blobs'],
+            properties: {
+              cursor: {
+                type: 'string',
+              },
+              blobs: {
+                type: 'array',
+                items: {
+                  type: 'ref',
+                  ref: 'lex:com.atproto.space.listMissingBlobs#recordBlob',
+                },
+              },
+            },
+          },
+        },
+      },
+      recordBlob: {
+        type: 'object',
+        required: ['cid', 'recordUri'],
+        properties: {
+          cid: {
+            type: 'string',
+            format: 'cid',
+          },
+          recordUri: {
+            type: 'string',
+            format: 'at-uri',
+          },
+        },
+      },
+    },
+  },
+  ComAtprotoSpaceListRecords: {
+    lexicon: 1,
+    id: 'com.atproto.space.listRecords',
+    defs: {
+      main: {
+        type: 'query',
+        description:
+          'List a range of records in a space, matching a specific collection.',
+        auth: {
+          permission: 'list',
+        },
+        parameters: {
+          type: 'params',
+          required: ['repo', 'space', 'collection'],
+          properties: {
+            repo: {
+              type: 'string',
+              format: 'at-identifier',
+              description: 'The handle or DID of the repo.',
+            },
+            space: {
+              type: 'string',
+              description: 'The id of the space associated with the repo.',
+            },
+            collection: {
+              type: 'string',
+              format: 'nsid',
+              description: 'The NSID of the record type.',
+            },
+            limit: {
+              type: 'integer',
+              minimum: 1,
+              maximum: 100,
+              default: 50,
+              description: 'The number of records to return.',
+            },
+            cursor: {
+              type: 'string',
+            },
+            reverse: {
+              type: 'boolean',
+              description: 'Flag to reverse the order of the returned records.',
+            },
+          },
+        },
+        output: {
+          encoding: 'application/json',
+          schema: {
+            type: 'object',
+            required: ['records'],
+            properties: {
+              cursor: {
+                type: 'string',
+              },
+              records: {
+                type: 'array',
+                items: {
+                  type: 'ref',
+                  ref: 'lex:com.atproto.space.listRecords#record',
+                },
+              },
+            },
+          },
+        },
+      },
+      record: {
+        type: 'object',
+        required: ['uri', 'cid', 'value'],
+        properties: {
+          uri: {
+            type: 'string',
+            format: 'at-uri',
+          },
+          cid: {
+            type: 'string',
+            format: 'cid',
+          },
+          value: {
+            type: 'unknown',
+          },
+        },
+      },
+    },
+  },
+  ComAtprotoSpaceListSpaces: {
+    lexicon: 1,
+    id: 'com.atproto.space.listSpaces',
+    defs: {
+      main: {
+        type: 'query',
+        description: 'List the spaces requester has access to.',
+        auth: {
+          permission: 'list',
+        },
+        parameters: {
+          type: 'params',
+          required: ['repo'],
+          properties: {
+            repo: {
+              type: 'string',
+              format: 'at-identifier',
+              description: 'The handle or DID of the repo.',
+            },
+            limit: {
+              type: 'integer',
+              minimum: 1,
+              maximum: 100,
+              default: 50,
+              description: 'The number of records to return.',
+            },
+            cursor: {
+              type: 'string',
+            },
+            reverse: {
+              type: 'boolean',
+              description: 'Flag to reverse the order of the returned records.',
+            },
+          },
+        },
+        output: {
+          encoding: 'application/json',
+          schema: {
+            type: 'object',
+            required: ['spaces'],
+            properties: {
+              cursor: {
+                type: 'string',
+              },
+              spaces: {
+                type: 'array',
+                items: {
+                  type: 'ref',
+                  ref: 'lex:com.atproto.space.listSpaces#record',
+                },
+              },
+            },
+          },
+        },
+      },
+      record: {
+        type: 'object',
+        required: ['uri', 'cid', 'value'],
+        properties: {
+          uri: {
+            type: 'string',
+            format: 'at-uri',
+          },
+          cid: {
+            type: 'string',
+            format: 'cid',
+          },
+          value: {
+            type: 'unknown',
+            description: 'Information about the space.',
+          },
+        },
+      },
+    },
+  },
+  ComAtprotoSpaceLookupResources: {
+    lexicon: 1,
+    id: 'com.atproto.space.lookupResources',
+    defs: {
+      main: {
+        type: 'query',
+        description: 'List of spaces which the requester has access too.',
+        auth: {
+          permission: 'iam_list',
+        },
+        parameters: {
+          type: 'params',
+          required: ['repo', 'space', 'subject', 'permission'],
+          properties: {
+            repo: {
+              type: 'string',
+              format: 'at-identifier',
+              description: 'The handle or DID of the repo.',
+            },
+            space: {
+              type: 'string',
+              description: 'The id of the space associated with the repo.',
+            },
+            subject: {
+              type: 'string',
+              description: 'the subject id.',
+            },
+            permission: {
+              type: 'string',
+              description: 'The required permission.',
+            },
+          },
+        },
+        output: {
+          encoding: 'application/json',
+          schema: {
+            type: 'object',
+            required: ['objects'],
+            properties: {
+              objects: {
+                type: 'array',
+                description:
+                  'List of all the objects the subject has the given permission on.',
+                items: {
+                  type: 'string',
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+  ComAtprotoSpaceLookupSubjects: {
+    lexicon: 1,
+    id: 'com.atproto.space.lookupSubjects',
+    defs: {
+      main: {
+        type: 'query',
+        description: 'List of spaces which the requester has access too.',
+        auth: {
+          permission: 'iam_list',
+        },
+        parameters: {
+          type: 'params',
+          required: ['repo', 'space', 'object', 'permission'],
+          properties: {
+            repo: {
+              type: 'string',
+              format: 'at-identifier',
+              description: 'The handle or DID of the repo.',
+            },
+            space: {
+              type: 'string',
+              description: 'The id of the space associated with the repo.',
+            },
+            object: {
+              type: 'string',
+              description: 'The object id.',
+            },
+            permission: {
+              type: 'string',
+              description: 'The required permission.',
+            },
+          },
+        },
+        output: {
+          encoding: 'application/json',
+          schema: {
+            type: 'object',
+            required: ['subjects'],
+            properties: {
+              subjects: {
+                type: 'array',
+                description:
+                  'List of all the subjects that have the given permission on the object.',
+                items: {
+                  type: 'string',
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+  ComAtprotoSpacePutGroup: {
+    lexicon: 1,
+    id: 'com.atproto.space.putGroup',
+    defs: {
+      main: {
+        type: 'procedure',
+        description:
+          'Write a group, creating or updating it as needed. Requires auth, implemented by PDS.',
+        auth: {
+          permission: 'iam_admin',
+        },
+        input: {
+          encoding: 'application/json',
+          schema: {
+            type: 'object',
+            required: ['repo', 'space', 'group', 'record'],
+            nullable: ['swapRecord'],
+            properties: {
+              repo: {
+                type: 'string',
+                format: 'at-identifier',
+                description:
+                  'The handle or DID of the repo (aka, current account).',
+              },
+              space: {
+                type: 'string',
+                description: 'The id of the space associated with the repo.',
+              },
+              group: {
+                type: 'string',
+                description: 'The id of the group associated with the space.',
+              },
+              parent: {
+                type: 'string',
+                description: 'The id of the space to nest this one under.',
+              },
+              record: {
+                type: 'unknown',
+                description: 'The record itself. Must contain a $type field.',
+              },
+              validate: {
+                type: 'boolean',
+                description:
+                  "Can be set to 'false' to skip Lexicon schema validation of record data, 'true' to require it, or leave unset to validate only for known Lexicons.",
+              },
+            },
+          },
+        },
+        output: {
+          encoding: 'application/json',
+          schema: {
+            type: 'object',
+            required: ['uri', 'cid'],
+            properties: {
+              uri: {
+                type: 'string',
+                format: 'at-uri',
+              },
+              cid: {
+                type: 'string',
+                format: 'cid',
+              },
+              validationStatus: {
+                type: 'string',
+                knownValues: ['valid', 'unknown'],
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+  ComAtprotoSpacePutRecord: {
+    lexicon: 1,
+    id: 'com.atproto.space.putRecord',
+    defs: {
+      main: {
+        type: 'procedure',
+        description:
+          'Write a repository record, creating or updating it as needed. Requires auth, implemented by PDS.',
+        auth: {
+          permission: 'update',
+        },
+        input: {
+          encoding: 'application/json',
+          schema: {
+            type: 'object',
+            required: ['repo', 'space', 'collection', 'rkey', 'record'],
+            nullable: ['swapRecord'],
+            properties: {
+              repo: {
+                type: 'string',
+                format: 'at-identifier',
+                description:
+                  'The handle or DID of the repo (aka, current account).',
+              },
+              space: {
+                type: 'string',
+                description: 'The id of the space associated with the repo.',
+              },
+              collection: {
+                type: 'string',
+                format: 'nsid',
+                description: 'The NSID of the record collection.',
+              },
+              rkey: {
+                type: 'string',
+                format: 'record-key',
+                description: 'The Record Key.',
+                maxLength: 512,
+              },
+              validate: {
+                type: 'boolean',
+                description:
+                  "Can be set to 'false' to skip Lexicon schema validation of record data, 'true' to require it, or leave unset to validate only for known Lexicons.",
+              },
+              record: {
+                type: 'unknown',
+                description: 'The record to write.',
+              },
+            },
+          },
+        },
+        output: {
+          encoding: 'application/json',
+          schema: {
+            type: 'object',
+            required: ['uri', 'cid'],
+            properties: {
+              uri: {
+                type: 'string',
+                format: 'at-uri',
+              },
+              cid: {
+                type: 'string',
+                format: 'cid',
+              },
+              validationStatus: {
+                type: 'string',
+                knownValues: ['valid', 'unknown'],
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+  ComAtprotoSpacePutRelationship: {
+    lexicon: 1,
+    id: 'com.atproto.space.putRelationship',
+    defs: {
+      main: {
+        type: 'procedure',
+        description:
+          'Write a repository space, creating or updating it as needed. Requires auth, implemented by PDS.',
+        auth: {
+          permission: 'iam_edit',
+        },
+        input: {
+          encoding: 'application/json',
+          schema: {
+            type: 'object',
+            required: ['repo', 'space', 'subject', 'relation', 'object'],
+            properties: {
+              repo: {
+                type: 'string',
+                format: 'at-identifier',
+                description:
+                  'The handle or DID of the repo (aka, current account).',
+              },
+              space: {
+                type: 'string',
+                description: 'The id of the space associated with the repo.',
+              },
+              subject: {
+                type: 'string',
+                description: 'the subject id to grant',
+              },
+              relation: {
+                type: 'string',
+                description: 'The relation to assign.',
+              },
+              object: {
+                type: 'string',
+                description: 'The object id to assign.',
+              },
+              swapRecord: {
+                type: 'string',
+                format: 'cid',
+                description:
+                  'Compare and swap with the previous record by CID.',
+              },
+              swapCommit: {
+                type: 'string',
+                format: 'cid',
+                description:
+                  'Compare and swap with the previous commit by CID.',
+              },
+            },
+          },
+        },
+        output: {
+          encoding: 'application/json',
+          schema: {
+            type: 'object',
+            required: ['uri', 'cid'],
+            properties: {
+              uri: {
+                type: 'string',
+                format: 'at-uri',
+              },
+              cid: {
+                type: 'string',
+                format: 'cid',
+              },
+              validationStatus: {
+                type: 'string',
+                knownValues: ['valid', 'unknown'],
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+  ComAtprotoSpacePutSpace: {
+    lexicon: 1,
+    id: 'com.atproto.space.putSpace',
+    defs: {
+      main: {
+        type: 'procedure',
+        description:
+          'Write a repository space, creating or updating it as needed. Requires auth, implemented by PDS.',
+        auth: {
+          permission: 'update',
+        },
+        input: {
+          encoding: 'application/json',
+          schema: {
+            type: 'object',
+            required: ['repo', 'space', 'record'],
+            nullable: ['swapRecord'],
+            properties: {
+              repo: {
+                type: 'string',
+                format: 'at-identifier',
+                description:
+                  'The handle or DID of the repo (aka, current account).',
+              },
+              space: {
+                type: 'string',
+                description: 'The id of the space associated with the repo.',
+              },
+              parent: {
+                type: 'string',
+                description: 'The id of the space to nest this one under.',
+              },
+              record: {
+                type: 'unknown',
+                description: 'The record itself. Must contain a $type field.',
+              },
+              validate: {
+                type: 'boolean',
+                description:
+                  "Can be set to 'false' to skip Lexicon schema validation of record data, 'true' to require it, or leave unset to validate only for known Lexicons.",
+              },
+            },
+          },
+        },
+        output: {
+          encoding: 'application/json',
+          schema: {
+            type: 'object',
+            required: ['uri', 'cid'],
+            properties: {
+              uri: {
+                type: 'string',
+                format: 'at-uri',
+              },
+              cid: {
+                type: 'string',
+                format: 'cid',
+              },
+              validationStatus: {
+                type: 'string',
+                knownValues: ['valid', 'unknown'],
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+  ComAtprotoSpaceRelationship: {
+    lexicon: 1,
+    id: 'com.atproto.space.relationship',
+    defs: {
+      main: {
+        type: 'record',
+        description:
+          'A declaration of an ATProto relationship tied to the repo and optionally space.',
+        key: 'any',
+        record: {
+          type: 'object',
+          properties: {
+            repo: {
+              type: 'string',
+              format: 'at-identifier',
+              description:
+                'The handle or DID of the repo (aka, current account).',
+            },
+            space: {
+              type: 'string',
+              description: 'The id of the space associated with the repo.',
+            },
+            subject: {
+              type: 'string',
+            },
+            permission: {
+              type: 'string',
+            },
+            object: {
+              type: 'string',
+            },
+            createdAt: {
+              type: 'string',
+              format: 'datetime',
+            },
+          },
+        },
+      },
+    },
+  },
+  ComAtprotoSpaceSpace: {
+    lexicon: 1,
+    id: 'com.atproto.space.space',
+    defs: {
+      main: {
+        type: 'record',
+        description: 'A declaration of a Space and some profile fields.',
+        key: 'any',
+        record: {
+          type: 'object',
+          properties: {
+            displayName: {
+              type: 'string',
+              maxGraphemes: 64,
+              maxLength: 640,
+            },
+            description: {
+              type: 'string',
+              description: 'Free-form profile description text.',
+              maxGraphemes: 256,
+              maxLength: 2560,
+            },
+            avatar: {
+              type: 'blob',
+              description:
+                "Small image to be displayed next to posts from account. AKA, 'profile picture'",
+              accept: ['image/png', 'image/jpeg'],
+              maxSize: 1000000,
+            },
+            banner: {
+              type: 'blob',
+              description:
+                'Larger horizontal image to display behind profile view.',
+              accept: ['image/png', 'image/jpeg'],
+              maxSize: 1000000,
+            },
+            labels: {
+              type: 'union',
+              description:
+                'Self-label values, specific to the Bluesky application, on the overall account.',
+              refs: ['lex:com.atproto.label.defs#selfLabels'],
+            },
+            createdAt: {
+              type: 'string',
+              format: 'datetime',
+            },
+          },
+        },
+      },
+    },
+  },
+  ComAtprotoSpaceUploadBlob: {
+    lexicon: 1,
+    id: 'com.atproto.space.uploadBlob',
+    defs: {
+      main: {
+        type: 'procedure',
+        description:
+          'Upload a new blob, to be referenced from a repository record. The blob will be deleted if it is not referenced within a time window (eg, minutes). Blob restrictions (mimetype, size, etc) are enforced when the reference is created. Requires auth, implemented by PDS.',
+        auth: {
+          permission: 'write',
+        },
+        parameters: {
+          type: 'params',
+          required: ['repo', 'space'],
+          properties: {
+            repo: {
+              type: 'string',
+              format: 'at-identifier',
+              description: 'The handle or DID of the repo.',
+            },
+            space: {
+              type: 'string',
+              description: 'The id of the space associated with the repo.',
+            },
+          },
+        },
+        input: {
+          encoding: '*/*',
+        },
+        output: {
+          encoding: 'application/json',
+          schema: {
+            type: 'object',
+            required: ['blob', 'space'],
+            properties: {
+              space: {
+                type: 'string',
+              },
+              blob: {
+                type: 'blob',
+              },
+            },
+          },
+        },
+      },
+    },
+  },
   ComAtprotoSyncDefs: {
     lexicon: 1,
     id: 'com.atproto.sync.defs',
@@ -18689,6 +21057,40 @@ export const ids = {
   ComAtprotoServerResetPassword: 'com.atproto.server.resetPassword',
   ComAtprotoServerRevokeAppPassword: 'com.atproto.server.revokeAppPassword',
   ComAtprotoServerUpdateEmail: 'com.atproto.server.updateEmail',
+  ComAtprotoSpaceApplyWrites: 'com.atproto.space.applyWrites',
+  ComAtprotoSpaceCheckPermission: 'com.atproto.space.checkPermission',
+  ComAtprotoSpaceCheckPermissions: 'com.atproto.space.checkPermissions',
+  ComAtprotoSpaceCreateGroup: 'com.atproto.space.createGroup',
+  ComAtprotoSpaceCreateRecord: 'com.atproto.space.createRecord',
+  ComAtprotoSpaceCreateRelationship: 'com.atproto.space.createRelationship',
+  ComAtprotoSpaceCreateSpace: 'com.atproto.space.createSpace',
+  ComAtprotoSpaceDefs: 'com.atproto.space.defs',
+  ComAtprotoSpaceDeleteGroup: 'com.atproto.space.deleteGroup',
+  ComAtprotoSpaceDeleteRecord: 'com.atproto.space.deleteRecord',
+  ComAtprotoSpaceDeleteRelationship: 'com.atproto.space.deleteRelationship',
+  ComAtprotoSpaceDeleteSpace: 'com.atproto.space.deleteSpace',
+  ComAtprotoSpaceDescribeGroup: 'com.atproto.space.describeGroup',
+  ComAtprotoSpaceDescribeSpace: 'com.atproto.space.describeSpace',
+  ComAtprotoSpaceGetBlob: 'com.atproto.space.getBlob',
+  ComAtprotoSpaceGetGroup: 'com.atproto.space.getGroup',
+  ComAtprotoSpaceGetRecord: 'com.atproto.space.getRecord',
+  ComAtprotoSpaceGetRelationship: 'com.atproto.space.getRelationship',
+  ComAtprotoSpaceGetSpace: 'com.atproto.space.getSpace',
+  ComAtprotoSpaceGroup: 'com.atproto.space.group',
+  ComAtprotoSpaceListBlobs: 'com.atproto.space.listBlobs',
+  ComAtprotoSpaceListGroups: 'com.atproto.space.listGroups',
+  ComAtprotoSpaceListMissingBlobs: 'com.atproto.space.listMissingBlobs',
+  ComAtprotoSpaceListRecords: 'com.atproto.space.listRecords',
+  ComAtprotoSpaceListSpaces: 'com.atproto.space.listSpaces',
+  ComAtprotoSpaceLookupResources: 'com.atproto.space.lookupResources',
+  ComAtprotoSpaceLookupSubjects: 'com.atproto.space.lookupSubjects',
+  ComAtprotoSpacePutGroup: 'com.atproto.space.putGroup',
+  ComAtprotoSpacePutRecord: 'com.atproto.space.putRecord',
+  ComAtprotoSpacePutRelationship: 'com.atproto.space.putRelationship',
+  ComAtprotoSpacePutSpace: 'com.atproto.space.putSpace',
+  ComAtprotoSpaceRelationship: 'com.atproto.space.relationship',
+  ComAtprotoSpaceSpace: 'com.atproto.space.space',
+  ComAtprotoSpaceUploadBlob: 'com.atproto.space.uploadBlob',
   ComAtprotoSyncDefs: 'com.atproto.sync.defs',
   ComAtprotoSyncGetBlob: 'com.atproto.sync.getBlob',
   ComAtprotoSyncGetBlocks: 'com.atproto.sync.getBlocks',
