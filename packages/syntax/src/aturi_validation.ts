@@ -11,21 +11,29 @@ import { isValidNsid } from './nsid'
 //      - optionally, follow "authority" with "/" and valid NSID as start of path
 //      - optionally, if NSID given, follow that with "/" and rkey
 //      - rkey path component can include URL-encoded ("percent encoded"), or:
-//          ALPHA / DIGIT / "-" / "." / "_" / "~" / ":" / "@" / "!" / "$" / "&" / "'" / "(" / ")" / "*" / "+" / "," / ";" / "="
-//          [a-zA-Z0-9._~:@!$&'\(\)*+,;=-]
+//          ALPHA / DIGIT / "-" / "." / "_" / "~" / ":" / "@" / "!" / "$" / "&" / "?" / "'" / "(" / ")" / "*" / "+" / "," / ";" / "="
+//          [a-zA-Z0-9._~:@!$&?'\(\)*+,;=-]
 //      - rkey must have at least one char
 //      - regardless of path component, a fragment can follow  as "#" and then a JSON pointer (RFC-6901)
 export const ensureValidAtUri = (uri: string) => {
   // JSON pointer is pretty different from rest of URI, so split that out first
-  const uriParts = uri.split('#')
-  if (uriParts.length > 2) {
-    throw new Error('ATURI can have at most one "#", separating fragment out')
+  let fragmentPart: string | null = null
+  const hashIndex = uri.indexOf('#')
+  if (hashIndex > -1) {
+    fragmentPart = uri.slice(hashIndex + 1)
+    uri = uri.slice(0, hashIndex)
   }
-  const fragmentPart = uriParts[1] || null
-  uri = uriParts[0]
+
+  // query part is also pretty different, so split that out next
+  let queryPart: string | null = null
+  const queryIndex = uri.indexOf('?')
+  if (queryIndex > -1) {
+    queryPart = uri.slice(queryIndex + 1)
+    uri = uri.slice(0, queryIndex)
+  }
 
   // check that all chars are boring ASCII
-  if (!/^[a-zA-Z0-9._~:@!$&')(*+,;=%/-]*$/.test(uri)) {
+  if (!/^[a-zA-Z0-9._~:@!$&?')(*+,;=%/-]*$/.test(uri)) {
     throw new Error('Disallowed characters in ATURI (ASCII)')
   }
 
@@ -75,9 +83,6 @@ export const ensureValidAtUri = (uri: string) => {
     )
   }
 
-  if (uriParts.length >= 2 && fragmentPart == null) {
-    throw new Error('ATURI fragment must be non-empty and start with slash')
-  }
 
   if (fragmentPart != null) {
     if (fragmentPart.length === 0 || fragmentPart[0] !== '/') {
@@ -86,6 +91,16 @@ export const ensureValidAtUri = (uri: string) => {
     // NOTE: enforcing *some* checks here for sanity. Eg, at least no whitespace
     if (!/^\/[a-zA-Z0-9._~:@!$&')(*+,;=%[\]/-]*$/.test(fragmentPart)) {
       throw new Error('Disallowed characters in ATURI fragment (ASCII)')
+    }
+  }
+
+  if (queryPart != null) {
+    if (queryPart.length === 0) {
+      throw new Error('ATURI query must be non-empty')
+    }
+    // NOTE: enforcing *some* checks here for sanity. Eg, at least no whitespace
+    if (!/^[a-zA-Z0-9._~:@!$&?')(*+,;=%/-]*$/.test(queryPart)) {
+      throw new Error('Disallowed characters in ATURI query (ASCII)')
     }
   }
 
@@ -98,7 +113,7 @@ export const ensureValidAtUriRegex = (uri: string): void => {
   // simple regex to enforce most constraints via just regex and length.
   // hand wrote this regex based on above constraints. whew!
   const aturiRegex =
-    /^at:\/\/(?<authority>[a-zA-Z0-9._:%-]+)(\/(?<collection>[a-zA-Z0-9-.]+)(\/(?<rkey>[a-zA-Z0-9._~:@!$&%')(*+,;=-]+))?)?(#(?<fragment>\/[a-zA-Z0-9._~:@!$&%')(*+,;=\-[\]/\\]*))?$/
+    /^at:\/\/(?<authority>[a-zA-Z0-9._:%-]+)(\/(?<collection>[a-zA-Z0-9-.]+)(\/(?<rkey>[a-zA-Z0-9._~:@!$&%')(*+,;=-]+))?)?(\?(?<query>[a-zA-Z0-9._~:@!$&%')(*+,;=/-]*))?(#(?<fragment>\/[a-zA-Z0-9._~:@!$&%')(*+,;=\-[\]/]*))?$/
   const rm = uri.match(aturiRegex)
   if (!rm || !rm.groups) {
     throw new Error("ATURI didn't validate via regex")
