@@ -19,17 +19,22 @@
     "verify:lint": "pnpm lint",
     "verify:types": "tsc --build tsconfig.json",
     "format": "pnpm lint:fix && pnpm style:fix",
+    "spacegen": "cd lexicons/com/atproto/space && make gen",
+    "pdsgen": "cd packages/pds/src/api/com/atproto/space && hof gen",
+    "schemagen": "pnpm run --recursive --stream --filter '@atproto/pds...' schemagen",
     "precodegen": "pnpm run --recursive --stream --filter '@atproto/lex-cli...' build --force",
     "codegen": "pnpm run --sort --recursive --stream --parallel codegen",
-    "build": "pnpm run --sort --recursive --stream '/^(build|build:.+)$/'",
+    "build": "pnpm run --sort --recursive --stream --filter '!./packages/{dev-env}' '/^(build|build:.+)$/'",
+    "dev-env:build": "pnpm run --sort --recursive --stream --filter './packages/{pds,dev-env}' build",
     "i18n": "pnpm run --parallel i18n:extract",
     "dev": "NODE_ENV=development pnpm run --recursive --parallel --stream '/^(dev|dev:.+)$/'",
     "dev:tsc": "tsc --build tsconfig.json --preserveWatchOutput --watch",
-    "test": "LOG_ENABLED=false ./packages/dev-infra/with-test-redis-and-db.sh pnpm test --stream --recursive",
+    "test": "LOG_ENABLED=false ./packages/dev-infra/with-test-redis-and-db.sh pnpm test --stream --recursive --filter '!./packages/{bsky,ozone}'",
     "test:withFlags": "pnpm run test --",
     "changeset": "changeset",
     "release": "pnpm build && changeset publish",
-    "version-packages": "changeset version && git add ."
+    "version-packages": "changeset version && git add .",
+    "zed": "zed --endpoint localhost:50051 --token spicedb --insecure $@"
   },
   "devDependencies": {
     "@atproto/dev-env": "workspace:^",
@@ -67,5 +72,8 @@
       "packages/oauth/*",
       "packages/internal/*"
     ]
+  },
+  "dependencies": {
+    "tsx": "^4.20.5"
   }
 }

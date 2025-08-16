@@ -1,5 +1,5 @@
 import './env'
-import { generateMockSetup } from './mock'
+// import { generateMockSetup } from './mock'
 import { TestNetwork } from './network'
 import { mockMailer } from './util'
 
@@ -19,6 +19,9 @@ const run = async () => {
       port: 2583,
       hostname: 'localhost',
       enableDidDocWithSession: true,
+      spicedbHost: 'localhost:50051',
+      spicedbToken: 'spicedb',
+      spicedbInsecure: 'true',
     },
     bsky: {
       dbPostgresSchema: 'bsky',
@@ -35,7 +38,7 @@ const run = async () => {
     introspect: { port: 2581 },
   })
   mockMailer(network.pds)
-  await generateMockSetup(network)
+  // await generateMockSetup(network)
 
   if (network.introspect) {
     console.log(

@@ -15,10 +15,16 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "bin": "dist/bin.js",
+  "hack": "dist/hack/hack.js",
+  "example/*": "dist/example/*.js",
   "scripts": {
     "build": "tsc --build tsconfig.build.json",
     "start": "../dev-infra/with-test-redis-and-db.sh node --enable-source-maps dist/bin.js",
-    "dev": "../dev-infra/with-test-redis-and-db.sh node --enable-source-maps --watch dist/bin.js"
+    "dev": "../dev-infra/with-test-redis-and-db.sh node --enable-source-maps --watch dist/bin.js",
+    "hack": "tsc --build tsconfig.build.json && node --enable-source-maps dist/hack/hack.js $@",
+    "example.bubble": "tsc --build tsconfig.build.json && node --enable-source-maps dist/example/bubble.js",
+    "example.basic": "tsc --build tsconfig.build.json && node --enable-source-maps dist/example/basic.js",
+    "example.accounts": "tsc --build tsconfig.build.json && node --enable-source-maps dist/example/accounts.js"
   },
   "engines": {
     "node": ">=18.7.0"

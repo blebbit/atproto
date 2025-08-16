@@ -52,6 +52,7 @@
     "@atproto/xrpc-server": "workspace:^",
     "@did-plc/lib": "^0.0.4",
     "@hapi/address": "^5.1.1",
+    "@paralleldrive/cuid2": "^2.2.2",
     "better-sqlite3": "^10.0.0",
     "bytes": "^3.1.2",
     "compression": "^1.7.4",

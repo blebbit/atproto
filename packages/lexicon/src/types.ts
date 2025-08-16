@@ -281,32 +281,47 @@ export const lexXrpcError = z.object({
 })
 export type LexXrpcError = z.infer<typeof lexXrpcError>
 
-export const lexXrpcQuery = z.object({
-  type: z.literal('query'),
-  description: z.string().optional(),
-  parameters: lexXrpcParameters.optional(),
-  output: lexXrpcBody.optional(),
-  errors: lexXrpcError.array().optional(),
-})
+export const lexXrpcQuery = z
+  .object({
+    type: z.literal('query'),
+    description: z.string().optional(),
+    auth: z.object({
+      permission: z.string()
+    }).optional(),
+    parameters: lexXrpcParameters.optional(),
+    output: lexXrpcBody.optional(),
+    errors: lexXrpcError.array().optional(),
+  })
+  .strict()
 export type LexXrpcQuery = z.infer<typeof lexXrpcQuery>
 
-export const lexXrpcProcedure = z.object({
-  type: z.literal('procedure'),
-  description: z.string().optional(),
-  parameters: lexXrpcParameters.optional(),
-  input: lexXrpcBody.optional(),
-  output: lexXrpcBody.optional(),
-  errors: lexXrpcError.array().optional(),
-})
+export const lexXrpcProcedure = z
+  .object({
+    type: z.literal('procedure'),
+    description: z.string().optional(),
+    auth: z.object({
+      permission: z.string()
+    }).optional(),
+    parameters: lexXrpcParameters.optional(),
+    input: lexXrpcBody.optional(),
+    output: lexXrpcBody.optional(),
+    errors: lexXrpcError.array().optional(),
+  })
+  .strict()
 export type LexXrpcProcedure = z.infer<typeof lexXrpcProcedure>
 
-export const lexXrpcSubscription = z.object({
-  type: z.literal('subscription'),
-  description: z.string().optional(),
-  parameters: lexXrpcParameters.optional(),
-  message: lexXrpcSubscriptionMessage.optional(),
-  errors: lexXrpcError.array().optional(),
-})
+export const lexXrpcSubscription = z
+  .object({
+    type: z.literal('subscription'),
+    description: z.string().optional(),
+    auth: z.object({
+      permission: z.string()
+    }).optional(),
+    parameters: lexXrpcParameters.optional(),
+    message: lexXrpcSubscriptionMessage.optional(),
+    errors: lexXrpcError.array().optional(),
+  })
+  .strict()
 export type LexXrpcSubscription = z.infer<typeof lexXrpcSubscription>
 
 // database

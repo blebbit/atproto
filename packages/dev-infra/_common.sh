@@ -152,6 +152,7 @@ main_docker() {
   if $not_running; then
     started_container=true
     docker compose --file $compose_file up --wait --force-recreate ${services}
+    sleep 3
   else
     echo "all services ${services} are already running"
   fi

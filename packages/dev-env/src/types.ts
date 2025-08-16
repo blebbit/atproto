@@ -16,6 +16,9 @@ export type PlcConfig = {
 export type PdsConfig = Partial<pds.ServerEnvironment> & {
   didPlcUrl: string
   migration?: string
+  spicedbHost?: string
+  spicedbToken?: string
+  spicedbInsecure?: string
 }
 
 export type BskyConfig = Partial<bsky.ServerConfig> & {

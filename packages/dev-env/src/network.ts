@@ -39,6 +39,13 @@ export class TestNetwork extends TestNetworkNoAppView {
     const dbPostgresSchema =
       params.dbPostgresSchema || process.env.DB_POSTGRES_SCHEMA
 
+    const spicedbHost = process.env.SPICEDB_HOST
+    const spicedbToken = process.env.SPICEDB_TOKEN
+    const spicedbInsecure = process.env.SPICEDB_INSECURE
+    // assert(spicedbHost, 'Missing spicedb host for tests')
+    // assert(spicedbToken, 'Missing spicedb token for tests')
+    // assert(spicedbInsecure, 'Missing spicedb insecure for tests')
+
     const plc = await TestPlc.create(params.plc ?? {})
 
     const bskyPort = params.bsky?.port ?? (await getPort())
@@ -87,6 +94,9 @@ export class TestNetwork extends TestNetworkNoAppView {
       modServiceUrl: ozoneUrl,
       modServiceDid: ozoneServiceProfile.did,
       lexiconDidAuthority: lexiconAuthorityProfile.did,
+      spicedbHost,
+      spicedbToken,
+      spicedbInsecure,
       ...params.pds,
     })
 
