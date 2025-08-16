@@ -29,7 +29,11 @@
     "test:sqlite-only": "jest --testPathIgnorePatterns /tests/proxied/*",
     "test:log": "tail -50 test.log | pino-pretty",
     "test:updateSnapshot": "../dev-infra/with-test-redis-and-db.sh jest --updateSnapshot",
-    "migration:create": "ts-node ./bin/migration-create.ts"
+    "migration:create": "ts-node ./bin/migration-create.ts",
+    "schemagen": "cd ./src/authz/spicedb && make gen",
+    "spicedb:validate": "zed validate ./src/authz/spicedb/schema/atproto.zed",
+    "spicedb:preview": "zed preview schema compile ./src/authz/spicedb/schema/atproto.zed",
+    "spicedb:compile": "zed preview schema compile ./src/authz/spicedb/schema/atproto.zed --out atproto.zed"
   },
   "dependencies": {
     "@atproto-labs/fetch-node": "workspace:*",
@@ -44,12 +48,13 @@
     "@atproto/identity": "workspace:^",
     "@atproto/lexicon": "workspace:^",
     "@atproto/lexicon-resolver": "workspace:^",
-    "@atproto/oauth-scopes": "workspace:^",
     "@atproto/oauth-provider": "workspace:^",
+    "@atproto/oauth-scopes": "workspace:^",
     "@atproto/repo": "workspace:^",
     "@atproto/syntax": "workspace:^",
     "@atproto/xrpc": "workspace:^",
     "@atproto/xrpc-server": "workspace:^",
+    "@authzed/authzed-node": "^1.5.1",
     "@did-plc/lib": "^0.0.4",
     "@hapi/address": "^5.1.1",
     "@paralleldrive/cuid2": "^2.2.2",

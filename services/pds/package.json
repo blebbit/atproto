@@ -2,6 +2,9 @@
   "name": "plc-service",
   "private": true,
   "packageManager": "pnpm@8.15.9",
+  "scripts": {
+    "docker": "docker build -t blebbit/pds:latest ."
+  },
   "dependencies": {
     "@atproto/pds": "workspace:^",
     "@opentelemetry/instrumentation": "^0.45.0",

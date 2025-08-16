@@ -13,6 +13,8 @@ import { Server } from '../../../../lexicon'
 import { InputSchema as CreateAccountInput } from '../../../../lexicon/types/com/atproto/server/createAccount'
 import { syncEvtDataFromCommit } from '../../../../sequencer'
 import { safeResolveDidDoc } from './util'
+import { createRelationship } from '../../../../authz/spicedb'
+import { aturi2spicedb } from '../../../../space'
 
 export default function (server: Server, ctx: AppContext) {
   server.com.atproto.server.createAccount({
@@ -43,9 +45,25 @@ export default function (server: Server, ctx: AppContext) {
       let creds: { accessJwt: string; refreshJwt: string }
       await ctx.actorStore.create(did, signingKey)
       try {
+        // DUAL WRITE
+        // (1) create repo
         const commit = await ctx.actorStore.transact(did, (actorTxn) =>
           actorTxn.repo.createRepo([]),
         )
+        // (2) set account as owner over root space
+        if (ctx.spicedbClient) {
+          try {
+            await createRelationship(ctx.spicedbClient,
+              `space:${aturi2spicedb(`${did}/root`)}`,
+              'owner',
+              `acct:${aturi2spicedb(did)}`,
+            )
+          } catch (err) {
+            // temp, dev-env is creating duplicate accounts
+            // or not cleaning up properly (shortcut? re: but not spicedb)
+            console.error('failed to set user as owner of root space', err)
+          }
+        }
 
         // Generate a real did with PLC
         if (plcOp) {

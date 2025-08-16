@@ -1,0 +1,47 @@
+---
+schemaFile: "../schema/atcue.zed"
+relationships: |-
+  // every acct has a root space
+  space:jay/root#owner@acct:jay
+  space:paul/root#owner@acct:paul
+  space:bryan/root#owner@acct:bryan
+  space:devin/root#owner@acct:devin
+  space:dholms/root#owner@acct:dholms
+
+  // give other accts access
+  space:jay/root#record_reader@acct:paul
+  space:jay/root#record_reader@acct:bryan[nsids:{"allowed":["bsky_post"]}]
+
+  // make some records
+  record:jay/root/bsky_post/hello#parent@space:jay/root
+  record:jay/root/bsky_post/c8s42#parent@space:jay/root
+
+  // give record specific access
+  record:jay/root/bsky_post/hello#record_reader@acct:devin
+
+
+assertions:
+  assertTrue:
+  - space:jay/root#record_read@acct:paul
+  - space:jay/root#record_read@acct:bryan with {"nsid":"bsky_post"}
+  - record:jay/root/bsky_post/hello#record_read@acct:paul
+  - record:jay/root/bsky_post/hello#record_read@acct:bryan with {"nsid":"bsky_post"}
+  - record:jay/root/bsky_post/hello#record_read@acct:devin
+  assertCaveated:
+  - space:jay/root#record_read@acct:bryan
+  - record:jay/root/bsky_post/hello#record_read@acct:bryan
+  assertFalse:
+  - space:jay/root#record_read@acct:dholms
+  - record:jay/root/bsky_post/c8s42#record_read@acct:devin
+  - space:jay/root#record_read@acct:bryan with {"nsid":"bsky_like"}
+  - space:jay/root#record_read@acct:billy # uknown user
+validation:
+  space:jay/root#space_create:
+  - "[acct:jay] is <space:jay/root#owner>"
+  record:jay/root/bsky_post/hello#record_read:
+  - "[acct:jay] is <space:jay/root#owner>"
+  - "[acct:paul] is <space:jay/root#record_reader>"
+  - "[acct:bryan[...]] is <space:jay/root#record_reader>"
+  - "[acct:devin] is <record:jay/root/bsky_post/hello#record_reader>"
+
+

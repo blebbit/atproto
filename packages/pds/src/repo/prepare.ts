@@ -215,7 +215,7 @@ export const writeToOp = (write: PreparedWrite): RecordWriteOp => {
   }
 }
 
-async function cidForSafeRecord(record: RepoRecord) {
+export async function cidForSafeRecord(record: RepoRecord) {
   try {
     const block = await dataToCborBlock(lexToIpld(record))
     cborToLex(block.bytes)
@@ -228,7 +228,7 @@ async function cidForSafeRecord(record: RepoRecord) {
   }
 }
 
-function assertNoExplicitSlurs(rkey: string, record: RepoRecord) {
+export function assertNoExplicitSlurs(rkey: string, record: RepoRecord) {
   const toCheck: string[] = []
 
   if (isValidProfile(record)) {
