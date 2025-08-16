@@ -1,4 +1,3 @@
-version: '3.8'
 services:
   # An ephermerally-stored postgres database for single-use test runs
   db_test: &db_test
@@ -44,6 +43,66 @@ services:
       disable: true
     volumes:
       - atp_redis:/data
+
+  # SpiceDB for permissions
+  spicedb:
+    image: "authzed/spicedb"
+    command: "serve --http-enabled"
+    restart: "always"
+    ports:
+      - "8080:8080"
+      - "9090:9090"
+      - "50051:50051"
+    environment:
+      - "SPICEDB_GRPC_PRESHARED_KEY=spicedb"
+      - "SPICEDB_DATASTORE_ENGINE=postgres"
+      - "SPICEDB_DATASTORE_CONN_URI=postgres://spicedb:spicedb@spicedb-pg:5432/spicedb?sslmode=disable"
+    depends_on:
+      spicedb-pg:
+        condition: service_healthy
+      spicedb-pg-mig:
+        condition: service_completed_successfully
+
+  spicedb-pg-mig:
+    image: "authzed/spicedb"
+    command: "migrate head"
+    restart: "on-failure"
+    environment:
+      - "SPICEDB_DATASTORE_ENGINE=postgres"
+      - "SPICEDB_DATASTORE_CONN_URI=postgres://spicedb:spicedb@spicedb-pg:5432/spicedb?sslmode=disable"
+    depends_on:
+      spicedb-pg:
+        condition: service_healthy
+      spicedb-pg-init:
+        condition: service_completed_successfully
+
+  # track_commit_timestamp is required to support SpiceDB's Watch API
+  # see https://authzed.com/docs/spicedb/concepts/datastores#usage-notes-2
+  spicedb-pg-init:
+    image: "postgres:16"
+    restart: "on-failure"
+    command: "psql postgres://spicedb:spicedb@spicedb-pg:5432/spicedb?sslmode=disable -c \"ALTER SYSTEM SET track_commit_timestamp = on;\""
+    depends_on:
+      spicedb-pg:
+        condition: service_healthy
+
+  spicedb-pg:
+    image: "postgres:16"
+    ports:
+      - "5434:5432"
+    environment:
+      - "POSTGRES_DB=spicedb"
+      - "POSTGRES_USER=spicedb"
+      - "POSTGRES_PASSWORD=spicedb"
+    volumes:
+      - atp_spicedb:/var/lib/postgresql/data
+    healthcheck:
+      test: 'pg_isready -U spicedb'
+      interval: 500ms
+      timeout: 10s
+      retries: 20
+
 volumes:
   atp_db:
   atp_redis:
+  atp_spicedb:
