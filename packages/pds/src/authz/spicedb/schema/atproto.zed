@@ -1,0 +1,88 @@
+//
+// Subjects
+//
+
+// not all are used yet
+definition anon {}
+definition user {}
+definition apikey {}
+definition service {}
+definition svcacct {}
+definition superuser {}
+
+// common resource schema (for consistency)
+partial common {
+  // every resource gets a default owner of the account the resources live under
+  //   the owner role can be given to other users or generally subjects too
+  relation owner:   user | apikey | service | svcacct | group#member
+
+  // CRUD relations
+  relation creater: user | apikey | service | svcacct | group#member
+  relation updater: user | apikey | service | svcacct | group#member
+  relation deleter: user | apikey | service | svcacct | group#member
+  relation lister:  user | apikey | service | svcacct | group#member | anon
+  relation reader:  user | apikey | service | svcacct | group#member | anon
+
+  // IAM relations
+  relation iam_adminer: user | apikey | service | svcacct | group#member
+  relation iam_editor:  user | apikey | service | svcacct | group#member
+  relation iam_lister:  user | apikey | service | svcacct | group#member
+  relation iam_reader:  user | apikey | service | svcacct | group#member
+
+  // Permissions cascade within the rules per section
+
+  // CRUD permissions
+  permission delete = owner  + deleter + parent->delete
+  permission update = delete + updater + parent->update
+  permission create = update + editor  + creater + parent->create
+  permission list =   create + lister  + parent->list
+  permission read =   list   + reader  + parent->read
+
+  // IAM permissions
+  permission iam_admin = owner + iam_adminer + parent->iam_admin
+  permission iam_edit = iam_admin + iam_editor + parent->iam_edit
+  permission iam_list = iam_edit + iam_lister + parent->iam_list
+  permission iam_read = iam_list + iam_reader + parent->iam_read
+
+  // pseudo member role as a permission
+  permission member = owner + creater + updater + deleter + lister + reader
+                    + iam_admin + iam_editor + iam_lister + iam_reader
+}
+
+//
+// TODO - custom roles
+//
+
+//
+// Resources
+//
+
+// groups are orthogonal to content
+definition group {
+  // (optional) space containment
+	relation parent: space
+
+  ...common
+}
+
+// the content resources form a hierarchy
+definition space {
+  // (optional) space nesting
+	relation parent: space
+
+  ...common
+}
+
+definition collection {
+  // space nesting, for limiting permissions by nsid
+	relation parent: space
+
+  ...common
+}
+
+definition record {
+  // space containment, this is the core content object
+	relation parent: space
+
+  ...common
+}
