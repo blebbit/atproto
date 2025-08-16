@@ -37,11 +37,15 @@ export class AtUri {
     this.searchParams = parsed.searchParams
   }
 
-  static make(handleOrDid: string, collection?: string, rkey?: string) {
+  // space could be generalized to query params, for future proofing
+  // but the constructor already does that, spaces are special, in terms of content addressing
+  static make(handleOrDid: string, collection?: string, rkey?: string, space?: string) {
     let str = handleOrDid
     if (collection) str += '/' + collection
     if (rkey) str += '/' + rkey
-    return new AtUri(str)
+    const uri = new AtUri(str)
+    if (space) uri.searchParams.set('space', space)
+    return uri
   }
 
   get protocol() {
@@ -66,6 +70,15 @@ export class AtUri {
 
   set search(v: string) {
     this.searchParams = new URLSearchParams(v)
+  }
+
+  get space() {
+    return this.searchParams.get('space') || ''
+  }
+
+  set space(s: string) {
+    if (this.searchParams) this.searchParams = new URLSearchParams()
+    this.searchParams.set('space', s)
   }
 
   get collection() {
