@@ -1207,7 +1207,16 @@ describe('crud operations', () => {
           record: {
             text: 'x',
             createdAt: new Date().toISOString(),
-            deepObject: createDeepObject(4000),
+            deepObject: createDeepObject(3000),
+            // HMMM, this value might be machine or environment dependent...
+            // On an M2-air 24GB, JSON.stringify will fail this test
+            // at 4000...
+            //   RangeError: Maximum call stack size exceeded
+            //   at JSON.stringify (<anonymous>)
+            // at 3000...
+            //   passes
+            // at 2000...
+            //   returns unexpected success creating the record
           },
         }),
         {
