@@ -27,12 +27,12 @@ export class Crawlers {
       await Promise.all(
         this.agents.map(async (agent) => {
           try {
-            await agent.api.com.atproto.sync.requestCrawl({
+            await agent.com.atproto.sync.requestCrawl({
               hostname: this.hostname,
             })
           } catch (err) {
             log.warn(
-              { err, cralwer: agent.service.toString() },
+              { err, crawler: agent.serviceUrl.toString() },
               'failed to request crawl',
             )
           }

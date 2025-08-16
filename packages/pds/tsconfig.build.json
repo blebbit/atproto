@@ -5,5 +5,9 @@
     "outDir": "./dist",
     "noUnusedLocals": false
   },
-  "include": ["./src"]
+  "include": ["./src"],
+  "exclude": [
+    "./src/api/com/atproto/space-old",
+    "./src/api/com/atproto/space/templates",
+  ]
 }

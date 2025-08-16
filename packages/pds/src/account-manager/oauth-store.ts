@@ -1,6 +1,7 @@
 import assert from 'node:assert'
 import { Client, createOp as createPlcOp } from '@did-plc/lib'
 import { Selectable } from 'kysely'
+import { AtUri } from '@atproto/syntax'
 import { Keypair, Secp256k1Keypair } from '@atproto/crypto'
 import {
   Account,
@@ -57,6 +58,10 @@ import * as deviceHelper from './helpers/device'
 import * as lexiconHelper from './helpers/lexicon'
 import * as tokenHelper from './helpers/token'
 import * as usedRefreshTokenHelper from './helpers/used-refresh-token'
+import { v1 as spice } from '@authzed/authzed-node'
+import { touchRelationship } from '../authz/spicedb'
+import { cidForSafeRecord } from '../repo'
+import { aturi2spicedb } from '../space'
 
 /**
  * This class' purpose is to implement the interface needed by the OAuthProvider
@@ -78,6 +83,8 @@ export class OAuthStore
     private readonly plcRotationKey: Keypair,
     private readonly publicUrl: string,
     private readonly recoveryDidKey: string | null,
+    private readonly genCuid: Record<string, () => string>,
+    private readonly spicedbClient?: spice.ZedPromiseClientInterface,
   ) {}
 
   private get db() {
@@ -152,9 +159,92 @@ export class OAuthStore
     try {
       await this.actorStore.create(did, signingKey)
       try {
-        const commit = await this.actorStore.transact(did, (actorTxn) =>
-          actorTxn.repo.createRepo([]),
-        )
+        /*
+          To create the initial repo/spaces setup...
+          1. create empty public repo
+          2. store records in sqlite
+            2.1 owner relation record (owner)
+            2.2 root space self record ("profile")
+            2.3 root space self relation record (parent)
+          3. touch relatioins in spicedb
+            3.1 acct -> owner -> space
+            3.2 space -> parent -> record
+        */
+
+        const acctSpiceId = `acct:${aturi2spicedb(did)}`
+        const rootSpiceId = `space:${aturi2spicedb(did)}/root`
+        const selfSpiceId = `record:${aturi2spicedb(did)}/root/${aturi2spicedb("com.atproto.space.space")}/self`
+
+        // DUAL WRITE
+        // (1) create repo
+        const commit = await this.actorStore.transact(did, async (actorTxn) => {
+
+          // init public repo
+          const r = actorTxn.repo.createRepo([])
+
+          // create owner relation record
+          const ownerRelnRkey = this.genCuid['16']()
+          const ownerRelnUri = AtUri.make(did, "com.atproto.space.relation", ownerRelnRkey, "")
+          const ownerRelnRecord = {
+            resource: rootSpiceId,
+            relation: "owner",
+            subject: acctSpiceId,
+          }
+          await actorTxn.space.insertRecord({
+            uri: ownerRelnUri,
+            reqDid: did,
+            parent: "",
+            record: ownerRelnRecord
+          })
+
+          // create root space self record
+          const uri = AtUri.make(did, "com.atproto.space.space", "self", "root")
+          await actorTxn.space.insertRecord({
+            uri,
+            reqDid: did,
+            parent: "",
+            record: {
+              name: "root",
+              $type: "com.atproto.space.space"
+            }
+          })
+
+          // create self relation record
+          const selfRelnRkey = this.genCuid['16']()
+          const selfRelnUri = AtUri.make(did, "com.atproto.space.relation", selfRelnRkey, "root")
+          const selfRelnRecord = {
+            resource: selfSpiceId,
+            relation: "parent",
+            subject: rootSpiceId,
+          }
+          await actorTxn.space.insertRecord({
+            uri: selfRelnUri,
+            reqDid: did,
+            parent: "root",
+            record: selfRelnRecord
+          })
+
+          return r
+        })
+        // (2) set account as owner over root space
+        if (this.spicedbClient) {
+          try {
+            await touchRelationship(this.spicedbClient,
+              rootSpiceId,
+              'owner',
+              acctSpiceId,
+            )
+            await touchRelationship(this.spicedbClient,
+              selfSpiceId,
+              'parent',
+              rootSpiceId,
+            )
+          } catch (err) {
+            // temp, dev-env is creating duplicate accounts
+            // or not cleaning up properly (shortcut? re: but not spicedb)
+            console.error('failed to set user as owner of root space', err)
+          }
+        }
 
         await this.plcClient.sendOperation(did, op)
 

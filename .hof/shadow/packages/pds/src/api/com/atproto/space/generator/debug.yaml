@@ -1602,12 +1602,15 @@ LEXICONS:
             createdAt:
               type: string
               format: datetime
+<<<<<<< HEAD
           required:
             - subjectType
             - subject
             - permission
             - resourceType
             - resource
+=======
+>>>>>>> 2a2f49909 (pds)
   getRelation:
     lexicon: 1
     defs:

@@ -122,6 +122,11 @@ export const readEnv = (): ServerEnvironment => {
     redisScratchAddress: envStr('PDS_REDIS_SCRATCH_ADDRESS'),
     redisScratchPassword: envStr('PDS_REDIS_SCRATCH_PASSWORD'),
 
+    // spicedb
+    spicedbHost: envStr('PDS_SPICEDB_HOST'),
+    spicedbToken: envStr('PDS_SPICEDB_TOKEN'),
+    spicedbInsecure: envStr('PDS_SPICEDB_INSECURE'),
+
     // crawlers
     crawlers: envList('PDS_CRAWLERS'),
 
@@ -270,6 +275,11 @@ export type ServerEnvironment = {
   // redis
   redisScratchAddress?: string
   redisScratchPassword?: string
+
+  // spicedb
+  spicedbHost?: string
+  spicedbToken?: string
+  spicedbInsecure?: string
 
   // crawler
   crawlers?: string[]

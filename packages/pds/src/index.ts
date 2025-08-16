@@ -109,6 +109,7 @@ export class PDS {
               ? (opts) => new RedisRateLimiter(ctx.redisScratch, opts)
               : (opts) => new MemoryRateLimiter(opts),
             bypass: ({ req }) => {
+              // these should be in the database, so we can dynamically assign multiple bypass keys with different/no limits
               const { bypassKey, bypassIps } = rateLimits
               if (
                 bypassKey &&
@@ -121,6 +122,7 @@ export class PDS {
               }
               return false
             },
+            // these should be configurable
             global: [
               {
                 name: 'global-ip',
@@ -128,7 +130,19 @@ export class PDS {
                 points: 3000,
               },
             ],
+            // seems that read is done under global-ip for repo
+            // should we have separate limits for spaces?
             shared: [
+              {
+                name: 'repo-read-hour',
+                durationMs: HOUR,
+                points: 12000, // all = 1
+              },
+              {
+                name: 'repo-read-day',
+                durationMs: DAY,
+                points: 100000, // all = 1
+              },
               {
                 name: 'repo-write-hour',
                 durationMs: HOUR,

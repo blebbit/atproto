@@ -5,6 +5,8 @@ import { Redis } from 'ioredis'
 import * as nodemailer from 'nodemailer'
 import * as ui8 from 'uint8arrays'
 import * as undici from 'undici'
+import { init as cuidInit } from '@paralleldrive/cuid2';
+
 import { AtpAgent } from '@atproto/api'
 import { KmsKeypair, S3BlobStore } from '@atproto/aws'
 import * as crypto from '@atproto/crypto'
@@ -52,11 +54,14 @@ import { ServerMailer } from './mailer'
 import { ModerationMailer } from './mailer/moderation'
 import { LocalViewer, LocalViewerCreator } from './read-after-write/viewer'
 import { getRedisClient } from './redis'
+import { v1 as spice } from '@authzed/authzed-node'
+import { getSpicedbClient, spicedbSchema } from './authz/spicedb'
 import { Sequencer } from './sequencer'
 
 export type AppContextOptions = {
   actorStore: ActorStore
   blobstore: (did: string) => BlobStore
+  genCuid: Record<string, () => string>
   localViewer: LocalViewerCreator
   mailer: ServerMailer
   moderationMailer: ModerationMailer
@@ -77,6 +82,7 @@ export type AppContextOptions = {
   safeFetch: Fetch
   oauthProvider?: OAuthProvider
   authVerifier: AuthVerifier
+  spicedbClient?: spice.ZedPromiseClientInterface
   plcRotationKey: crypto.Keypair
   cfg: ServerConfig
 }
@@ -84,6 +90,7 @@ export type AppContextOptions = {
 export class AppContext {
   public actorStore: ActorStore
   public blobstore: (did: string) => BlobStore
+  public genCuid: Record<string, () => string>
   public localViewer: LocalViewerCreator
   public mailer: ServerMailer
   public moderationMailer: ModerationMailer
@@ -103,13 +110,16 @@ export class AppContext {
   public proxyAgent: undici.Dispatcher
   public safeFetch: Fetch
   public authVerifier: AuthVerifier
+  public spicedbClient?: spice.ZedPromiseClientInterface
   public oauthProvider?: OAuthProvider
   public plcRotationKey: crypto.Keypair
+
   public cfg: ServerConfig
 
   constructor(opts: AppContextOptions) {
     this.actorStore = opts.actorStore
     this.blobstore = opts.blobstore
+    this.genCuid = opts.genCuid
     this.localViewer = opts.localViewer
     this.mailer = opts.mailer
     this.moderationMailer = opts.moderationMailer
@@ -130,6 +140,7 @@ export class AppContext {
     this.safeFetch = opts.safeFetch
     this.authVerifier = opts.authVerifier
     this.oauthProvider = opts.oauthProvider
+    this.spicedbClient = opts.spicedbClient
     this.plcRotationKey = opts.plcRotationKey
     this.cfg = opts.cfg
   }
@@ -139,6 +150,7 @@ export class AppContext {
     secrets: ServerSecrets,
     overrides?: Partial<AppContextOptions>,
   ): Promise<AppContext> {
+
     const blobstore =
       cfg.blobstore.provider === 's3'
         ? S3BlobStore.creator({
@@ -199,6 +211,40 @@ export class AppContext {
     const redisScratch = cfg.redis
       ? getRedisClient(cfg.redis.address, cfg.redis.password)
       : undefined
+
+    const spicedbCfg = cfg.spicedb
+    const spicedbClient = spicedbCfg && spicedbCfg.enabled ? getSpicedbClient({
+      host: spicedbCfg.host,
+      token: spicedbCfg.token,
+      insecure: spicedbCfg.insecure,
+    }) : undefined
+
+    // TODO, migrate
+    if (spicedbClient) {
+      try {
+        await spicedbClient.writeSchema({ schema: spicedbSchema })
+      } catch (error) {
+        console.error("Error updating spicedb schema:", error);
+      }
+    }
+
+    const genCuid = {}
+    Array(10,16,27).forEach(
+      (val) => {
+        // The init function returns a custom genCuid function with the specified
+        // configuration. All configuration properties are optional.
+        genCuid[`${val}`] = cuidInit({
+          // A custom random function with the same API as Math.random.
+          // You can use this to pass a cryptographically secure random function.
+          random: Math.random,
+          // the length of the id
+          length: val,
+          // A custom fingerprint for the host environment. This is used to help
+          // prevent collisions when generating ids in a distributed system.
+          fingerprint: cfg.service.hostname,
+        })
+      }
+    )
 
     const bskyAppView = cfg.bskyAppView
       ? new BskyAppView(cfg.bskyAppView)
@@ -385,6 +431,8 @@ export class AppContext {
             plcRotationKey,
             cfg.service.publicUrl,
             cfg.identity.recoveryDidKey,
+            genCuid,
+            spicedbClient,
           ),
           redis: redisScratch,
           dpopSecret: secrets.dpopSecret,
@@ -460,6 +508,7 @@ export class AppContext {
     return new AppContext({
       actorStore,
       blobstore,
+      genCuid,
       localViewer,
       mailer,
       moderationMailer,
@@ -480,6 +529,7 @@ export class AppContext {
       safeFetch,
       authVerifier,
       oauthProvider,
+      spicedbClient,
       plcRotationKey,
       cfg,
       ...(overrides ?? {}),

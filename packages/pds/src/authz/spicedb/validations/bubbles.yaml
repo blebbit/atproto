@@ -1,0 +1,88 @@
+---
+schemaFile: "../schema/atcue.zed"
+relationships: |-
+  // every acct has a root space
+  space:jay/root#owner@acct:jay
+
+  // create a subspace bubble
+  bubble:jay/ssb#parent@space:jay/root
+
+  // give other accts access
+  space:jay/root#record_reader@acct:paul
+  bubble:jay/ssb#record_reader@acct:bryan
+
+  // make other accts members
+  space:jay/root#direct_member@acct:devin
+  bubble:jay/ssb#direct_member@acct:dholms
+
+  // give bubble members read access too
+  bubble:jay/ssb#record_reader@bubble:jay/ssb#member
+
+  // make some records
+  record:jay/root/bsky_post/hello#parent@space:jay/root
+  record:jay/ssb/bsky_post/c8s42#parent@bubble:jay/ssb
+
+
+assertions:
+  assertTrue:
+  # permission on resources
+  - space:jay/root#record_read@acct:jay
+  - space:jay/root#record_read@acct:paul
+  - bubble:jay/ssb#record_read@acct:jay
+  - bubble:jay/ssb#record_read@acct:bryan
+  # permission on sub-resources
+  - record:jay/root/bsky_post/hello#record_read@acct:jay
+  - record:jay/root/bsky_post/hello#record_read@acct:paul
+  - record:jay/ssb/bsky_post/c8s42#record_read@acct:jay
+  - record:jay/ssb/bsky_post/c8s42#record_read@acct:bryan
+
+  assertFalse:
+  # permission on resources
+  - space:jay/root#record_read@acct:bryan
+  - bubble:jay/ssb#record_read@acct:paul
+  # permission on sub-resources
+  - record:jay/root/bsky_post/hello#record_read@acct:bryan
+  - record:jay/ssb/bsky_post/c8s42#record_read@acct:paul
+
+  # invalid / anon user
+  - space:jay/root#record_read@acct:darth
+  - bubble:jay/ssb#record_read@acct:darth
+  - record:jay/root/bsky_post/hello#record_read@acct:darth
+  - record:jay/ssb/bsky_post/c8s42#record_read@acct:darth
+
+validation:
+  # expacations for the space
+  space:jay/root#member:
+  - "[acct:jay] is <space:jay/root#owner>"
+  - "[acct:devin] is <space:jay/root#direct_member>"
+  space:jay/root#owners:
+  - "[acct:jay] is <space:jay/root#owner>"
+  space:jay/root#space_create:
+  - "[acct:jay] is <space:jay/root#owner>"
+  space:jay/root#record_read:
+  - "[acct:jay] is <space:jay/root#owner>"
+  - "[acct:paul] is <space:jay/root#record_reader>"
+
+  # expacations for the bubble
+  bubble:jay/ssb#owners:
+  - "[acct:jay] is <space:jay/root#owner>"
+  bubble:jay/ssb#member:
+  - "[acct:jay] is <space:jay/root#owner>"
+  - "[acct:dholms] is <bubble:jay/ssb#direct_member>"
+  bubble:jay/ssb#space_create:
+  - "[acct:jay] is <space:jay/root#owner>"
+  bubble:jay/ssb#record_read:
+  - "[acct:jay] is <space:jay/root#owner>"
+  - "[acct:bryan] is <bubble:jay/ssb#record_reader>"
+  - "[acct:dholms] is <bubble:jay/ssb#direct_member>"
+  - "[bubble:jay/ssb#member] is <bubble:jay/ssb#record_reader>"
+
+  # expacations for the records
+  record:jay/root/bsky_post/hello#record_read:
+  - "[acct:jay] is <space:jay/root#owner>"
+  - "[acct:paul] is <space:jay/root#record_reader>"
+  record:jay/ssb/bsky_post/c8s42#record_read:
+  - "[acct:jay] is <space:jay/root#owner>"
+  - "[acct:bryan] is <bubble:jay/ssb#record_reader>"
+  - "[acct:dholms] is <bubble:jay/ssb#direct_member>"
+  - "[bubble:jay/ssb#member] is <bubble:jay/ssb#record_reader>"
