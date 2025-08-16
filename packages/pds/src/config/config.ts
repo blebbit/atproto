@@ -3,6 +3,7 @@ import path from 'node:path'
 import { DAY, HOUR, SECOND } from '@atproto/common'
 import { BrandingInput, HcaptchaConfig } from '@atproto/oauth-provider'
 import { ServerEnvironment } from './env'
+import { Server } from 'node:http'
 
 // off-config but still from env:
 // logging: LOG_LEVEL, LOG_SYSTEMS, LOG_ENABLED, LOG_DESTINATION
@@ -223,6 +224,15 @@ export const envToCfg = (env: ServerEnvironment): ServerConfig => {
       }
     : null
 
+  const spicedbCfg: ServerConfig['spicedb'] = env.spicedbHost
+    ? {
+        enabled: true,
+        host: env.spicedbHost,
+        token: env.spicedbToken,
+        insecure: env.spicedbInsecure,
+      }
+    : { enabled: false }
+
   const rateLimitsCfg: ServerConfig['rateLimits'] = env.rateLimitsEnabled
     ? {
         enabled: true,
@@ -339,6 +349,7 @@ export const envToCfg = (env: ServerEnvironment): ServerConfig => {
     modService: modServiceCfg,
     reportService: reportServiceCfg,
     redis: redisCfg,
+    spicedb: spicedbCfg,
     rateLimits: rateLimitsCfg,
     crawlers: crawlersCfg,
     fetch: fetchCfg,
@@ -363,6 +374,7 @@ export type ServerConfig = {
   modService: ModServiceConfig | null
   reportService: ReportServiceConfig | null
   redis: RedisScratchConfig | null
+  spicedb: SpicedbConfig | null
   rateLimits: RateLimitsConfig
   crawlers: string[]
   fetch: FetchConfig
@@ -496,6 +508,16 @@ export type RedisScratchConfig = {
   address: string
   password?: string
 }
+
+export type SpicedbConfig =
+  | {
+      enabled: true
+      host?: string
+      token?: string
+      insecure?: string
+    }
+  | { enabled: false }
+
 
 export type RateLimitsConfig =
   | {

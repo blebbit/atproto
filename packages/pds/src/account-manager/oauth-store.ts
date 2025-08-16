@@ -57,6 +57,9 @@ import * as deviceHelper from './helpers/device'
 import * as lexiconHelper from './helpers/lexicon'
 import * as tokenHelper from './helpers/token'
 import * as usedRefreshTokenHelper from './helpers/used-refresh-token'
+import { v1 as spice } from '@authzed/authzed-node'
+import { createRelationship } from '../authz/spicedb'
+import { aturi2spicedb } from '../space'
 
 /**
  * This class' purpose is to implement the interface needed by the OAuthProvider
@@ -78,6 +81,7 @@ export class OAuthStore
     private readonly plcRotationKey: Keypair,
     private readonly publicUrl: string,
     private readonly recoveryDidKey: string | null,
+    private readonly spicedbClient?: spice.ZedPromiseClientInterface,
   ) {}
 
   private get db() {
@@ -152,9 +156,26 @@ export class OAuthStore
     try {
       await this.actorStore.create(did, signingKey)
       try {
+        // DUAL WRITE
+        // (1) create repo
         const commit = await this.actorStore.transact(did, (actorTxn) =>
           actorTxn.repo.createRepo([]),
+          // TODO, write root space and relationship records to the root space in the database
         )
+        // (2) set account as owner over root space
+        if (this.spicedbClient) {
+          try {
+            await createRelationship(this.spicedbClient,
+              `space:${aturi2spicedb(`${did}/root`)}`,
+              'owner',
+              `user:${aturi2spicedb(did)}`,
+            )
+          } catch (err) {
+            // temp, dev-env is creating duplicate accounts
+            // or not cleaning up properly (shortcut? re: but not spicedb)
+            console.error('failed to set user as owner of root space', err)
+          }
+        }
 
         await this.plcClient.sendOperation(did, op)
 
