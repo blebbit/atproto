@@ -1,0 +1,19 @@
+---
+schemaFile: "../schema/atcue.zed"
+relationships: |-
+  // every acct has a root space
+  space:jay/root#owner@acct:jay
+  space:paul/root#owner@acct:paul
+  space:bryan/root#owner@acct:bryan
+  space:devin/root#owner@acct:devin
+  space:dholms/root#owner@acct:dholms
+
+with_tracing: true
+assertions:
+  assertTrue:
+  - "space:jay/root#space_read@acct:jay"
+  assertFalse:
+  - "space:jay/root#space_read@acct:paul"
+validation:
+  space:jay/root#space_read:
+  - "[acct:jay] is <space:jay/root#owner>"
