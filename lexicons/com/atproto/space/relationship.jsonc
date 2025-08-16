@@ -1,0 +1,36 @@
+{
+  "lexicon": 1,
+  "id": "com.atproto.space.relationship",
+  "defs": {
+    "main": {
+      "type": "record",
+      "description": "A declaration of an ATProto relationship tied to the repo and optionally space.",
+      "key": "any",
+      "record": {
+        "type": "object",
+        "properties": {
+          // location fields
+          "repo": {
+            "type": "string",
+            "format": "at-identifier",
+            "description": "The handle or DID of the repo (aka, current account)."
+          },
+          "space": {
+            "type": "string",
+            "description": "The id of the space associated with the repo."
+          },
+
+          // relationship fields
+          "subject": { "type": "string" },
+          "permission": { "type": "string" },
+          "object": { "type": "string" },
+
+          // general fields
+          "createdAt": { "type": "string", "format": "datetime" }
+        }
+      }
+    }
+  }
+}
+
+
