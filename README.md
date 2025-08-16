@@ -1,117 +1,137 @@
-# AT Protocol Reference Implementation (TypeScript)
+# Blebbit's ATProto (TypeScript) ((Patched))
 
 Welcome friends!
 
-This repository contains Bluesky's reference implementation of AT Protocol, and of the `app.bsky` microblogging application service backend.
+This repository contains Bluesky's atproto implementation of AT Protocol,
+with various patches applied to it.
+Notably, "permissioned spaces"
+see the [proposal.md](./proposal.md) for details.
 
-## What is in here?
+We primarily produce a docker image that
+anyone can run as a drop in replacement.
 
-**TypeScript Packages:**
+However in order to interact with the patches,
+you also need all the related changes throughout
+codebase for your own projects that talk to the PDS.
+Two options I have yet to try are
+(1) publishing under a different `@org` on npm
+(2) required to clone, build, link when using in an app
 
-| Package                                                                       | Docs                                       | NPM                                                                                                             |
-| ----------------------------------------------------------------------------- | ------------------------------------------ | --------------------------------------------------------------------------------------------------------------- |
-| `@atproto/api`: client library                                                | [README](./packages/api/README.md)         | [![NPM](https://img.shields.io/npm/v/@atproto/api)](https://www.npmjs.com/package/@atproto/api)                 |
-| `@atproto/common-web`: shared code and helpers which can run in web browsers  | [README](./packages/common-web/README.md)  | [![NPM](https://img.shields.io/npm/v/@atproto/common-web)](https://www.npmjs.com/package/@atproto/common-web)   |
-| `@atproto/common`: shared code and helpers which doesn't work in web browsers | [README](./packages/common/README.md)      | [![NPM](https://img.shields.io/npm/v/@atproto/common)](https://www.npmjs.com/package/@atproto/common)           |
-| `@atproto/crypto`: cryptographic signing and key serialization                | [README](./packages/crypto/README.md)      | [![NPM](https://img.shields.io/npm/v/@atproto/crypto)](https://www.npmjs.com/package/@atproto/crypto)           |
-| `@atproto/identity`: DID and handle resolution                                | [README](./packages/identity/README.md)    | [![NPM](https://img.shields.io/npm/v/@atproto/identity)](https://www.npmjs.com/package/@atproto/identity)       |
-| `@atproto/lexicon`: schema definition language                                | [README](./packages/lexicon/README.md)     | [![NPM](https://img.shields.io/npm/v/@atproto/lexicon)](https://www.npmjs.com/package/@atproto/lexicon)         |
-| `@atproto/repo`: data storage structure, including MST                        | [README](./packages/repo/README.md)        | [![NPM](https://img.shields.io/npm/v/@atproto/repo)](https://www.npmjs.com/package/@atproto/repo)               |
-| `@atproto/syntax`: string parsers for identifiers                             | [README](./packages/syntax/README.md)      | [![NPM](https://img.shields.io/npm/v/@atproto/syntax)](https://www.npmjs.com/package/@atproto/syntax)           |
-| `@atproto/xrpc`: client-side HTTP API helpers                                 | [README](./packages/xrpc/README.md)        | [![NPM](https://img.shields.io/npm/v/@atproto/xrpc)](https://www.npmjs.com/package/@atproto/xrpc)               |
-| `@atproto/xrpc-server`: server-side HTTP API helpers                          | [README](./packages/xrpc-server/README.md) | [![NPM](https://img.shields.io/npm/v/@atproto/xrpc-server)](https://www.npmjs.com/package/@atproto/xrpc-server) |
+Right now, these changes are extensions and all other functionality should work.
+All of the tests and builds remain passing.
 
-**TypeScript Services:**
+For all other README, security, and license stuff,
+see the [Original README](./README.orig.md)
 
-- `pds`: "Personal Data Server", hosting repo content for atproto accounts. Most implementation code in `packages/pds`, with runtime wrapper in `services/pds`. See [bluesky-social/pds](https://github.com/bluesky-social/pds) for directions on self-hosting.
-- `bsky`: AppView implementation of the `app.bsky.*` API endpoints. Running on main network at `api.bsky.app`. Most implementation code in `packages/bsky`, with runtime wrapper in `services/bsky`.
 
-**Lexicons:** for both the `com.atproto.*` and `app.bsky.*` are canonically versioned in this repo, for now, under `./lexicons/`. These are JSON files in the [Lexicon schema definition language](https://atproto.com/specs/lexicon), similar to JSON Schema or OpenAPI.
+## Dependencies
 
-**Interoperability Test Data:** the language-neutral test files in `./interop-test-files/` may be useful for other protocol implementations to ensure that they follow the specification correctly
+1. Same as the upstream, see the [Original README](./README.orig.md)
+2. [CUE](https://cuelang.org), I couldn't help myself
+3. [zed](https://github.com/authzed/zed), the CLI for SpiceDB
 
-The source code for the Bluesky Social client app (for web and mobile) can be found at [bluesky-social/social-app](https://github.com/bluesky-social/social-app).
 
-Go programming language source code is in [bluesky-social/indigo](https://github.com/bluesky-social/indigo), including the BGS implementation.
+## Setup
 
-## Developer Quickstart
-
-We recommend [`nvm`](https://github.com/nvm-sh/nvm) for managing Node.js installs. This project requires Node.js version 18. `pnpm` is used to manage the workspace of multiple packages. You can install it with `npm install --global pnpm`.
-
-There is a Makefile which can help with basic development tasks:
-
-```shell
-# use existing nvm to install node 18 and pnpm
-make nvm-setup
-
-# pull dependencies and build all local packages
-make deps
+```sh
+# build all the packages
 make build
 
-# run the tests, using Docker services as needed
+# test all the packages
 make test
 
-# run a local PDS and AppView with fake test accounts and data
-# (this requires a global installation of `jq` and `docker`)
+# (re) startup the dev env & pds, this also seeds a bsky app
 make run-dev-env
 
-# show all other commands
-make help
+# simulate network activity, i.e. spaces xrpc for seeded users
+./packages/dev-env/sim.sh
 ```
 
-## About AT Protocol
+## Commits
 
-The Authenticated Transfer Protocol ("ATP" or "atproto") is a decentralized social media protocol, developed by [Bluesky Social PBC](https://bsky.social). Learn more at:
+We are using a `./git-stack.ts` script
+to implement a poor man's Gerrit.
+The intention is to move to Gerrit,
+for stacked commits and git-codereview features.
 
-- [Overview and Guides](https://atproto.com/guides/overview) 👈 Best starting point
-- [Github Discussions](https://github.com/bluesky-social/atproto/discussions) 👈 Great place to ask questions
-- [Protocol Specifications](https://atproto.com/specs/atp)
-- [Blogpost on self-authenticating data structures](https://bsky.social/about/blog/3-6-2022-a-self-authenticating-social-protocol)
+Essentially, this is a list of commits with a name as the comment
+and then we use `git commit --fixup` and `git rebase` to add
+changes to any of the named commits in a predefined stack.
+Gerrit will let us do this while also keeping the history
+of each commit in the stack.
 
-The Bluesky Social application encompasses a set of schemas and APIs built in the overall AT Protocol framework. The namespace for these "Lexicons" is `app.bsky.*`.
+The CUE team has a really nice Gerrit-GitHub setup
+and good instructions on how this works.
 
-## Contributions
+[github.com/cue-lang/cue - CONTRIBUTING.md](https://github.com/cue-lang/cue/blob/master/CONTRIBUTING.md)
 
-> While we do accept contributions, we prioritize high quality issues and pull requests. Adhering to the below guidelines will ensure a more timely review.
+### `./git-stack.ts <command>`
 
-**Rules:**
+```
+Usage: git-stack.ts <command>
+Commands:
+  init                 - Create dummy commits for the stack
+  list [--files]       - List the commit stack
+  add <commit-name>    - Add staged changes to a commit
+  remove <commit-name> <file-path> - Remove a file from a named commit
+  diff <commit-name>   - Show changes in a named commit
+  rebase               - Rebase stack on origin/main
+  push                 - Push stack to a remote branch
+```
 
-- We may not respond to your issue or PR.
-- We may close an issue or PR without much feedback.
-- We may lock discussions or contributions if our attention is getting DDOSed.
-- We do not provide support for build issues.
+### The named commit stack
 
-**Guidelines:**
+```
+$ ./git-stack.ts list
+Commit Stack:
+- extra (4b0d52f)
+- examples (d0b48b9)
+- pds (7018636)
+- packages (d5fcf16)
+- lexicon (13d84d3)
+- proposal (b910783)
+- agents (4f97b2e)
+- prep (bcb7bfa)
 
-- Check for existing issues before filing a new one, please.
-- Open an issue and give some time for discussion before submitting a PR.
-- If submitting a PR that includes a lexicon change, please get sign off on the lexicon change _before_ doing the implementation.
-- Issues are for bugs & feature requests related to the TypeScript implementation of atproto and related services.
-  - For high-level discussions, please use the [Discussion Forum](https://github.com/bluesky-social/atproto/discussions).
-  - For client issues, please use the relevant [social-app](https://github.com/bluesky-social/social-app) repo.
-- Stay away from PRs that:
-  - Refactor large parts of the codebase
-  - Add entirely new features without prior discussion
-  - Change the tooling or frameworks used without prior discussion
-  - Introduce new unnecessary dependencies
+Stack Bases:
+- (blebbit) (6d7bf4bff) Remove old, never resolved, lexicons from the database (#4162)
+- (origin) (6d7bf4bff) Remove old, never resolved, lexicons from the database (#4162)
 
-Remember, we serve a wide community of users. Our day-to-day involves us constantly asking "which top priority is our top priority." If you submit well-written PRs that solve problems concisely, that's an awesome contribution. Otherwise, as much as we'd love to accept your ideas and contributions, we really don't have the bandwidth.
+```
 
-## Are you a developer interested in building on atproto?
+If you want to change the list of commits, there are instructions at the top of the script.
 
-Bluesky is an open social network built on the AT Protocol, a flexible technology that will never lock developers out of the ecosystems that they help build. With atproto, third-party can be as seamless as first-party through custom feeds, federated services, clients, and more.
 
-## Security disclosures
+### Typical workflow
 
-If you discover any security issues, please send an email to security@bsky.app. The email is automatically CCed to the entire team, and we'll respond promptly. See [SECURITY.md](https://github.com/bluesky-social/atproto/blob/main/SECURITY.md) for more info.
+```sh
+# stage files for commit
+git add ...
 
-## License
+# add staged changes to a named commit
+./git-stack.ts add <name>
 
-This project is dual-licensed under MIT and Apache 2.0 terms:
+# force push to upstream (blebbit/atproto)
+./git-stack.ts push
 
-- MIT license ([LICENSE-MIT.txt](https://github.com/bluesky-social/atproto/blob/main/LICENSE-MIT.txt) or http://opensource.org/licenses/MIT)
-- Apache License, Version 2.0, ([LICENSE-APACHE.txt](https://github.com/bluesky-social/atproto/blob/main/LICENSE-APACHE.txt) or http://www.apache.org/licenses/LICENSE-2.0)
+# rebase with bluesky-social/atproto
+# WARN, only do this with a clean git workspace
+#       merge conflicts are not infrequent
+./git-stack.ts rebase
+```
 
-Downstream projects and end users may chose either license individually, or both together, at their discretion. The motivation for this dual-licensing is the additional software patent assurance provided by Apache 2.0.
+### Useful sequences
 
-Bluesky Social PBC has committed to a software patent non-aggression pledge. For details see [the original announcement](https://bsky.social/about/blog/10-01-2025-patent-pledge).
+#### Update Lexicons
+
+```sh
+# change json and regenerate code
+make codegen
+make build
+
+# ... any testing
+
+# add to commit stack
+git add lexicons/ packages/{api,bsky,ozone,pds/src/lexicon}
+./git-stack.ts add lexicon
+```

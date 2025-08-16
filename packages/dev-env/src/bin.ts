@@ -19,6 +19,9 @@ const run = async () => {
       port: 2583,
       hostname: 'localhost',
       enableDidDocWithSession: true,
+      spicedbHost: 'localhost:50051',
+      spicedbToken: 'spicedb',
+      spicedbInsecure: 'true',
     },
     bsky: {
       dbPostgresSchema: 'bsky',
