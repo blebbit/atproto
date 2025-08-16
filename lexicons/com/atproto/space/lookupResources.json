@@ -1,0 +1,73 @@
+{
+  "lexicon": 1,
+  "id": "com.atproto.space.lookupResources",
+  "description": "List of resource for the given permission for the given subject. Requires auth, implemented by PDS.",
+  "defs": {
+    "main": {
+      "type": "query",
+      "description": "List of resource for the given permission for the given subject.",
+      "parameters": {
+        "type": "params",
+        "properties": {
+          "resourceType": {
+            "type": "string",
+            "description": "The resource type [space,record,etc]",
+            "maxLength": 32
+          },
+          "resource": {
+            "type": "string",
+            "description": "The object id to assign.",
+            "maxLength": 660
+          },
+          "permission": {
+            "type": "string",
+            "description": "possible values are defined in the spicedb schema and depend on context",
+            "maxLength": 32
+          },
+          "subjectType": {
+            "type": "string",
+            "description": "the subject type [user,group,etc]",
+            "maxLength": 32
+          },
+          "subject": {
+            "type": "string",
+            "description": "the subject id to grant",
+            "maxLength": 643
+          },
+          "caveats": {
+            "type": "string",
+            "description": "nsids: { allowed: map<bool>, default bool, nsid string }"
+          },
+          "zookie": {
+            "type": "string",
+            "description": "The Zanzibar/SpiceDB consistency token, very similar in intent to CIDs in ATProto."
+          }
+        },
+        "required": [
+          "permission",
+          "subjectType",
+          "subject"
+        ]
+      },
+      "output": {
+        "encoding": "application/json",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "resources": {
+              "type": "array",
+              "description": "List of all the resources the subject has the given permission.",
+              "items": {
+                "type": "string",
+                "description": "subject ids"
+              }
+            }
+          },
+          "required": [
+            "resources"
+          ]
+        }
+      }
+    }
+  }
+}

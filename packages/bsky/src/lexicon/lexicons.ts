@@ -12665,6 +12665,3232 @@ export const schemaDict = {
       },
     },
   },
+  ComAtprotoSpaceCheckPermission: {
+    lexicon: 1,
+    id: 'com.atproto.space.checkPermission',
+    description:
+      'Check if the permission is allowed. Requires auth, implemented by PDS.',
+    defs: {
+      main: {
+        type: 'query',
+        description: 'Check if the permission is allowed.',
+        parameters: {
+          type: 'params',
+          properties: {
+            resourceType: {
+              type: 'string',
+              description: 'The resource type [space,record,etc]',
+              maxLength: 32,
+            },
+            resource: {
+              type: 'string',
+              description: 'The object id to assign.',
+              maxLength: 660,
+            },
+            permission: {
+              type: 'string',
+              description:
+                'possible values are defined in the spicedb schema and depend on context',
+              maxLength: 32,
+            },
+            subjectType: {
+              type: 'string',
+              description: 'the subject type [user,group,etc]',
+              maxLength: 32,
+            },
+            subject: {
+              type: 'string',
+              description: 'the subject id to grant',
+              maxLength: 643,
+            },
+            caveats: {
+              type: 'string',
+              description:
+                'nsids: { allowed: map<bool>, default bool, nsid string }',
+            },
+            zookie: {
+              type: 'string',
+              description:
+                'The Zanzibar/SpiceDB consistency token, very similar in intent to CIDs in ATProto.',
+            },
+          },
+          required: [
+            'resourceType',
+            'resource',
+            'permission',
+            'subjectType',
+            'subject',
+          ],
+        },
+        output: {
+          encoding: 'application/json',
+          schema: {
+            type: 'object',
+            properties: {
+              allowed: {
+                type: 'string',
+                description: 'one of: [yes,no,conditional,unspecified,unknown]',
+              },
+            },
+            required: ['allowed'],
+          },
+        },
+      },
+    },
+  },
+  ComAtprotoSpaceCheckPermissions: {
+    lexicon: 1,
+    id: 'com.atproto.space.checkPermissions',
+    description:
+      'Bulk check if the permission is allowed. Requires auth, implemented by PDS.',
+    defs: {
+      main: {
+        type: 'query',
+        description: 'Bulk check if the permission is allowed.',
+        parameters: {
+          type: 'params',
+          properties: {
+            resourceType: {
+              type: 'string',
+              description: 'The resource type [space,record,etc]',
+              maxLength: 32,
+            },
+            resources: {
+              type: 'array',
+              description:
+                'List of object ids to see if subject is granted the permission.',
+              items: {
+                type: 'string',
+              },
+            },
+            permission: {
+              type: 'string',
+              description:
+                'possible values are defined in the spicedb schema and depend on context',
+              maxLength: 32,
+            },
+            subjectType: {
+              type: 'string',
+              description: 'the subject type [user,group,etc]',
+              maxLength: 32,
+            },
+            subject: {
+              type: 'string',
+              description: 'the subject id to grant',
+              maxLength: 643,
+            },
+            caveats: {
+              type: 'string',
+              description:
+                'nsids: { allowed: map<bool>, default bool, nsid string }',
+            },
+            zookie: {
+              type: 'string',
+              description:
+                'The Zanzibar/SpiceDB consistency token, very similar in intent to CIDs in ATProto.',
+            },
+          },
+          required: [
+            'resourceType',
+            'resources',
+            'permission',
+            'subjectType',
+            'subject',
+          ],
+        },
+        output: {
+          encoding: 'application/json',
+          schema: {
+            type: 'object',
+            properties: {
+              allowed: {
+                type: 'array',
+                description:
+                  'List ordered the same as input objects, with allowed status.',
+                items: {
+                  type: 'string',
+                  description:
+                    'one of: [yes,no,conditional,unspecified,unknown]',
+                },
+              },
+            },
+            required: ['allowed'],
+          },
+        },
+      },
+    },
+  },
+  ComAtprotoSpaceCreateGroup: {
+    lexicon: 1,
+    defs: {
+      main: {
+        type: 'procedure',
+        description: 'Create a new repository group, errors if it exists.',
+        auth: {
+          permission: 'group_create',
+          objectType: 'space',
+        },
+        input: {
+          encoding: 'application/json',
+          schema: {
+            type: 'object',
+            properties: {
+              repo: {
+                type: 'string',
+                description:
+                  'The handle or DID of the repo (aka, current account).',
+                format: 'at-identifier',
+                maxLength: 256,
+              },
+              parent: {
+                description:
+                  'The id of the parent space to nest under. If not set, the current value or /root is assumed. Can be used to move a space or bubble.',
+                type: 'string',
+                format: 'record-key',
+                maxLength: 64,
+              },
+              rkey: {
+                type: 'string',
+                description: 'The id of the space associated with the repo.',
+                format: 'record-key',
+                maxLength: 64,
+              },
+              record: {
+                type: 'unknown',
+                description: 'The record itself. Must contain a $type field.',
+              },
+              validate: {
+                type: 'boolean',
+                description:
+                  "Can be set to 'false' to skip Lexicon schema validation of record data, 'true' to require it, or leave unset to validate only for known Lexicons.",
+              },
+              zookie: {
+                type: 'string',
+                description:
+                  'The Zanzibar/SpiceDB consistency token, very similar in intent to CIDs in ATProto.',
+              },
+            },
+            required: ['repo', 'record'],
+          },
+        },
+        output: {
+          encoding: 'application/json',
+          schema: {
+            type: 'object',
+            properties: {
+              uri: {
+                type: 'string',
+                format: 'at-uri',
+              },
+              cid: {
+                type: 'string',
+                format: 'cid',
+              },
+              zookie: {
+                type: 'string',
+                description:
+                  'The Zanzibar/SpiceDB consistency token, very similar in intent to CIDs in ATProto.',
+              },
+              validationStatus: {
+                type: 'string',
+                knownValues: ['valid', 'unknown'],
+              },
+              status: {
+                type: 'string',
+                description: 'a human readable status message',
+              },
+            },
+            required: ['uri', 'cid'],
+          },
+        },
+      },
+    },
+    description:
+      'Create a new repository group, errors if it exists. Requires auth, implemented by PDS.',
+    id: 'com.atproto.space.createGroup',
+  },
+  ComAtprotoSpaceCreateRecord: {
+    lexicon: 1,
+    id: 'com.atproto.space.createRecord',
+    description:
+      'Create a new repository record, errors if it exists. Requires auth, implemented by PDS.',
+    defs: {
+      main: {
+        parameters: {
+          properties: {
+            collection: {
+              description: 'The NSID of the record type.',
+              format: 'nsid',
+              maxLength: 256,
+              type: 'string',
+            },
+          },
+          type: 'params',
+        },
+        type: 'procedure',
+        description: 'Create a new repository record, errors if it exists.',
+        auth: {
+          permission: 'record_create',
+          objectType: 'space',
+        },
+        input: {
+          encoding: 'application/json',
+          schema: {
+            type: 'object',
+            properties: {
+              repo: {
+                type: 'string',
+                description:
+                  'The handle or DID of the repo (aka, current account).',
+                format: 'at-identifier',
+                maxLength: 256,
+              },
+              parent: {
+                description:
+                  'The id of the parent space to nest under. If not set, the current value or /root is assumed. Can be used to move a space or bubble.',
+                type: 'string',
+                format: 'record-key',
+                maxLength: 64,
+              },
+              rkey: {
+                type: 'string',
+                description: 'The id of the space associated with the repo.',
+                format: 'record-key',
+                maxLength: 64,
+              },
+              record: {
+                type: 'unknown',
+                description: 'The record itself. Must contain a $type field.',
+              },
+              validate: {
+                type: 'boolean',
+                description:
+                  "Can be set to 'false' to skip Lexicon schema validation of record data, 'true' to require it, or leave unset to validate only for known Lexicons.",
+              },
+              zookie: {
+                type: 'string',
+                description:
+                  'The Zanzibar/SpiceDB consistency token, very similar in intent to CIDs in ATProto.',
+              },
+            },
+            required: ['repo', 'record'],
+          },
+        },
+        output: {
+          encoding: 'application/json',
+          schema: {
+            type: 'object',
+            properties: {
+              uri: {
+                type: 'string',
+                format: 'at-uri',
+              },
+              cid: {
+                type: 'string',
+                format: 'cid',
+              },
+              zookie: {
+                type: 'string',
+                description:
+                  'The Zanzibar/SpiceDB consistency token, very similar in intent to CIDs in ATProto.',
+              },
+              validationStatus: {
+                type: 'string',
+                knownValues: ['valid', 'unknown'],
+              },
+              status: {
+                type: 'string',
+                description: 'a human readable status message',
+              },
+            },
+            required: ['uri', 'cid'],
+          },
+        },
+      },
+    },
+  },
+  ComAtprotoSpaceCreateRelation: {
+    lexicon: 1,
+    defs: {
+      main: {
+        type: 'procedure',
+        description: 'Create a new repository relation, errors if it exists.',
+        auth: {
+          permission: 'relation_create',
+          objectType: 'space',
+        },
+        input: {
+          encoding: 'application/json',
+          schema: {
+            type: 'object',
+            properties: {
+              repo: {
+                type: 'string',
+                description:
+                  'The handle or DID of the repo (aka, current account).',
+                format: 'at-identifier',
+                maxLength: 256,
+              },
+              parent: {
+                description:
+                  'The id of the parent space to nest under. If not set, the current value or /root is assumed. Can be used to move a space or bubble.',
+                type: 'string',
+                format: 'record-key',
+                maxLength: 64,
+              },
+              rkey: {
+                type: 'string',
+                description: 'The id of the space associated with the repo.',
+                format: 'record-key',
+                maxLength: 64,
+              },
+              record: {
+                type: 'unknown',
+                description: 'The record itself. Must contain a $type field.',
+              },
+              validate: {
+                type: 'boolean',
+                description:
+                  "Can be set to 'false' to skip Lexicon schema validation of record data, 'true' to require it, or leave unset to validate only for known Lexicons.",
+              },
+              zookie: {
+                type: 'string',
+                description:
+                  'The Zanzibar/SpiceDB consistency token, very similar in intent to CIDs in ATProto.',
+              },
+            },
+            required: ['repo', 'record'],
+          },
+        },
+        output: {
+          encoding: 'application/json',
+          schema: {
+            type: 'object',
+            properties: {
+              uri: {
+                type: 'string',
+                format: 'at-uri',
+              },
+              cid: {
+                type: 'string',
+                format: 'cid',
+              },
+              zookie: {
+                type: 'string',
+                description:
+                  'The Zanzibar/SpiceDB consistency token, very similar in intent to CIDs in ATProto.',
+              },
+              validationStatus: {
+                type: 'string',
+                knownValues: ['valid', 'unknown'],
+              },
+              status: {
+                type: 'string',
+                description: 'a human readable status message',
+              },
+            },
+            required: ['uri', 'cid'],
+          },
+        },
+      },
+    },
+    description:
+      'Create a new repository relation, errors if it exists. Requires auth, implemented by PDS.',
+    id: 'com.atproto.space.createRelation',
+  },
+  ComAtprotoSpaceCreateRole: {
+    lexicon: 1,
+    defs: {
+      main: {
+        type: 'procedure',
+        description: 'Create a new repository role, errors if it exists.',
+        auth: {
+          permission: 'role_create',
+          objectType: 'space',
+        },
+        input: {
+          encoding: 'application/json',
+          schema: {
+            type: 'object',
+            properties: {
+              repo: {
+                type: 'string',
+                description:
+                  'The handle or DID of the repo (aka, current account).',
+                format: 'at-identifier',
+                maxLength: 256,
+              },
+              parent: {
+                description:
+                  'The id of the parent space to nest under. If not set, the current value or /root is assumed. Can be used to move a space or bubble.',
+                type: 'string',
+                format: 'record-key',
+                maxLength: 64,
+              },
+              rkey: {
+                type: 'string',
+                description: 'The id of the space associated with the repo.',
+                format: 'record-key',
+                maxLength: 64,
+              },
+              record: {
+                type: 'unknown',
+                description: 'The record itself. Must contain a $type field.',
+              },
+              validate: {
+                type: 'boolean',
+                description:
+                  "Can be set to 'false' to skip Lexicon schema validation of record data, 'true' to require it, or leave unset to validate only for known Lexicons.",
+              },
+              zookie: {
+                type: 'string',
+                description:
+                  'The Zanzibar/SpiceDB consistency token, very similar in intent to CIDs in ATProto.',
+              },
+            },
+            required: ['repo', 'record'],
+          },
+        },
+        output: {
+          encoding: 'application/json',
+          schema: {
+            type: 'object',
+            properties: {
+              uri: {
+                type: 'string',
+                format: 'at-uri',
+              },
+              cid: {
+                type: 'string',
+                format: 'cid',
+              },
+              zookie: {
+                type: 'string',
+                description:
+                  'The Zanzibar/SpiceDB consistency token, very similar in intent to CIDs in ATProto.',
+              },
+              validationStatus: {
+                type: 'string',
+                knownValues: ['valid', 'unknown'],
+              },
+              status: {
+                type: 'string',
+                description: 'a human readable status message',
+              },
+            },
+            required: ['uri', 'cid'],
+          },
+        },
+      },
+    },
+    description:
+      'Create a new repository role, errors if it exists. Requires auth, implemented by PDS.',
+    id: 'com.atproto.space.createRole',
+  },
+  ComAtprotoSpaceCreateSpace: {
+    lexicon: 1,
+    defs: {
+      main: {
+        type: 'procedure',
+        description: 'Create a new repository space, errors if it exists.',
+        auth: {
+          permission: 'space_create',
+          objectType: 'space',
+        },
+        input: {
+          encoding: 'application/json',
+          schema: {
+            type: 'object',
+            properties: {
+              repo: {
+                type: 'string',
+                description:
+                  'The handle or DID of the repo (aka, current account).',
+                format: 'at-identifier',
+                maxLength: 256,
+              },
+              parent: {
+                description:
+                  'The id of the parent space to nest under. If not set, the current value or /root is assumed. Can be used to move a space or bubble.',
+                type: 'string',
+                format: 'record-key',
+                maxLength: 64,
+              },
+              rkey: {
+                type: 'string',
+                description: 'The id of the space associated with the repo.',
+                format: 'record-key',
+                maxLength: 64,
+              },
+              record: {
+                type: 'unknown',
+                description: 'The record itself. Must contain a $type field.',
+              },
+              validate: {
+                type: 'boolean',
+                description:
+                  "Can be set to 'false' to skip Lexicon schema validation of record data, 'true' to require it, or leave unset to validate only for known Lexicons.",
+              },
+              zookie: {
+                type: 'string',
+                description:
+                  'The Zanzibar/SpiceDB consistency token, very similar in intent to CIDs in ATProto.',
+              },
+            },
+            required: ['repo', 'record'],
+          },
+        },
+        output: {
+          encoding: 'application/json',
+          schema: {
+            type: 'object',
+            properties: {
+              uri: {
+                type: 'string',
+                format: 'at-uri',
+              },
+              cid: {
+                type: 'string',
+                format: 'cid',
+              },
+              zookie: {
+                type: 'string',
+                description:
+                  'The Zanzibar/SpiceDB consistency token, very similar in intent to CIDs in ATProto.',
+              },
+              validationStatus: {
+                type: 'string',
+                knownValues: ['valid', 'unknown'],
+              },
+              status: {
+                type: 'string',
+                description: 'a human readable status message',
+              },
+            },
+            required: ['uri', 'cid'],
+          },
+        },
+      },
+    },
+    description:
+      'Create a new repository space, errors if it exists. Requires auth, implemented by PDS.',
+    id: 'com.atproto.space.createSpace',
+  },
+  ComAtprotoSpaceDeleteBlob: {
+    lexicon: 1,
+    id: 'com.atproto.space.deleteBlob',
+    description:
+      'Delete a blob from a repository. Requires auth, implemented by PDS.',
+    defs: {
+      main: {
+        type: 'query',
+        description: 'Delete a blob from a repository.',
+        auth: {
+          permission: 'get_blob',
+        },
+        parameters: {
+          type: 'params',
+          properties: {
+            repo: {
+              type: 'string',
+              description:
+                'The handle or DID of the repo (aka, current account).',
+              format: 'at-identifier',
+              maxLength: 256,
+            },
+            space: {
+              type: 'string',
+              description: 'The id of the space.',
+              format: 'record-key',
+              maxLength: 64,
+            },
+            parent: {
+              type: 'string',
+              description: 'The id of the context space to operate under.',
+              format: 'record-key',
+              maxLength: 64,
+            },
+            cid: {
+              type: 'string',
+              description:
+                'The CID of the version of the resource. If not specified, then return the most recent version.',
+              format: 'cid',
+            },
+          },
+          required: ['repo', 'cid'],
+        },
+        output: {
+          encoding: 'application/json',
+          schema: {
+            type: 'object',
+            properties: {
+              status: {
+                type: 'string',
+                description: 'a human readable status message',
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+  ComAtprotoSpaceDeleteGroup: {
+    lexicon: 1,
+    defs: {
+      main: {
+        type: 'procedure',
+        description: 'Delete a group and everything associated with it.',
+        auth: {
+          permission: 'group_delete',
+          objectType: 'group',
+        },
+        input: {
+          encoding: 'application/json',
+          schema: {
+            type: 'object',
+            properties: {
+              repo: {
+                type: 'string',
+                description:
+                  'The handle or DID of the repo (aka, current account).',
+                format: 'at-identifier',
+                maxLength: 256,
+              },
+              rkey: {
+                type: 'string',
+                format: 'record-key',
+                maxLength: 64,
+              },
+              swapCID: {
+                description:
+                  'Compare and swap with the previous record by CID.',
+                type: 'string',
+                format: 'cid',
+              },
+              zookie: {
+                type: 'string',
+                description:
+                  'The Zanzibar/SpiceDB consistency token, very similar in intent to CIDs in ATProto.',
+              },
+            },
+            required: ['repo', 'rkey'],
+          },
+        },
+        output: {
+          encoding: 'application/json',
+          schema: {
+            type: 'object',
+            properties: {
+              status: {
+                type: 'string',
+                description: 'a human readable status message',
+              },
+              zookie: {
+                type: 'string',
+                description:
+                  'The Zanzibar/SpiceDB consistency token, very similar in intent to CIDs in ATProto.',
+              },
+            },
+          },
+        },
+      },
+    },
+    description:
+      'Delete a group and everything associated with it. Requires auth, implemented by PDS.',
+    id: 'com.atproto.space.deleteGroup',
+  },
+  ComAtprotoSpaceDeleteRecord: {
+    lexicon: 1,
+    id: 'com.atproto.space.deleteRecord',
+    description:
+      'Delete a record and everything associated with it. Requires auth, implemented by PDS.',
+    defs: {
+      main: {
+        parameters: {
+          properties: {
+            collection: {
+              description: 'The NSID of the record type.',
+              format: 'nsid',
+              maxLength: 256,
+              type: 'string',
+            },
+          },
+          type: 'params',
+        },
+        type: 'procedure',
+        description: 'Delete a record and everything associated with it.',
+        auth: {
+          permission: 'record_delete',
+          objectType: 'record',
+        },
+        input: {
+          encoding: 'application/json',
+          schema: {
+            type: 'object',
+            properties: {
+              repo: {
+                type: 'string',
+                description:
+                  'The handle or DID of the repo (aka, current account).',
+                format: 'at-identifier',
+                maxLength: 256,
+              },
+              rkey: {
+                type: 'string',
+                format: 'record-key',
+                maxLength: 64,
+              },
+              swapCID: {
+                description:
+                  'Compare and swap with the previous record by CID.',
+                type: 'string',
+                format: 'cid',
+              },
+              zookie: {
+                type: 'string',
+                description:
+                  'The Zanzibar/SpiceDB consistency token, very similar in intent to CIDs in ATProto.',
+              },
+            },
+            required: ['repo', 'rkey'],
+          },
+        },
+        output: {
+          encoding: 'application/json',
+          schema: {
+            type: 'object',
+            properties: {
+              status: {
+                type: 'string',
+                description: 'a human readable status message',
+              },
+              zookie: {
+                type: 'string',
+                description:
+                  'The Zanzibar/SpiceDB consistency token, very similar in intent to CIDs in ATProto.',
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+  ComAtprotoSpaceDeleteRelation: {
+    lexicon: 1,
+    defs: {
+      main: {
+        type: 'procedure',
+        description: 'Delete a relation and everything associated with it.',
+        auth: {
+          permission: 'relation_delete',
+          objectType: 'relation',
+        },
+        input: {
+          encoding: 'application/json',
+          schema: {
+            type: 'object',
+            properties: {
+              repo: {
+                type: 'string',
+                description:
+                  'The handle or DID of the repo (aka, current account).',
+                format: 'at-identifier',
+                maxLength: 256,
+              },
+              rkey: {
+                type: 'string',
+                format: 'record-key',
+                maxLength: 64,
+              },
+              swapCID: {
+                description:
+                  'Compare and swap with the previous record by CID.',
+                type: 'string',
+                format: 'cid',
+              },
+              zookie: {
+                type: 'string',
+                description:
+                  'The Zanzibar/SpiceDB consistency token, very similar in intent to CIDs in ATProto.',
+              },
+            },
+            required: ['repo', 'rkey'],
+          },
+        },
+        output: {
+          encoding: 'application/json',
+          schema: {
+            type: 'object',
+            properties: {
+              status: {
+                type: 'string',
+                description: 'a human readable status message',
+              },
+              zookie: {
+                type: 'string',
+                description:
+                  'The Zanzibar/SpiceDB consistency token, very similar in intent to CIDs in ATProto.',
+              },
+            },
+          },
+        },
+      },
+    },
+    description:
+      'Delete a relation and everything associated with it. Requires auth, implemented by PDS.',
+    id: 'com.atproto.space.deleteRelation',
+  },
+  ComAtprotoSpaceDeleteRole: {
+    lexicon: 1,
+    defs: {
+      main: {
+        type: 'procedure',
+        description: 'Delete a role and everything associated with it.',
+        auth: {
+          permission: 'role_delete',
+          objectType: 'role',
+        },
+        input: {
+          encoding: 'application/json',
+          schema: {
+            type: 'object',
+            properties: {
+              repo: {
+                type: 'string',
+                description:
+                  'The handle or DID of the repo (aka, current account).',
+                format: 'at-identifier',
+                maxLength: 256,
+              },
+              rkey: {
+                type: 'string',
+                format: 'record-key',
+                maxLength: 64,
+              },
+              swapCID: {
+                description:
+                  'Compare and swap with the previous record by CID.',
+                type: 'string',
+                format: 'cid',
+              },
+              zookie: {
+                type: 'string',
+                description:
+                  'The Zanzibar/SpiceDB consistency token, very similar in intent to CIDs in ATProto.',
+              },
+            },
+            required: ['repo', 'rkey'],
+          },
+        },
+        output: {
+          encoding: 'application/json',
+          schema: {
+            type: 'object',
+            properties: {
+              status: {
+                type: 'string',
+                description: 'a human readable status message',
+              },
+              zookie: {
+                type: 'string',
+                description:
+                  'The Zanzibar/SpiceDB consistency token, very similar in intent to CIDs in ATProto.',
+              },
+            },
+          },
+        },
+      },
+    },
+    description:
+      'Delete a role and everything associated with it. Requires auth, implemented by PDS.',
+    id: 'com.atproto.space.deleteRole',
+  },
+  ComAtprotoSpaceDeleteSpace: {
+    lexicon: 1,
+    defs: {
+      main: {
+        type: 'procedure',
+        description: 'Delete a space and everything associated with it.',
+        auth: {
+          permission: 'space_delete',
+          objectType: 'space',
+        },
+        input: {
+          encoding: 'application/json',
+          schema: {
+            type: 'object',
+            properties: {
+              repo: {
+                type: 'string',
+                description:
+                  'The handle or DID of the repo (aka, current account).',
+                format: 'at-identifier',
+                maxLength: 256,
+              },
+              rkey: {
+                type: 'string',
+                format: 'record-key',
+                maxLength: 64,
+              },
+              swapCID: {
+                description:
+                  'Compare and swap with the previous record by CID.',
+                type: 'string',
+                format: 'cid',
+              },
+              zookie: {
+                type: 'string',
+                description:
+                  'The Zanzibar/SpiceDB consistency token, very similar in intent to CIDs in ATProto.',
+              },
+            },
+            required: ['repo', 'rkey'],
+          },
+        },
+        output: {
+          encoding: 'application/json',
+          schema: {
+            type: 'object',
+            properties: {
+              status: {
+                type: 'string',
+                description: 'a human readable status message',
+              },
+              zookie: {
+                type: 'string',
+                description:
+                  'The Zanzibar/SpiceDB consistency token, very similar in intent to CIDs in ATProto.',
+              },
+            },
+          },
+        },
+      },
+    },
+    description:
+      'Delete a space and everything associated with it. Requires auth, implemented by PDS.',
+    id: 'com.atproto.space.deleteSpace',
+  },
+  ComAtprotoSpaceDescribeGroup: {
+    lexicon: 1,
+    defs: {
+      main: {
+        type: 'query',
+        description: 'Get a group from a repository with extra information.',
+        auth: {
+          permission: 'group_get',
+          objectType: 'group',
+        },
+        parameters: {
+          type: 'params',
+          properties: {
+            repo: {
+              type: 'string',
+              description:
+                'The handle or DID of the repo (aka, current account).',
+              format: 'at-identifier',
+              maxLength: 256,
+            },
+            parent: {
+              type: 'string',
+              description: 'The id of the context space to operate under.',
+              format: 'record-key',
+              maxLength: 64,
+            },
+            rkey: {
+              type: 'string',
+              description: 'The id of the space.',
+              format: 'record-key',
+              maxLength: 64,
+            },
+            cid: {
+              type: 'string',
+              description:
+                'The CID of the version of the resource. If not specified, then return the most recent version.',
+              format: 'cid',
+            },
+            zookie: {
+              type: 'string',
+              description:
+                'The Zanzibar/SpiceDB consistency token, very similar in intent to CIDs in ATProto.',
+            },
+          },
+          required: ['repo', 'rkey'],
+        },
+        output: {
+          encoding: 'application/json',
+          schema: {
+            type: 'object',
+            properties: {
+              uri: {
+                type: 'string',
+                format: 'at-uri',
+              },
+              cid: {
+                description: 'The CID of the resource.',
+                type: 'string',
+                format: 'cid',
+              },
+              value: {
+                type: 'unknown',
+                description:
+                  'Some value, lexicon and implementation dependent.',
+              },
+            },
+            required: ['uri', 'value'],
+          },
+        },
+      },
+    },
+    description:
+      'Get a group from a repository with extra information. Requires auth, implemented by PDS.',
+    id: 'com.atproto.space.describeGroup',
+  },
+  ComAtprotoSpaceDescribeRole: {
+    lexicon: 1,
+    defs: {
+      main: {
+        type: 'query',
+        description: 'Get a role from a repository with extra information.',
+        auth: {
+          permission: 'role_get',
+          objectType: 'role',
+        },
+        parameters: {
+          type: 'params',
+          properties: {
+            repo: {
+              type: 'string',
+              description:
+                'The handle or DID of the repo (aka, current account).',
+              format: 'at-identifier',
+              maxLength: 256,
+            },
+            parent: {
+              type: 'string',
+              description: 'The id of the context space to operate under.',
+              format: 'record-key',
+              maxLength: 64,
+            },
+            rkey: {
+              type: 'string',
+              description: 'The id of the space.',
+              format: 'record-key',
+              maxLength: 64,
+            },
+            cid: {
+              type: 'string',
+              description:
+                'The CID of the version of the resource. If not specified, then return the most recent version.',
+              format: 'cid',
+            },
+            zookie: {
+              type: 'string',
+              description:
+                'The Zanzibar/SpiceDB consistency token, very similar in intent to CIDs in ATProto.',
+            },
+          },
+          required: ['repo', 'rkey'],
+        },
+        output: {
+          encoding: 'application/json',
+          schema: {
+            type: 'object',
+            properties: {
+              uri: {
+                type: 'string',
+                format: 'at-uri',
+              },
+              cid: {
+                description: 'The CID of the resource.',
+                type: 'string',
+                format: 'cid',
+              },
+              value: {
+                type: 'unknown',
+                description:
+                  'Some value, lexicon and implementation dependent.',
+              },
+            },
+            required: ['uri', 'value'],
+          },
+        },
+      },
+    },
+    description:
+      'Get a role from a repository with extra information. Requires auth, implemented by PDS.',
+    id: 'com.atproto.space.describeRole',
+  },
+  ComAtprotoSpaceDescribeSpace: {
+    lexicon: 1,
+    defs: {
+      main: {
+        type: 'query',
+        description: 'Get a space from a repository with extra information.',
+        auth: {
+          permission: 'space_get',
+          objectType: 'space',
+        },
+        parameters: {
+          type: 'params',
+          properties: {
+            repo: {
+              type: 'string',
+              description:
+                'The handle or DID of the repo (aka, current account).',
+              format: 'at-identifier',
+              maxLength: 256,
+            },
+            parent: {
+              type: 'string',
+              description: 'The id of the context space to operate under.',
+              format: 'record-key',
+              maxLength: 64,
+            },
+            rkey: {
+              type: 'string',
+              description: 'The id of the space.',
+              format: 'record-key',
+              maxLength: 64,
+            },
+            cid: {
+              type: 'string',
+              description:
+                'The CID of the version of the resource. If not specified, then return the most recent version.',
+              format: 'cid',
+            },
+            zookie: {
+              type: 'string',
+              description:
+                'The Zanzibar/SpiceDB consistency token, very similar in intent to CIDs in ATProto.',
+            },
+          },
+          required: ['repo', 'rkey'],
+        },
+        output: {
+          encoding: 'application/json',
+          schema: {
+            type: 'object',
+            properties: {
+              uri: {
+                type: 'string',
+                format: 'at-uri',
+              },
+              cid: {
+                description: 'The CID of the resource.',
+                type: 'string',
+                format: 'cid',
+              },
+              value: {
+                type: 'unknown',
+                description:
+                  'Some value, lexicon and implementation dependent.',
+              },
+            },
+            required: ['uri', 'value'],
+          },
+        },
+      },
+    },
+    description:
+      'Get a space from a repository with extra information. Requires auth, implemented by PDS.',
+    id: 'com.atproto.space.describeSpace',
+  },
+  ComAtprotoSpaceGetBlob: {
+    lexicon: 1,
+    id: 'com.atproto.space.getBlob',
+    description:
+      'Get a blob from a repository. Requires auth, implemented by PDS.',
+    defs: {
+      main: {
+        type: 'query',
+        description: 'Get a blob from a repository.',
+        auth: {
+          permission: 'get_blob',
+        },
+        parameters: {
+          type: 'params',
+          properties: {
+            repo: {
+              type: 'string',
+              description:
+                'The handle or DID of the repo (aka, current account).',
+              format: 'at-identifier',
+              maxLength: 256,
+            },
+            space: {
+              type: 'string',
+              description: 'The id of the space.',
+              format: 'record-key',
+              maxLength: 64,
+            },
+            parent: {
+              type: 'string',
+              description: 'The id of the context space to operate under.',
+              format: 'record-key',
+              maxLength: 64,
+            },
+            cid: {
+              type: 'string',
+              description:
+                'The CID of the version of the resource. If not specified, then return the most recent version.',
+              format: 'cid',
+            },
+          },
+          required: ['repo', 'cid'],
+        },
+        output: {
+          encoding: '*/*',
+        },
+      },
+    },
+  },
+  ComAtprotoSpaceGetGroup: {
+    lexicon: 1,
+    defs: {
+      main: {
+        type: 'query',
+        description: 'Get a group from a repository.',
+        auth: {
+          permission: 'group_get',
+          objectType: 'group',
+        },
+        parameters: {
+          type: 'params',
+          properties: {
+            repo: {
+              type: 'string',
+              description:
+                'The handle or DID of the repo (aka, current account).',
+              format: 'at-identifier',
+              maxLength: 256,
+            },
+            parent: {
+              type: 'string',
+              description: 'The id of the context space to operate under.',
+              format: 'record-key',
+              maxLength: 64,
+            },
+            rkey: {
+              type: 'string',
+              description: 'The id of the space.',
+              format: 'record-key',
+              maxLength: 64,
+            },
+            cid: {
+              type: 'string',
+              description:
+                'The CID of the version of the resource. If not specified, then return the most recent version.',
+              format: 'cid',
+            },
+            zookie: {
+              type: 'string',
+              description:
+                'The Zanzibar/SpiceDB consistency token, very similar in intent to CIDs in ATProto.',
+            },
+          },
+          required: ['repo', 'rkey'],
+        },
+        output: {
+          encoding: 'application/json',
+          schema: {
+            type: 'object',
+            properties: {
+              uri: {
+                type: 'string',
+                format: 'at-uri',
+              },
+              cid: {
+                description: 'The CID of the resource.',
+                type: 'string',
+                format: 'cid',
+              },
+              value: {
+                type: 'unknown',
+                description:
+                  'Some value, lexicon and implementation dependent.',
+              },
+            },
+            required: ['uri', 'value'],
+          },
+        },
+      },
+    },
+    description:
+      'Get a group from a repository. Requires auth, implemented by PDS.',
+    id: 'com.atproto.space.getGroup',
+  },
+  ComAtprotoSpaceGetRecord: {
+    lexicon: 1,
+    id: 'com.atproto.space.getRecord',
+    description:
+      'Get a record from a repository. Requires auth, implemented by PDS.',
+    defs: {
+      main: {
+        auth: {
+          permission: 'record_get',
+          objectType: 'record',
+        },
+        description: 'Get a record from a repository.',
+        parameters: {
+          properties: {
+            collection: {
+              description: 'The NSID of the record type.',
+              format: 'nsid',
+              maxLength: 256,
+              type: 'string',
+            },
+            repo: {
+              type: 'string',
+              description:
+                'The handle or DID of the repo (aka, current account).',
+              format: 'at-identifier',
+              maxLength: 256,
+            },
+            parent: {
+              type: 'string',
+              description: 'The id of the context space to operate under.',
+              format: 'record-key',
+              maxLength: 64,
+            },
+            rkey: {
+              type: 'string',
+              description: 'The id of the space.',
+              format: 'record-key',
+              maxLength: 64,
+            },
+            cid: {
+              type: 'string',
+              description:
+                'The CID of the version of the resource. If not specified, then return the most recent version.',
+              format: 'cid',
+            },
+            zookie: {
+              type: 'string',
+              description:
+                'The Zanzibar/SpiceDB consistency token, very similar in intent to CIDs in ATProto.',
+            },
+          },
+          required: ['repo', 'rkey'],
+          type: 'params',
+        },
+        type: 'query',
+        output: {
+          encoding: 'application/json',
+          schema: {
+            type: 'object',
+            properties: {
+              uri: {
+                type: 'string',
+                format: 'at-uri',
+              },
+              cid: {
+                description: 'The CID of the resource.',
+                type: 'string',
+                format: 'cid',
+              },
+              value: {
+                type: 'unknown',
+                description:
+                  'Some value, lexicon and implementation dependent.',
+              },
+            },
+            required: ['uri', 'value'],
+          },
+        },
+      },
+    },
+  },
+  ComAtprotoSpaceGetRelation: {
+    lexicon: 1,
+    defs: {
+      main: {
+        type: 'query',
+        description: 'Get a relation from a repository.',
+        auth: {
+          permission: 'relation_get',
+          objectType: 'relation',
+        },
+        parameters: {
+          type: 'params',
+          properties: {
+            repo: {
+              type: 'string',
+              description:
+                'The handle or DID of the repo (aka, current account).',
+              format: 'at-identifier',
+              maxLength: 256,
+            },
+            parent: {
+              type: 'string',
+              description: 'The id of the context space to operate under.',
+              format: 'record-key',
+              maxLength: 64,
+            },
+            rkey: {
+              type: 'string',
+              description: 'The id of the space.',
+              format: 'record-key',
+              maxLength: 64,
+            },
+            cid: {
+              type: 'string',
+              description:
+                'The CID of the version of the resource. If not specified, then return the most recent version.',
+              format: 'cid',
+            },
+            zookie: {
+              type: 'string',
+              description:
+                'The Zanzibar/SpiceDB consistency token, very similar in intent to CIDs in ATProto.',
+            },
+          },
+          required: ['repo', 'rkey'],
+        },
+        output: {
+          encoding: 'application/json',
+          schema: {
+            type: 'object',
+            properties: {
+              uri: {
+                type: 'string',
+                format: 'at-uri',
+              },
+              cid: {
+                description: 'The CID of the resource.',
+                type: 'string',
+                format: 'cid',
+              },
+              value: {
+                type: 'unknown',
+                description:
+                  'Some value, lexicon and implementation dependent.',
+              },
+            },
+            required: ['uri', 'value'],
+          },
+        },
+      },
+    },
+    description:
+      'Get a relation from a repository. Requires auth, implemented by PDS.',
+    id: 'com.atproto.space.getRelation',
+  },
+  ComAtprotoSpaceGetRole: {
+    lexicon: 1,
+    defs: {
+      main: {
+        type: 'query',
+        description: 'Get a role from a repository.',
+        auth: {
+          permission: 'role_get',
+          objectType: 'role',
+        },
+        parameters: {
+          type: 'params',
+          properties: {
+            repo: {
+              type: 'string',
+              description:
+                'The handle or DID of the repo (aka, current account).',
+              format: 'at-identifier',
+              maxLength: 256,
+            },
+            parent: {
+              type: 'string',
+              description: 'The id of the context space to operate under.',
+              format: 'record-key',
+              maxLength: 64,
+            },
+            rkey: {
+              type: 'string',
+              description: 'The id of the space.',
+              format: 'record-key',
+              maxLength: 64,
+            },
+            cid: {
+              type: 'string',
+              description:
+                'The CID of the version of the resource. If not specified, then return the most recent version.',
+              format: 'cid',
+            },
+            zookie: {
+              type: 'string',
+              description:
+                'The Zanzibar/SpiceDB consistency token, very similar in intent to CIDs in ATProto.',
+            },
+          },
+          required: ['repo', 'rkey'],
+        },
+        output: {
+          encoding: 'application/json',
+          schema: {
+            type: 'object',
+            properties: {
+              uri: {
+                type: 'string',
+                format: 'at-uri',
+              },
+              cid: {
+                description: 'The CID of the resource.',
+                type: 'string',
+                format: 'cid',
+              },
+              value: {
+                type: 'unknown',
+                description:
+                  'Some value, lexicon and implementation dependent.',
+              },
+            },
+            required: ['uri', 'value'],
+          },
+        },
+      },
+    },
+    description:
+      'Get a role from a repository. Requires auth, implemented by PDS.',
+    id: 'com.atproto.space.getRole',
+  },
+  ComAtprotoSpaceGetSpace: {
+    lexicon: 1,
+    defs: {
+      main: {
+        type: 'query',
+        description: 'Get a space from a repository.',
+        auth: {
+          permission: 'space_get',
+          objectType: 'space',
+        },
+        parameters: {
+          type: 'params',
+          properties: {
+            repo: {
+              type: 'string',
+              description:
+                'The handle or DID of the repo (aka, current account).',
+              format: 'at-identifier',
+              maxLength: 256,
+            },
+            parent: {
+              type: 'string',
+              description: 'The id of the context space to operate under.',
+              format: 'record-key',
+              maxLength: 64,
+            },
+            rkey: {
+              type: 'string',
+              description: 'The id of the space.',
+              format: 'record-key',
+              maxLength: 64,
+            },
+            cid: {
+              type: 'string',
+              description:
+                'The CID of the version of the resource. If not specified, then return the most recent version.',
+              format: 'cid',
+            },
+            zookie: {
+              type: 'string',
+              description:
+                'The Zanzibar/SpiceDB consistency token, very similar in intent to CIDs in ATProto.',
+            },
+          },
+          required: ['repo', 'rkey'],
+        },
+        output: {
+          encoding: 'application/json',
+          schema: {
+            type: 'object',
+            properties: {
+              uri: {
+                type: 'string',
+                format: 'at-uri',
+              },
+              cid: {
+                description: 'The CID of the resource.',
+                type: 'string',
+                format: 'cid',
+              },
+              value: {
+                type: 'unknown',
+                description:
+                  'Some value, lexicon and implementation dependent.',
+              },
+            },
+            required: ['uri', 'value'],
+          },
+        },
+      },
+    },
+    description:
+      'Get a space from a repository. Requires auth, implemented by PDS.',
+    id: 'com.atproto.space.getSpace',
+  },
+  ComAtprotoSpaceGroup: {
+    lexicon: 1,
+    id: 'com.atproto.space.group',
+    description:
+      'Groups are sets of members composed from accounts, services, apikeys, other groups, etc... Requires auth, implemented by PDS.',
+    defs: {
+      main: {
+        type: 'record',
+        description:
+          'Groups are sets of members composed from accounts, services, apikeys, other groups, etc...',
+        key: 'any',
+        record: {
+          type: 'object',
+          properties: {
+            displayName: {
+              type: 'string',
+              maxGraphemes: 64,
+              maxLength: 640,
+            },
+            description: {
+              type: 'string',
+              description: 'Free-form profile description text.',
+              maxGraphemes: 256,
+              maxLength: 2560,
+            },
+            avatar: {
+              type: 'blob',
+              description:
+                "Small image to be displayed next to posts from account. AKA, 'profile picture'",
+              accept: ['image/png', 'image/jpeg'],
+              maxSize: 1000000,
+            },
+            banner: {
+              type: 'blob',
+              description:
+                'Larger horizontal image to display behind profile view.',
+              accept: ['image/png', 'image/jpeg'],
+              maxSize: 1000000,
+            },
+            labels: {
+              type: 'union',
+              description:
+                'Self-label values, specific to the Bluesky application, on the overall account.',
+              refs: ['lex:com.atproto.label.defs#selfLabels'],
+            },
+            createdAt: {
+              type: 'string',
+              format: 'datetime',
+            },
+          },
+        },
+      },
+    },
+  },
+  ComAtprotoSpaceListBlobs: {
+    lexicon: 1,
+    id: 'com.atproto.space.listBlobs',
+    description:
+      'List blobs under a repository. Requires auth, implemented by PDS.',
+    defs: {
+      main: {
+        type: 'query',
+        description: 'List blobs under a repository.',
+        auth: {
+          permission: 'list_blob',
+        },
+        parameters: {
+          type: 'params',
+          properties: {
+            repo: {
+              type: 'string',
+              description:
+                'The handle or DID of the repo (aka, current account).',
+              format: 'at-identifier',
+              maxLength: 256,
+            },
+            parent: {
+              type: 'string',
+              description: 'The id of the context space to operate under.',
+              format: 'record-key',
+              maxLength: 64,
+            },
+            limit: {
+              type: 'integer',
+              minimum: 1,
+              maximum: 1000,
+              default: 500,
+              description: 'The number of records to return.',
+            },
+            cursor: {
+              type: 'string',
+            },
+            reverse: {
+              type: 'boolean',
+              description: 'Flag to reverse the order of the returned records.',
+            },
+            since: {
+              type: 'string',
+              description:
+                'Optional revision of the repo to list blobs since. (note, createdAt?)',
+            },
+          },
+          required: ['repo'],
+        },
+        output: {
+          encoding: 'application/json',
+          schema: {
+            type: 'object',
+            properties: {
+              cursor: {
+                type: 'string',
+              },
+              blobs: {
+                type: 'array',
+                items: {
+                  type: 'ref',
+                  ref: 'lex:com.atproto.space.listBlobs#record',
+                },
+              },
+            },
+            required: ['blobs'],
+          },
+        },
+      },
+      record: {
+        type: 'object',
+        properties: {
+          uri: {
+            type: 'string',
+            format: 'at-uri',
+          },
+          cid: {
+            description: 'The CID of the resource.',
+            type: 'string',
+            format: 'cid',
+          },
+          encoding: {
+            type: 'string',
+            maxLength: 64,
+          },
+          size: {
+            type: 'integer',
+          },
+        },
+        required: ['uri', 'cid'],
+      },
+    },
+  },
+  ComAtprotoSpaceListGroups: {
+    lexicon: 1,
+    defs: {
+      main: {
+        type: 'query',
+        description: 'List groups under a repository.',
+        auth: {
+          permission: 'group_list',
+          objectType: 'space',
+        },
+        parameters: {
+          type: 'params',
+          properties: {
+            repo: {
+              type: 'string',
+              description:
+                'The handle or DID of the repo (aka, current account).',
+              format: 'at-identifier',
+              maxLength: 256,
+            },
+            parent: {
+              type: 'string',
+              description: 'The id of the context space to operate under.',
+              format: 'record-key',
+              maxLength: 64,
+            },
+            limit: {
+              type: 'integer',
+              minimum: 1,
+              maximum: 100,
+              default: 50,
+              description: 'The number of records to return.',
+            },
+            cursor: {
+              type: 'string',
+            },
+            reverse: {
+              type: 'boolean',
+              description: 'Flag to reverse the order of the returned records.',
+            },
+            zookie: {
+              type: 'string',
+              description:
+                'The Zanzibar/SpiceDB consistency token, very similar in intent to CIDs in ATProto.',
+            },
+          },
+          required: ['repo'],
+        },
+        output: {
+          encoding: 'application/json',
+          schema: {
+            type: 'object',
+            properties: {
+              cursor: {
+                type: 'string',
+              },
+              groups: {
+                type: 'array',
+                items: {
+                  type: 'ref',
+                  ref: 'lex:com.atproto.space.listGroups#record',
+                },
+              },
+            },
+            required: ['groups'],
+          },
+        },
+      },
+      record: {
+        type: 'object',
+        properties: {
+          uri: {
+            type: 'string',
+            format: 'at-uri',
+          },
+          cid: {
+            description: 'The CID of the resource.',
+            type: 'string',
+            format: 'cid',
+          },
+          value: {
+            type: 'unknown',
+            description: 'Some value, lexicon and implementation dependent.',
+          },
+        },
+        required: ['uri', 'cid', 'value'],
+      },
+    },
+    description:
+      'List groups under a repository. Requires auth, implemented by PDS.',
+    id: 'com.atproto.space.listGroups',
+  },
+  ComAtprotoSpaceListMissingBlobs: {
+    lexicon: 1,
+    id: 'com.atproto.space.listMissingBlobs',
+    description:
+      'Returns a list of missing blobs for the requesting account. Intended to be used in the account migration flow. Requires auth, implemented by PDS.',
+    defs: {
+      main: {
+        type: 'query',
+        description:
+          'Returns a list of missing blobs for the requesting account. Intended to be used in the account migration flow.',
+        auth: {
+          permission: 'list_blob',
+        },
+        parameters: {
+          type: 'params',
+          properties: {
+            repo: {
+              type: 'string',
+              description:
+                'The handle or DID of the repo (aka, current account).',
+              format: 'at-identifier',
+              maxLength: 256,
+            },
+            parent: {
+              type: 'string',
+              description: 'The id of the context space to operate under.',
+              format: 'record-key',
+              maxLength: 64,
+            },
+            limit: {
+              type: 'integer',
+              minimum: 1,
+              maximum: 1000,
+              default: 500,
+              description: 'The number of records to return.',
+            },
+            cursor: {
+              type: 'string',
+            },
+            reverse: {
+              type: 'boolean',
+              description: 'Flag to reverse the order of the returned records.',
+            },
+            since: {
+              type: 'string',
+              description:
+                'Optional revision of the repo to list blobs since. (note, createdAt?)',
+            },
+          },
+          required: ['repo'],
+        },
+        output: {
+          encoding: 'application/json',
+          schema: {
+            type: 'object',
+            properties: {
+              cursor: {
+                type: 'string',
+              },
+              blobs: {
+                type: 'array',
+                items: {
+                  type: 'ref',
+                  ref: 'lex:com.atproto.space.listMissingBlobs#recordBlob',
+                },
+              },
+            },
+            required: ['blobs'],
+          },
+        },
+      },
+      recordBlob: {
+        type: 'object',
+        properties: {
+          cid: {
+            type: 'string',
+            format: 'cid',
+          },
+          recordUri: {
+            type: 'string',
+            format: 'at-uri',
+          },
+        },
+        required: ['cid', 'recordUri'],
+      },
+    },
+  },
+  ComAtprotoSpaceListRecords: {
+    lexicon: 1,
+    id: 'com.atproto.space.listRecords',
+    description:
+      'List records under a repository. Requires auth, implemented by PDS.',
+    defs: {
+      main: {
+        auth: {
+          permission: 'record_list',
+          objectType: 'space',
+        },
+        description: 'List records under a repository.',
+        parameters: {
+          properties: {
+            collection: {
+              description: 'The NSID of the record type.',
+              format: 'nsid',
+              maxLength: 256,
+              type: 'string',
+            },
+            repo: {
+              type: 'string',
+              description:
+                'The handle or DID of the repo (aka, current account).',
+              format: 'at-identifier',
+              maxLength: 256,
+            },
+            parent: {
+              type: 'string',
+              description: 'The id of the context space to operate under.',
+              format: 'record-key',
+              maxLength: 64,
+            },
+            limit: {
+              type: 'integer',
+              minimum: 1,
+              maximum: 100,
+              default: 50,
+              description: 'The number of records to return.',
+            },
+            cursor: {
+              type: 'string',
+            },
+            reverse: {
+              type: 'boolean',
+              description: 'Flag to reverse the order of the returned records.',
+            },
+            zookie: {
+              type: 'string',
+              description:
+                'The Zanzibar/SpiceDB consistency token, very similar in intent to CIDs in ATProto.',
+            },
+          },
+          required: ['repo'],
+          type: 'params',
+        },
+        type: 'query',
+        output: {
+          encoding: 'application/json',
+          schema: {
+            type: 'object',
+            properties: {
+              cursor: {
+                type: 'string',
+              },
+              records: {
+                type: 'array',
+                items: {
+                  type: 'ref',
+                  ref: 'lex:com.atproto.space.listRecords#record',
+                },
+              },
+            },
+            required: ['records'],
+          },
+        },
+      },
+      record: {
+        type: 'object',
+        properties: {
+          uri: {
+            type: 'string',
+            format: 'at-uri',
+          },
+          cid: {
+            description: 'The CID of the resource.',
+            type: 'string',
+            format: 'cid',
+          },
+          value: {
+            type: 'unknown',
+            description: 'Some value, lexicon and implementation dependent.',
+          },
+        },
+        required: ['uri', 'cid', 'value'],
+      },
+    },
+  },
+  ComAtprotoSpaceListRelations: {
+    lexicon: 1,
+    defs: {
+      main: {
+        type: 'query',
+        description: 'List relations under a repository.',
+        auth: {
+          permission: 'relation_list',
+          objectType: 'space',
+        },
+        parameters: {
+          type: 'params',
+          properties: {
+            repo: {
+              type: 'string',
+              description:
+                'The handle or DID of the repo (aka, current account).',
+              format: 'at-identifier',
+              maxLength: 256,
+            },
+            parent: {
+              type: 'string',
+              description: 'The id of the context space to operate under.',
+              format: 'record-key',
+              maxLength: 64,
+            },
+            limit: {
+              type: 'integer',
+              minimum: 1,
+              maximum: 100,
+              default: 50,
+              description: 'The number of records to return.',
+            },
+            cursor: {
+              type: 'string',
+            },
+            reverse: {
+              type: 'boolean',
+              description: 'Flag to reverse the order of the returned records.',
+            },
+            zookie: {
+              type: 'string',
+              description:
+                'The Zanzibar/SpiceDB consistency token, very similar in intent to CIDs in ATProto.',
+            },
+          },
+          required: ['repo'],
+        },
+        output: {
+          encoding: 'application/json',
+          schema: {
+            type: 'object',
+            properties: {
+              cursor: {
+                type: 'string',
+              },
+              relations: {
+                type: 'array',
+                items: {
+                  type: 'ref',
+                  ref: 'lex:com.atproto.space.listRelations#record',
+                },
+              },
+            },
+            required: ['relations'],
+          },
+        },
+      },
+      record: {
+        type: 'object',
+        properties: {
+          uri: {
+            type: 'string',
+            format: 'at-uri',
+          },
+          cid: {
+            description: 'The CID of the resource.',
+            type: 'string',
+            format: 'cid',
+          },
+          value: {
+            type: 'unknown',
+            description: 'Some value, lexicon and implementation dependent.',
+          },
+        },
+        required: ['uri', 'cid', 'value'],
+      },
+    },
+    description:
+      'List relations under a repository. Requires auth, implemented by PDS.',
+    id: 'com.atproto.space.listRelations',
+  },
+  ComAtprotoSpaceListRoles: {
+    lexicon: 1,
+    defs: {
+      main: {
+        type: 'query',
+        description: 'List roles under a repository.',
+        auth: {
+          permission: 'role_list',
+          objectType: 'space',
+        },
+        parameters: {
+          type: 'params',
+          properties: {
+            repo: {
+              type: 'string',
+              description:
+                'The handle or DID of the repo (aka, current account).',
+              format: 'at-identifier',
+              maxLength: 256,
+            },
+            parent: {
+              type: 'string',
+              description: 'The id of the context space to operate under.',
+              format: 'record-key',
+              maxLength: 64,
+            },
+            limit: {
+              type: 'integer',
+              minimum: 1,
+              maximum: 100,
+              default: 50,
+              description: 'The number of records to return.',
+            },
+            cursor: {
+              type: 'string',
+            },
+            reverse: {
+              type: 'boolean',
+              description: 'Flag to reverse the order of the returned records.',
+            },
+            zookie: {
+              type: 'string',
+              description:
+                'The Zanzibar/SpiceDB consistency token, very similar in intent to CIDs in ATProto.',
+            },
+          },
+          required: ['repo'],
+        },
+        output: {
+          encoding: 'application/json',
+          schema: {
+            type: 'object',
+            properties: {
+              cursor: {
+                type: 'string',
+              },
+              roles: {
+                type: 'array',
+                items: {
+                  type: 'ref',
+                  ref: 'lex:com.atproto.space.listRoles#record',
+                },
+              },
+            },
+            required: ['roles'],
+          },
+        },
+      },
+      record: {
+        type: 'object',
+        properties: {
+          uri: {
+            type: 'string',
+            format: 'at-uri',
+          },
+          cid: {
+            description: 'The CID of the resource.',
+            type: 'string',
+            format: 'cid',
+          },
+          value: {
+            type: 'unknown',
+            description: 'Some value, lexicon and implementation dependent.',
+          },
+        },
+        required: ['uri', 'cid', 'value'],
+      },
+    },
+    description:
+      'List roles under a repository. Requires auth, implemented by PDS.',
+    id: 'com.atproto.space.listRoles',
+  },
+  ComAtprotoSpaceListSpaces: {
+    lexicon: 1,
+    defs: {
+      main: {
+        type: 'query',
+        description: 'List spaces under a repository.',
+        auth: {
+          permission: 'space_list',
+          objectType: 'space',
+        },
+        parameters: {
+          type: 'params',
+          properties: {
+            repo: {
+              type: 'string',
+              description:
+                'The handle or DID of the repo (aka, current account).',
+              format: 'at-identifier',
+              maxLength: 256,
+            },
+            parent: {
+              type: 'string',
+              description: 'The id of the context space to operate under.',
+              format: 'record-key',
+              maxLength: 64,
+            },
+            limit: {
+              type: 'integer',
+              minimum: 1,
+              maximum: 100,
+              default: 50,
+              description: 'The number of records to return.',
+            },
+            cursor: {
+              type: 'string',
+            },
+            reverse: {
+              type: 'boolean',
+              description: 'Flag to reverse the order of the returned records.',
+            },
+            zookie: {
+              type: 'string',
+              description:
+                'The Zanzibar/SpiceDB consistency token, very similar in intent to CIDs in ATProto.',
+            },
+          },
+          required: ['repo'],
+        },
+        output: {
+          encoding: 'application/json',
+          schema: {
+            type: 'object',
+            properties: {
+              cursor: {
+                type: 'string',
+              },
+              spaces: {
+                type: 'array',
+                items: {
+                  type: 'ref',
+                  ref: 'lex:com.atproto.space.listSpaces#record',
+                },
+              },
+            },
+            required: ['spaces'],
+          },
+        },
+      },
+      record: {
+        type: 'object',
+        properties: {
+          uri: {
+            type: 'string',
+            format: 'at-uri',
+          },
+          cid: {
+            description: 'The CID of the resource.',
+            type: 'string',
+            format: 'cid',
+          },
+          value: {
+            type: 'unknown',
+            description: 'Some value, lexicon and implementation dependent.',
+          },
+        },
+        required: ['uri', 'cid', 'value'],
+      },
+    },
+    description:
+      'List spaces under a repository. Requires auth, implemented by PDS.',
+    id: 'com.atproto.space.listSpaces',
+  },
+  ComAtprotoSpaceLookupResources: {
+    lexicon: 1,
+    id: 'com.atproto.space.lookupResources',
+    description:
+      'List of resource for the given permission for the given subject. Requires auth, implemented by PDS.',
+    defs: {
+      main: {
+        type: 'query',
+        description:
+          'List of resource for the given permission for the given subject.',
+        parameters: {
+          type: 'params',
+          properties: {
+            resourceType: {
+              type: 'string',
+              description: 'The resource type [space,record,etc]',
+              maxLength: 32,
+            },
+            resource: {
+              type: 'string',
+              description: 'The object id to assign.',
+              maxLength: 660,
+            },
+            permission: {
+              type: 'string',
+              description:
+                'possible values are defined in the spicedb schema and depend on context',
+              maxLength: 32,
+            },
+            subjectType: {
+              type: 'string',
+              description: 'the subject type [user,group,etc]',
+              maxLength: 32,
+            },
+            subject: {
+              type: 'string',
+              description: 'the subject id to grant',
+              maxLength: 643,
+            },
+            caveats: {
+              type: 'string',
+              description:
+                'nsids: { allowed: map<bool>, default bool, nsid string }',
+            },
+            zookie: {
+              type: 'string',
+              description:
+                'The Zanzibar/SpiceDB consistency token, very similar in intent to CIDs in ATProto.',
+            },
+          },
+          required: ['permission', 'subjectType', 'subject'],
+        },
+        output: {
+          encoding: 'application/json',
+          schema: {
+            type: 'object',
+            properties: {
+              resources: {
+                type: 'array',
+                description:
+                  'List of all the resources the subject has the given permission.',
+                items: {
+                  type: 'string',
+                  description: 'subject ids',
+                },
+              },
+            },
+            required: ['resources'],
+          },
+        },
+      },
+    },
+  },
+  ComAtprotoSpaceLookupSubjects: {
+    lexicon: 1,
+    id: 'com.atproto.space.lookupSubjects',
+    description:
+      'List of subjects with the given permission over the resource. Requires auth, implemented by PDS.',
+    defs: {
+      main: {
+        type: 'query',
+        description:
+          'List of subjects with the given permission over the resource.',
+        parameters: {
+          type: 'params',
+          properties: {
+            resourceType: {
+              type: 'string',
+              description: 'The resource type [space,record,etc]',
+              maxLength: 32,
+            },
+            resource: {
+              type: 'string',
+              description: 'The object id to assign.',
+              maxLength: 660,
+            },
+            permission: {
+              type: 'string',
+              description:
+                'possible values are defined in the spicedb schema and depend on context',
+              maxLength: 32,
+            },
+            subjectType: {
+              type: 'string',
+              description: 'the subject type [user,group,etc]',
+              maxLength: 32,
+            },
+            subject: {
+              type: 'string',
+              description: 'the subject id to grant',
+              maxLength: 643,
+            },
+            caveats: {
+              type: 'string',
+              description:
+                'nsids: { allowed: map<bool>, default bool, nsid string }',
+            },
+            zookie: {
+              type: 'string',
+              description:
+                'The Zanzibar/SpiceDB consistency token, very similar in intent to CIDs in ATProto.',
+            },
+          },
+          required: ['resourceType', 'resource', 'permission'],
+        },
+        output: {
+          encoding: 'application/json',
+          schema: {
+            type: 'object',
+            properties: {
+              subjects: {
+                type: 'array',
+                description:
+                  'List of all the subjects that have the given permission on the object.',
+                items: {
+                  type: 'string',
+                  description: 'subject ids',
+                },
+              },
+            },
+            required: ['subjects'],
+          },
+        },
+      },
+    },
+  },
+  ComAtprotoSpaceRelation: {
+    lexicon: 1,
+    id: 'com.atproto.space.relation',
+    description:
+      'A relation tuple [resource, relation, subject]. Subject is acct:<did> whereas the others depend ... Subjects will eventually expand as well Requires auth, implemented by PDS.',
+    defs: {
+      main: {
+        type: 'record',
+        description:
+          'A relation tuple [resource, relation, subject]. Subject is acct:<did> whereas the others depend ... Subjects will eventually expand as well',
+        key: 'any',
+        record: {
+          type: 'object',
+          properties: {
+            subjectType: {
+              type: 'string',
+              description: 'the subject type [user,group,etc]',
+              maxLength: 32,
+            },
+            subject: {
+              type: 'string',
+              description: 'the subject id to grant',
+              maxLength: 643,
+            },
+            permission: {
+              type: 'string',
+              description:
+                'possible values are defined in the spicedb schema and depend on context',
+              maxLength: 32,
+            },
+            resourceType: {
+              type: 'string',
+              description: 'The resource type [space,record,etc]',
+              maxLength: 32,
+            },
+            resource: {
+              type: 'string',
+              description: 'The object id to assign.',
+              maxLength: 660,
+            },
+            caveats: {
+              type: 'string',
+              description:
+                'nsids: { allowed: map<bool>, default bool, nsid string }',
+            },
+            createdAt: {
+              type: 'string',
+              format: 'datetime',
+            },
+          },
+          required: [
+            'subjectType',
+            'subject',
+            'permission',
+            'resourceType',
+            'resource',
+          ],
+        },
+      },
+    },
+  },
+  ComAtprotoSpaceRole: {
+    lexicon: 1,
+    id: 'com.atproto.space.role',
+    description:
+      'Roles are a collection of permissions that all members get. They are compositional. Requires auth, implemented by PDS.',
+    defs: {
+      main: {
+        type: 'record',
+        description:
+          'Roles are a collection of permissions that all members get. They are compositional.',
+        key: 'any',
+        record: {
+          type: 'object',
+          properties: {
+            displayName: {
+              type: 'string',
+              maxGraphemes: 64,
+              maxLength: 640,
+            },
+            description: {
+              type: 'string',
+              description: 'Free-form profile description text.',
+              maxGraphemes: 256,
+              maxLength: 2560,
+            },
+            avatar: {
+              type: 'blob',
+              description:
+                "Small image to be displayed next to posts from account. AKA, 'profile picture'",
+              accept: ['image/png', 'image/jpeg'],
+              maxSize: 1000000,
+            },
+            banner: {
+              type: 'blob',
+              description:
+                'Larger horizontal image to display behind profile view.',
+              accept: ['image/png', 'image/jpeg'],
+              maxSize: 1000000,
+            },
+            labels: {
+              type: 'union',
+              description:
+                'Self-label values, specific to the Bluesky application, on the overall account.',
+              refs: ['lex:com.atproto.label.defs#selfLabels'],
+            },
+            createdAt: {
+              type: 'string',
+              format: 'datetime',
+            },
+          },
+        },
+      },
+    },
+  },
+  ComAtprotoSpaceSpace: {
+    lexicon: 1,
+    id: 'com.atproto.space.space',
+    description:
+      'Spaces are nesting sets of groups, roles, content, and their relations. Requires auth, implemented by PDS.',
+    defs: {
+      main: {
+        type: 'record',
+        description:
+          'Spaces are nesting sets of groups, roles, content, and their relations.',
+        key: 'any',
+        record: {
+          type: 'object',
+          properties: {
+            bubble: {
+              type: 'boolean',
+              description:
+                'Bubbles are private spaces to restrict access in a larger space. They reset the permission space so that outer permissions do not apply, except for owners from parent spaces.',
+            },
+            displayName: {
+              type: 'string',
+              maxGraphemes: 64,
+              maxLength: 640,
+            },
+            description: {
+              type: 'string',
+              description: 'Free-form profile description text.',
+              maxGraphemes: 256,
+              maxLength: 2560,
+            },
+            avatar: {
+              type: 'blob',
+              description:
+                "Small image to be displayed next to posts from account. AKA, 'profile picture'",
+              accept: ['image/png', 'image/jpeg'],
+              maxSize: 1000000,
+            },
+            banner: {
+              type: 'blob',
+              description:
+                'Larger horizontal image to display behind profile view.',
+              accept: ['image/png', 'image/jpeg'],
+              maxSize: 1000000,
+            },
+            labels: {
+              type: 'union',
+              description:
+                'Self-label values, specific to the Bluesky application, on the overall account.',
+              refs: ['lex:com.atproto.label.defs#selfLabels'],
+            },
+            createdAt: {
+              type: 'string',
+              format: 'datetime',
+            },
+          },
+        },
+      },
+    },
+  },
+  ComAtprotoSpaceUpdateGroup: {
+    lexicon: 1,
+    defs: {
+      main: {
+        type: 'procedure',
+        description: 'Update an existing group, errors if it does not exist.',
+        auth: {
+          permission: 'group_update',
+          objectType: 'group',
+        },
+        input: {
+          encoding: 'application/json',
+          schema: {
+            type: 'object',
+            properties: {
+              repo: {
+                type: 'string',
+                description:
+                  'The handle or DID of the repo (aka, current account).',
+                format: 'at-identifier',
+                maxLength: 256,
+              },
+              parent: {
+                description:
+                  'The id of the parent space to nest under. If not set, the current value or /root is assumed. Can be used to move a space or bubble.',
+                type: 'string',
+                format: 'record-key',
+                maxLength: 64,
+              },
+              rkey: {
+                description: 'The id of the space.',
+                type: 'string',
+                format: 'record-key',
+                maxLength: 64,
+              },
+              record: {
+                type: 'unknown',
+                description: 'The record itself. Must contain a $type field.',
+              },
+              validate: {
+                type: 'boolean',
+                description:
+                  "Can be set to 'false' to skip Lexicon schema validation of record data, 'true' to require it, or leave unset to validate only for known Lexicons.",
+              },
+              swapCID: {
+                description:
+                  'Compare and swap with the previous record by CID.',
+                type: 'string',
+                format: 'cid',
+              },
+              zookie: {
+                type: 'string',
+                description:
+                  'The Zanzibar/SpiceDB consistency token, very similar in intent to CIDs in ATProto.',
+              },
+            },
+            required: ['repo', 'rkey', 'record'],
+          },
+        },
+        output: {
+          encoding: 'application/json',
+          schema: {
+            type: 'object',
+            properties: {
+              uri: {
+                type: 'string',
+                format: 'at-uri',
+              },
+              cid: {
+                type: 'string',
+                format: 'cid',
+              },
+              zookie: {
+                type: 'string',
+                description:
+                  'The Zanzibar/SpiceDB consistency token, very similar in intent to CIDs in ATProto.',
+              },
+              validationStatus: {
+                type: 'string',
+                knownValues: ['valid', 'unknown'],
+              },
+              status: {
+                type: 'string',
+                description: 'a human readable status message',
+              },
+            },
+          },
+        },
+      },
+    },
+    description:
+      'Update an existing group, errors if it does not exist. Requires auth, implemented by PDS.',
+    id: 'com.atproto.space.updateGroup',
+  },
+  ComAtprotoSpaceUpdateRecord: {
+    lexicon: 1,
+    id: 'com.atproto.space.updateRecord',
+    description:
+      'Update an existing record, errors if it does not exist. Requires auth, implemented by PDS.',
+    defs: {
+      main: {
+        parameters: {
+          properties: {
+            collection: {
+              description: 'The NSID of the record type.',
+              format: 'nsid',
+              maxLength: 256,
+              type: 'string',
+            },
+          },
+          type: 'params',
+        },
+        type: 'procedure',
+        description: 'Update an existing record, errors if it does not exist.',
+        auth: {
+          permission: 'record_update',
+          objectType: 'record',
+        },
+        input: {
+          encoding: 'application/json',
+          schema: {
+            type: 'object',
+            properties: {
+              repo: {
+                type: 'string',
+                description:
+                  'The handle or DID of the repo (aka, current account).',
+                format: 'at-identifier',
+                maxLength: 256,
+              },
+              parent: {
+                description:
+                  'The id of the parent space to nest under. If not set, the current value or /root is assumed. Can be used to move a space or bubble.',
+                type: 'string',
+                format: 'record-key',
+                maxLength: 64,
+              },
+              rkey: {
+                description: 'The id of the space.',
+                type: 'string',
+                format: 'record-key',
+                maxLength: 64,
+              },
+              record: {
+                type: 'unknown',
+                description: 'The record itself. Must contain a $type field.',
+              },
+              validate: {
+                type: 'boolean',
+                description:
+                  "Can be set to 'false' to skip Lexicon schema validation of record data, 'true' to require it, or leave unset to validate only for known Lexicons.",
+              },
+              swapCID: {
+                description:
+                  'Compare and swap with the previous record by CID.',
+                type: 'string',
+                format: 'cid',
+              },
+              zookie: {
+                type: 'string',
+                description:
+                  'The Zanzibar/SpiceDB consistency token, very similar in intent to CIDs in ATProto.',
+              },
+            },
+            required: ['repo', 'rkey', 'record'],
+          },
+        },
+        output: {
+          encoding: 'application/json',
+          schema: {
+            type: 'object',
+            properties: {
+              uri: {
+                type: 'string',
+                format: 'at-uri',
+              },
+              cid: {
+                type: 'string',
+                format: 'cid',
+              },
+              zookie: {
+                type: 'string',
+                description:
+                  'The Zanzibar/SpiceDB consistency token, very similar in intent to CIDs in ATProto.',
+              },
+              validationStatus: {
+                type: 'string',
+                knownValues: ['valid', 'unknown'],
+              },
+              status: {
+                type: 'string',
+                description: 'a human readable status message',
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+  ComAtprotoSpaceUpdateRelation: {
+    lexicon: 1,
+    defs: {
+      main: {
+        type: 'procedure',
+        description:
+          'Update an existing relation, errors if it does not exist.',
+        auth: {
+          permission: 'relation_update',
+          objectType: 'relation',
+        },
+        input: {
+          encoding: 'application/json',
+          schema: {
+            type: 'object',
+            properties: {
+              repo: {
+                type: 'string',
+                description:
+                  'The handle or DID of the repo (aka, current account).',
+                format: 'at-identifier',
+                maxLength: 256,
+              },
+              parent: {
+                description:
+                  'The id of the parent space to nest under. If not set, the current value or /root is assumed. Can be used to move a space or bubble.',
+                type: 'string',
+                format: 'record-key',
+                maxLength: 64,
+              },
+              rkey: {
+                description: 'The id of the space.',
+                type: 'string',
+                format: 'record-key',
+                maxLength: 64,
+              },
+              record: {
+                type: 'unknown',
+                description: 'The record itself. Must contain a $type field.',
+              },
+              validate: {
+                type: 'boolean',
+                description:
+                  "Can be set to 'false' to skip Lexicon schema validation of record data, 'true' to require it, or leave unset to validate only for known Lexicons.",
+              },
+              swapCID: {
+                description:
+                  'Compare and swap with the previous record by CID.',
+                type: 'string',
+                format: 'cid',
+              },
+              zookie: {
+                type: 'string',
+                description:
+                  'The Zanzibar/SpiceDB consistency token, very similar in intent to CIDs in ATProto.',
+              },
+            },
+            required: ['repo', 'rkey', 'record'],
+          },
+        },
+        output: {
+          encoding: 'application/json',
+          schema: {
+            type: 'object',
+            properties: {
+              uri: {
+                type: 'string',
+                format: 'at-uri',
+              },
+              cid: {
+                type: 'string',
+                format: 'cid',
+              },
+              zookie: {
+                type: 'string',
+                description:
+                  'The Zanzibar/SpiceDB consistency token, very similar in intent to CIDs in ATProto.',
+              },
+              validationStatus: {
+                type: 'string',
+                knownValues: ['valid', 'unknown'],
+              },
+              status: {
+                type: 'string',
+                description: 'a human readable status message',
+              },
+            },
+          },
+        },
+      },
+    },
+    description:
+      'Update an existing relation, errors if it does not exist. Requires auth, implemented by PDS.',
+    id: 'com.atproto.space.updateRelation',
+  },
+  ComAtprotoSpaceUpdateRole: {
+    lexicon: 1,
+    defs: {
+      main: {
+        type: 'procedure',
+        description: 'Update an existing role, errors if it does not exist.',
+        auth: {
+          permission: 'role_update',
+          objectType: 'role',
+        },
+        input: {
+          encoding: 'application/json',
+          schema: {
+            type: 'object',
+            properties: {
+              repo: {
+                type: 'string',
+                description:
+                  'The handle or DID of the repo (aka, current account).',
+                format: 'at-identifier',
+                maxLength: 256,
+              },
+              parent: {
+                description:
+                  'The id of the parent space to nest under. If not set, the current value or /root is assumed. Can be used to move a space or bubble.',
+                type: 'string',
+                format: 'record-key',
+                maxLength: 64,
+              },
+              rkey: {
+                description: 'The id of the space.',
+                type: 'string',
+                format: 'record-key',
+                maxLength: 64,
+              },
+              record: {
+                type: 'unknown',
+                description: 'The record itself. Must contain a $type field.',
+              },
+              validate: {
+                type: 'boolean',
+                description:
+                  "Can be set to 'false' to skip Lexicon schema validation of record data, 'true' to require it, or leave unset to validate only for known Lexicons.",
+              },
+              swapCID: {
+                description:
+                  'Compare and swap with the previous record by CID.',
+                type: 'string',
+                format: 'cid',
+              },
+              zookie: {
+                type: 'string',
+                description:
+                  'The Zanzibar/SpiceDB consistency token, very similar in intent to CIDs in ATProto.',
+              },
+            },
+            required: ['repo', 'rkey', 'record'],
+          },
+        },
+        output: {
+          encoding: 'application/json',
+          schema: {
+            type: 'object',
+            properties: {
+              uri: {
+                type: 'string',
+                format: 'at-uri',
+              },
+              cid: {
+                type: 'string',
+                format: 'cid',
+              },
+              zookie: {
+                type: 'string',
+                description:
+                  'The Zanzibar/SpiceDB consistency token, very similar in intent to CIDs in ATProto.',
+              },
+              validationStatus: {
+                type: 'string',
+                knownValues: ['valid', 'unknown'],
+              },
+              status: {
+                type: 'string',
+                description: 'a human readable status message',
+              },
+            },
+          },
+        },
+      },
+    },
+    description:
+      'Update an existing role, errors if it does not exist. Requires auth, implemented by PDS.',
+    id: 'com.atproto.space.updateRole',
+  },
+  ComAtprotoSpaceUpdateSpace: {
+    lexicon: 1,
+    defs: {
+      main: {
+        type: 'procedure',
+        description: 'Update an existing space, errors if it does not exist.',
+        auth: {
+          permission: 'space_update',
+          objectType: 'space',
+        },
+        input: {
+          encoding: 'application/json',
+          schema: {
+            type: 'object',
+            properties: {
+              repo: {
+                type: 'string',
+                description:
+                  'The handle or DID of the repo (aka, current account).',
+                format: 'at-identifier',
+                maxLength: 256,
+              },
+              parent: {
+                description:
+                  'The id of the parent space to nest under. If not set, the current value or /root is assumed. Can be used to move a space or bubble.',
+                type: 'string',
+                format: 'record-key',
+                maxLength: 64,
+              },
+              rkey: {
+                description: 'The id of the space.',
+                type: 'string',
+                format: 'record-key',
+                maxLength: 64,
+              },
+              record: {
+                type: 'unknown',
+                description: 'The record itself. Must contain a $type field.',
+              },
+              validate: {
+                type: 'boolean',
+                description:
+                  "Can be set to 'false' to skip Lexicon schema validation of record data, 'true' to require it, or leave unset to validate only for known Lexicons.",
+              },
+              swapCID: {
+                description:
+                  'Compare and swap with the previous record by CID.',
+                type: 'string',
+                format: 'cid',
+              },
+              zookie: {
+                type: 'string',
+                description:
+                  'The Zanzibar/SpiceDB consistency token, very similar in intent to CIDs in ATProto.',
+              },
+            },
+            required: ['repo', 'rkey', 'record'],
+          },
+        },
+        output: {
+          encoding: 'application/json',
+          schema: {
+            type: 'object',
+            properties: {
+              uri: {
+                type: 'string',
+                format: 'at-uri',
+              },
+              cid: {
+                type: 'string',
+                format: 'cid',
+              },
+              zookie: {
+                type: 'string',
+                description:
+                  'The Zanzibar/SpiceDB consistency token, very similar in intent to CIDs in ATProto.',
+              },
+              validationStatus: {
+                type: 'string',
+                knownValues: ['valid', 'unknown'],
+              },
+              status: {
+                type: 'string',
+                description: 'a human readable status message',
+              },
+            },
+          },
+        },
+      },
+    },
+    description:
+      'Update an existing space, errors if it does not exist. Requires auth, implemented by PDS.',
+    id: 'com.atproto.space.updateSpace',
+  },
+  ComAtprotoSpaceUploadBlob: {
+    lexicon: 1,
+    id: 'com.atproto.space.uploadBlob',
+    description:
+      'Upload a new blob, to be referenced from a repository record. The blob will be deleted if it is not referenced within a time window (eg, minutes). Blob restrictions (mimetype, size, etc) are enforced when the reference is created. Requires auth, implemented by PDS.',
+    defs: {
+      main: {
+        type: 'procedure',
+        description:
+          'Upload a new blob, to be referenced from a repository record. The blob will be deleted if it is not referenced within a time window (eg, minutes). Blob restrictions (mimetype, size, etc) are enforced when the reference is created.',
+        auth: {
+          permission: 'create_blob',
+        },
+        parameters: {
+          type: 'params',
+          properties: {
+            repo: {
+              type: 'string',
+              description:
+                'The handle or DID of the repo (aka, current account).',
+              format: 'at-identifier',
+              maxLength: 256,
+            },
+            space: {
+              type: 'string',
+              description: 'The id of the context space to operate under.',
+              format: 'record-key',
+              maxLength: 64,
+            },
+          },
+          required: ['repo', 'space'],
+        },
+        input: {
+          encoding: '*/*',
+        },
+        output: {
+          encoding: 'application/json',
+          schema: {
+            type: 'object',
+            properties: {
+              uri: {
+                type: 'string',
+                format: 'at-uri',
+              },
+              cid: {
+                type: 'string',
+                format: 'cid',
+              },
+              validationStatus: {
+                type: 'string',
+                knownValues: ['valid', 'unknown'],
+              },
+              status: {
+                type: 'string',
+                description: 'a human readable status message',
+              },
+            },
+            required: ['uri', 'cid'],
+          },
+        },
+      },
+    },
+  },
   ComAtprotoSyncDefs: {
     lexicon: 1,
     id: 'com.atproto.sync.defs',
@@ -14258,6 +17484,47 @@ export const ids = {
   ComAtprotoServerResetPassword: 'com.atproto.server.resetPassword',
   ComAtprotoServerRevokeAppPassword: 'com.atproto.server.revokeAppPassword',
   ComAtprotoServerUpdateEmail: 'com.atproto.server.updateEmail',
+  ComAtprotoSpaceCheckPermission: 'com.atproto.space.checkPermission',
+  ComAtprotoSpaceCheckPermissions: 'com.atproto.space.checkPermissions',
+  ComAtprotoSpaceCreateGroup: 'com.atproto.space.createGroup',
+  ComAtprotoSpaceCreateRecord: 'com.atproto.space.createRecord',
+  ComAtprotoSpaceCreateRelation: 'com.atproto.space.createRelation',
+  ComAtprotoSpaceCreateRole: 'com.atproto.space.createRole',
+  ComAtprotoSpaceCreateSpace: 'com.atproto.space.createSpace',
+  ComAtprotoSpaceDeleteBlob: 'com.atproto.space.deleteBlob',
+  ComAtprotoSpaceDeleteGroup: 'com.atproto.space.deleteGroup',
+  ComAtprotoSpaceDeleteRecord: 'com.atproto.space.deleteRecord',
+  ComAtprotoSpaceDeleteRelation: 'com.atproto.space.deleteRelation',
+  ComAtprotoSpaceDeleteRole: 'com.atproto.space.deleteRole',
+  ComAtprotoSpaceDeleteSpace: 'com.atproto.space.deleteSpace',
+  ComAtprotoSpaceDescribeGroup: 'com.atproto.space.describeGroup',
+  ComAtprotoSpaceDescribeRole: 'com.atproto.space.describeRole',
+  ComAtprotoSpaceDescribeSpace: 'com.atproto.space.describeSpace',
+  ComAtprotoSpaceGetBlob: 'com.atproto.space.getBlob',
+  ComAtprotoSpaceGetGroup: 'com.atproto.space.getGroup',
+  ComAtprotoSpaceGetRecord: 'com.atproto.space.getRecord',
+  ComAtprotoSpaceGetRelation: 'com.atproto.space.getRelation',
+  ComAtprotoSpaceGetRole: 'com.atproto.space.getRole',
+  ComAtprotoSpaceGetSpace: 'com.atproto.space.getSpace',
+  ComAtprotoSpaceGroup: 'com.atproto.space.group',
+  ComAtprotoSpaceListBlobs: 'com.atproto.space.listBlobs',
+  ComAtprotoSpaceListGroups: 'com.atproto.space.listGroups',
+  ComAtprotoSpaceListMissingBlobs: 'com.atproto.space.listMissingBlobs',
+  ComAtprotoSpaceListRecords: 'com.atproto.space.listRecords',
+  ComAtprotoSpaceListRelations: 'com.atproto.space.listRelations',
+  ComAtprotoSpaceListRoles: 'com.atproto.space.listRoles',
+  ComAtprotoSpaceListSpaces: 'com.atproto.space.listSpaces',
+  ComAtprotoSpaceLookupResources: 'com.atproto.space.lookupResources',
+  ComAtprotoSpaceLookupSubjects: 'com.atproto.space.lookupSubjects',
+  ComAtprotoSpaceRelation: 'com.atproto.space.relation',
+  ComAtprotoSpaceRole: 'com.atproto.space.role',
+  ComAtprotoSpaceSpace: 'com.atproto.space.space',
+  ComAtprotoSpaceUpdateGroup: 'com.atproto.space.updateGroup',
+  ComAtprotoSpaceUpdateRecord: 'com.atproto.space.updateRecord',
+  ComAtprotoSpaceUpdateRelation: 'com.atproto.space.updateRelation',
+  ComAtprotoSpaceUpdateRole: 'com.atproto.space.updateRole',
+  ComAtprotoSpaceUpdateSpace: 'com.atproto.space.updateSpace',
+  ComAtprotoSpaceUploadBlob: 'com.atproto.space.uploadBlob',
   ComAtprotoSyncDefs: 'com.atproto.sync.defs',
   ComAtprotoSyncGetBlob: 'com.atproto.sync.getBlob',
   ComAtprotoSyncGetBlocks: 'com.atproto.sync.getBlocks',

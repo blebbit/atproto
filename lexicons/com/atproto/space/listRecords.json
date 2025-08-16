@@ -1,0 +1,103 @@
+{
+  "lexicon": 1,
+  "id": "com.atproto.space.listRecords",
+  "description": "List records under a repository. Requires auth, implemented by PDS.",
+  "defs": {
+    "main": {
+      "auth": {
+        "permission": "record_list",
+        "objectType": "space"
+      },
+      "description": "List records under a repository.",
+      "parameters": {
+        "properties": {
+          "collection": {
+            "description": "The NSID of the record type.",
+            "format": "nsid",
+            "maxLength": 256,
+            "type": "string"
+          },
+          "repo": {
+            "type": "string",
+            "description": "The handle or DID of the repo (aka, current account).",
+            "format": "at-identifier",
+            "maxLength": 256
+          },
+          "parent": {
+            "type": "string",
+            "description": "The id of the context space to operate under.",
+            "format": "record-key",
+            "maxLength": 64
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100,
+            "default": 50,
+            "description": "The number of records to return."
+          },
+          "cursor": {
+            "type": "string"
+          },
+          "reverse": {
+            "type": "boolean",
+            "description": "Flag to reverse the order of the returned records."
+          },
+          "zookie": {
+            "type": "string",
+            "description": "The Zanzibar/SpiceDB consistency token, very similar in intent to CIDs in ATProto."
+          }
+        },
+        "required": [
+          "repo"
+        ],
+        "type": "params"
+      },
+      "type": "query",
+      "output": {
+        "encoding": "application/json",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "cursor": {
+              "type": "string"
+            },
+            "records": {
+              "type": "array",
+              "items": {
+                "type": "ref",
+                "ref": "#record"
+              }
+            }
+          },
+          "required": [
+            "records"
+          ]
+        }
+      }
+    },
+    "record": {
+      "type": "object",
+      "properties": {
+        "uri": {
+          "type": "string",
+          "format": "at-uri"
+        },
+        "cid": {
+          "description": "The CID of the resource.",
+          "type": "string",
+          "format": "cid"
+        },
+        "value": {
+          "type": "unknown",
+          "description": "Some value, lexicon and implementation dependent."
+        }
+      },
+      "required": [
+        "uri",
+        "cid",
+        "value"
+      ]
+    }
+  }
+}

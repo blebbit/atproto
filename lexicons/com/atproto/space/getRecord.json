@@ -1,0 +1,82 @@
+{
+  "lexicon": 1,
+  "id": "com.atproto.space.getRecord",
+  "description": "Get a record from a repository. Requires auth, implemented by PDS.",
+  "defs": {
+    "main": {
+      "auth": {
+        "permission": "record_get",
+        "objectType": "record"
+      },
+      "description": "Get a record from a repository.",
+      "parameters": {
+        "properties": {
+          "collection": {
+            "description": "The NSID of the record type.",
+            "format": "nsid",
+            "maxLength": 256,
+            "type": "string"
+          },
+          "repo": {
+            "type": "string",
+            "description": "The handle or DID of the repo (aka, current account).",
+            "format": "at-identifier",
+            "maxLength": 256
+          },
+          "parent": {
+            "type": "string",
+            "description": "The id of the context space to operate under.",
+            "format": "record-key",
+            "maxLength": 64
+          },
+          "rkey": {
+            "type": "string",
+            "description": "The id of the space.",
+            "format": "record-key",
+            "maxLength": 64
+          },
+          "cid": {
+            "type": "string",
+            "description": "The CID of the version of the resource. If not specified, then return the most recent version.",
+            "format": "cid"
+          },
+          "zookie": {
+            "type": "string",
+            "description": "The Zanzibar/SpiceDB consistency token, very similar in intent to CIDs in ATProto."
+          }
+        },
+        "required": [
+          "repo",
+          "rkey"
+        ],
+        "type": "params"
+      },
+      "type": "query",
+      "output": {
+        "encoding": "application/json",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "uri": {
+              "type": "string",
+              "format": "at-uri"
+            },
+            "cid": {
+              "description": "The CID of the resource.",
+              "type": "string",
+              "format": "cid"
+            },
+            "value": {
+              "type": "unknown",
+              "description": "Some value, lexicon and implementation dependent."
+            }
+          },
+          "required": [
+            "uri",
+            "value"
+          ]
+        }
+      }
+    }
+  }
+}

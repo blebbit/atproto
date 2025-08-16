@@ -1,0 +1,103 @@
+{
+  "lexicon": 1,
+  "id": "com.atproto.space.createRecord",
+  "description": "Create a new repository record, errors if it exists. Requires auth, implemented by PDS.",
+  "defs": {
+    "main": {
+      "parameters": {
+        "properties": {
+          "collection": {
+            "description": "The NSID of the record type.",
+            "format": "nsid",
+            "maxLength": 256,
+            "type": "string"
+          }
+        },
+        "type": "params"
+      },
+      "type": "procedure",
+      "description": "Create a new repository record, errors if it exists.",
+      "auth": {
+        "permission": "record_create",
+        "objectType": "space"
+      },
+      "input": {
+        "encoding": "application/json",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "repo": {
+              "type": "string",
+              "description": "The handle or DID of the repo (aka, current account).",
+              "format": "at-identifier",
+              "maxLength": 256
+            },
+            "parent": {
+              "description": "The id of the parent space to nest under. If not set, the current value or /root is assumed. Can be used to move a space or bubble.",
+              "type": "string",
+              "format": "record-key",
+              "maxLength": 64
+            },
+            "rkey": {
+              "type": "string",
+              "description": "The id of the space associated with the repo.",
+              "format": "record-key",
+              "maxLength": 64
+            },
+            "record": {
+              "type": "unknown",
+              "description": "The record itself. Must contain a $type field."
+            },
+            "validate": {
+              "type": "boolean",
+              "description": "Can be set to 'false' to skip Lexicon schema validation of record data, 'true' to require it, or leave unset to validate only for known Lexicons."
+            },
+            "zookie": {
+              "type": "string",
+              "description": "The Zanzibar/SpiceDB consistency token, very similar in intent to CIDs in ATProto."
+            }
+          },
+          "required": [
+            "repo",
+            "record"
+          ]
+        }
+      },
+      "output": {
+        "encoding": "application/json",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "uri": {
+              "type": "string",
+              "format": "at-uri"
+            },
+            "cid": {
+              "type": "string",
+              "format": "cid"
+            },
+            "zookie": {
+              "type": "string",
+              "description": "The Zanzibar/SpiceDB consistency token, very similar in intent to CIDs in ATProto."
+            },
+            "validationStatus": {
+              "type": "string",
+              "knownValues": [
+                "valid",
+                "unknown"
+              ]
+            },
+            "status": {
+              "type": "string",
+              "description": "a human readable status message"
+            }
+          },
+          "required": [
+            "uri",
+            "cid"
+          ]
+        }
+      }
+    }
+  }
+}

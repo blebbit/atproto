@@ -1,0 +1,63 @@
+{
+  "lexicon": 1,
+  "defs": {
+    "main": {
+      "type": "procedure",
+      "description": "Delete a group and everything associated with it.",
+      "auth": {
+        "permission": "group_delete",
+        "objectType": "group"
+      },
+      "input": {
+        "encoding": "application/json",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "repo": {
+              "type": "string",
+              "description": "The handle or DID of the repo (aka, current account).",
+              "format": "at-identifier",
+              "maxLength": 256
+            },
+            "rkey": {
+              "type": "string",
+              "format": "record-key",
+              "maxLength": 64
+            },
+            "swapCID": {
+              "description": "Compare and swap with the previous record by CID.",
+              "type": "string",
+              "format": "cid"
+            },
+            "zookie": {
+              "type": "string",
+              "description": "The Zanzibar/SpiceDB consistency token, very similar in intent to CIDs in ATProto."
+            }
+          },
+          "required": [
+            "repo",
+            "rkey"
+          ]
+        }
+      },
+      "output": {
+        "encoding": "application/json",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "description": "a human readable status message"
+            },
+            "zookie": {
+              "type": "string",
+              "description": "The Zanzibar/SpiceDB consistency token, very similar in intent to CIDs in ATProto."
+            }
+          }
+        }
+      }
+    }
+  },
+  "description": "Delete a group and everything associated with it. Requires auth, implemented by PDS.",
+  "id": "com.atproto.space.deleteGroup"
+}

@@ -1,0 +1,77 @@
+{
+  "lexicon": 1,
+  "id": "com.atproto.space.checkPermissions",
+  "description": "Bulk check if the permission is allowed. Requires auth, implemented by PDS.",
+  "defs": {
+    "main": {
+      "type": "query",
+      "description": "Bulk check if the permission is allowed.",
+      "parameters": {
+        "type": "params",
+        "properties": {
+          "resourceType": {
+            "type": "string",
+            "description": "The resource type [space,record,etc]",
+            "maxLength": 32
+          },
+          "resources": {
+            "type": "array",
+            "description": "List of object ids to see if subject is granted the permission.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "permission": {
+            "type": "string",
+            "description": "possible values are defined in the spicedb schema and depend on context",
+            "maxLength": 32
+          },
+          "subjectType": {
+            "type": "string",
+            "description": "the subject type [user,group,etc]",
+            "maxLength": 32
+          },
+          "subject": {
+            "type": "string",
+            "description": "the subject id to grant",
+            "maxLength": 643
+          },
+          "caveats": {
+            "type": "string",
+            "description": "nsids: { allowed: map<bool>, default bool, nsid string }"
+          },
+          "zookie": {
+            "type": "string",
+            "description": "The Zanzibar/SpiceDB consistency token, very similar in intent to CIDs in ATProto."
+          }
+        },
+        "required": [
+          "resourceType",
+          "resources",
+          "permission",
+          "subjectType",
+          "subject"
+        ]
+      },
+      "output": {
+        "encoding": "application/json",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "allowed": {
+              "type": "array",
+              "description": "List ordered the same as input objects, with allowed status.",
+              "items": {
+                "type": "string",
+                "description": "one of: [yes,no,conditional,unspecified,unknown]"
+              }
+            }
+          },
+          "required": [
+            "allowed"
+          ]
+        }
+      }
+    }
+  }
+}

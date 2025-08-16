@@ -12,9 +12,9 @@ export const DISALLOWED_TLDS = [
   '.internal',
   '.example',
   '.alt',
-  // policy could concievably change on ".onion" some day
+  // policy could conceivably change on ".onion" some day
   '.onion',
-  // NOTE: .test is allowed in testing and devopment. In practical terms
+  // NOTE: .test is allowed in testing and development. In practical terms
   // "should" "never" actually resolve and get registered in production
 ]
 

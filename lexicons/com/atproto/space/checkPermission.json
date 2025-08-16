@@ -1,0 +1,71 @@
+{
+  "lexicon": 1,
+  "id": "com.atproto.space.checkPermission",
+  "description": "Check if the permission is allowed. Requires auth, implemented by PDS.",
+  "defs": {
+    "main": {
+      "type": "query",
+      "description": "Check if the permission is allowed.",
+      "parameters": {
+        "type": "params",
+        "properties": {
+          "resourceType": {
+            "type": "string",
+            "description": "The resource type [space,record,etc]",
+            "maxLength": 32
+          },
+          "resource": {
+            "type": "string",
+            "description": "The object id to assign.",
+            "maxLength": 660
+          },
+          "permission": {
+            "type": "string",
+            "description": "possible values are defined in the spicedb schema and depend on context",
+            "maxLength": 32
+          },
+          "subjectType": {
+            "type": "string",
+            "description": "the subject type [user,group,etc]",
+            "maxLength": 32
+          },
+          "subject": {
+            "type": "string",
+            "description": "the subject id to grant",
+            "maxLength": 643
+          },
+          "caveats": {
+            "type": "string",
+            "description": "nsids: { allowed: map<bool>, default bool, nsid string }"
+          },
+          "zookie": {
+            "type": "string",
+            "description": "The Zanzibar/SpiceDB consistency token, very similar in intent to CIDs in ATProto."
+          }
+        },
+        "required": [
+          "resourceType",
+          "resource",
+          "permission",
+          "subjectType",
+          "subject"
+        ]
+      },
+      "output": {
+        "encoding": "application/json",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "allowed": {
+              "type": "string",
+              "description": "one of: [yes,no,conditional,unspecified,unknown]"
+            }
+          },
+          "required": [
+            "allowed"
+          ]
+        }
+      }
+    }
+  }
+}
